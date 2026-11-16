@@ -125,6 +125,7 @@
     const outcomes=await Promise.allSettled(modules.map(([,loader])=>loader()));
     const failures=outcomes.flatMap((result,index)=>result.status==='rejected'?[modules[index][0]]:[]);
     const updated=$('#dashboardUpdated');if(updated)updated.textContent=outcomes[0].status==='fulfilled'?'Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Dashboard unavailable';
+    if(outcomes[0].status==='rejected')console.error('Dashboard load failed:',outcomes[0].reason);
     if(failures.length) {
       console.warn('NTA management: some data could not be loaded:',failures.join(', '));
       const message=$('#adminLoadStatus');
@@ -249,7 +250,10 @@
     const sectors=breakdown.map(([,key],i)=>{const pct=total?100*Number(state.metrics[key]||0)/total:0;const sector=`${colors[i]} ${start}% ${start+pct}%`;start+=pct;return sector;});
     $('#snapshotDonut').style.background=total?`conic-gradient(${sectors.join(', ')})`:'conic-gradient(#dce5ef 0% 100%)';
     $('#snapshotLegend').innerHTML=breakdown.map(([label,key],i)=>{const count=Number(state.metrics[key]||0);return `<div class="snapshot-row"><span class="snapshot-dot" style="background:${colors[i]}"></span><span>${esc(label)}</span><b>${count}</b><em>${total?Math.round(count/total*100):0}%</em></div>`}).join('');
-    await loadRecentActivity();
+    try{await loadRecentActivity()}catch(error){
+      console.warn('NTA recent activity could not load:',error);
+      $('#recentActivity').textContent='Recent activity is temporarily unavailable.';
+    }
   }
   async function loadRecentActivity(){
     const events=[];
