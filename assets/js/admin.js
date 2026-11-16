@@ -14,6 +14,82 @@
     const res=await fetch(cfg.adminFunctionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.publishableKey,'Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({action,...payload})});
     const j=await res.json().catch(()=>({})); if(!res.ok||j.error) throw new Error(j.error||'Request failed'); return j;
   }
+  // Client inactivity policy. A per-user timestamp persists through refresh and syncs tabs.
+  const IDLE_LIMIT_MS=10*60*1000;
+  const IDLE_WARNING_MS=60*1000;
+  const idleModal=$('#idleWarningModal');
+  const idleCountdown=$('#idleCountdown');
+  let idleKey=null, idleInterval=null, idleLoggingOut=false, lastActivityWrite=0;
+  function idleLastActivity(){
+    if(!idleKey)return 0;
+    try{return Number(localStorage.getItem(idleKey))||0}catch{return lastActivityWrite}
+  }
+  function recordActivity(force=false){
+    if(!idleKey||idleLoggingOut||!state.session||!idleModal.hidden)return;
+    const now=Date.now();
+    if(!force&&now-lastActivityWrite<1000)return;
+    lastActivityWrite=now;
+    try{localStorage.setItem(idleKey,String(now))}catch{}
+  }
+  function hideIdleWarning(){idleModal.hidden=true;document.body.classList.remove('nta-idle-modal-open')}
+  function displayIdleWarning(seconds){
+    idleCountdown.textContent=String(Math.max(0,seconds));
+    if(idleModal.hidden){
+      idleModal.hidden=false;
+      document.body.classList.add('nta-idle-modal-open');
+      $('#idleStaySignedIn').focus();
+    }
+  }
+  async function idleSignOut(){
+    if(idleLoggingOut)return;
+    idleLoggingOut=true;
+    clearInterval(idleInterval);idleInterval=null;
+    hideIdleWarning();
+    try{if(idleKey)localStorage.removeItem(idleKey)}catch{}
+    try{await sb.auth.signOut({scope:'local'})}catch(error){console.warn('Idle sign-out error:',error)}
+    state.session=null;state.admin=null;idleKey=null;
+    showAuth();
+    statusBox('Your session ended after 10 minutes of inactivity. Please sign in again.','error');
+  }
+  function checkIdle(){
+    if(!idleKey||idleLoggingOut||!state.session)return;
+    const last=idleLastActivity();
+    const remaining=IDLE_LIMIT_MS-(Date.now()-last);
+    if(!last||remaining<=0){void idleSignOut();return}
+    if(remaining<=IDLE_WARNING_MS)displayIdleWarning(Math.ceil(remaining/1000));
+    else hideIdleWarning();
+  }
+  function startIdleTracking(session){
+    const nextKey='nta-admin-last-activity:'+session.user.id;
+    if(idleKey!==nextKey){
+      idleKey=nextKey;
+      lastActivityWrite=0;
+      // A newly signed-in session is initialized in the sign-in handler.
+      if(!idleLastActivity())recordActivity(true);
+    }
+    clearInterval(idleInterval);
+    idleInterval=setInterval(checkIdle,1000);
+    checkIdle();
+  }
+  function endIdleTracking(){
+    clearInterval(idleInterval);idleInterval=null;
+    hideIdleWarning();
+    if(idleKey){try{localStorage.removeItem(idleKey)}catch{}}
+    idleKey=null;
+  }
+  ['pointerdown','keydown','touchstart','wheel','scroll'].forEach(eventName=>
+    document.addEventListener(eventName,()=>recordActivity(),{passive:true})
+  );
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkIdle()});
+  window.addEventListener('focus',checkIdle);
+  window.addEventListener('storage',event=>{if(event.key===idleKey)checkIdle()});
+  $('#idleStaySignedIn').addEventListener('click',()=>{
+    // Explicit acknowledgement starts a new activity window.
+    hideIdleWarning();
+    recordActivity(true);
+    checkIdle();
+  });
+  $('#idleSignOutNow').addEventListener('click',()=>{void idleSignOut()});
   function showAuth(){ $('#adminAuth').hidden=false; $('#adminApp').hidden=true; }
   function showApp(){
     $('#adminAuth').hidden=true; $('#adminApp').hidden=false;
@@ -63,7 +139,9 @@
       return;
     }
     state.session=session;
-    if(!session){showAuth();return;}
+    if(!session){endIdleTracking();showAuth();return;}
+    startIdleTracking(session);
+    if(idleLoggingOut)return;
     try{
       const me=await api('me');
       if(!me?.admin?.active)throw new Error('Administrator access is required.');
@@ -94,6 +172,9 @@
     try{
       const {error}=await sb.auth.signInWithPassword({email,password:fields.get('password')});
       if(error)throw error;
+      idleLoggingOut=false;
+      const current=(await sb.auth.getSession()).data?.session;
+      if(current?.user?.id){try{localStorage.setItem('nta-admin-last-activity:'+current.user.id,String(Date.now()))}catch{}}
       // The authenticated client persists the session; don't reload and race
       // an unnecessary new authorization request against the current sign-in.
       await boot();
@@ -103,7 +184,7 @@
       if(submit){submit.disabled=false;submit.textContent='Sign In';}
     }
   });
-  $('#signOutBtn').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
+  $('#signOutBtn').addEventListener('click',async()=>{endIdleTracking();await sb.auth.signOut();state.session=null;state.admin=null;showAuth();});
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
   $$('[data-admin-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminPanel)));
   $('[data-goto-crm]')?.addEventListener('click',()=>activate('crm'));
