@@ -15,7 +15,18 @@
     const j=await res.json().catch(()=>({})); if(!res.ok||j.error) throw new Error(j.error||'Request failed'); return j;
   }
   function showAuth(){ $('#adminAuth').hidden=false; $('#adminApp').hidden=true; }
-  function showApp(){ $('#adminAuth').hidden=true; $('#adminApp').hidden=false; $('#adminUserName').textContent=state.admin?.display_name||'Administrator'; $('#adminUserEmail').textContent=state.session?.user?.email||''; }
+  function showApp(){
+    $('#adminAuth').hidden=true; $('#adminApp').hidden=false;
+    const name=state.admin?.display_name||'Administrator';
+    const email=state.session?.user?.email||'';
+    $('#adminUserName').textContent=name;
+    $('#adminUserEmail').textContent=email;
+    $('#accountMenuName').textContent=name;
+    $('#profileDisplayName').textContent=name;
+    $('#profileEmail').textContent=email;
+    $('#profileRole').textContent=state.admin?.role||'admin';
+    $('#profileStatus').textContent=state.admin?.active===false?'Inactive':'Active';
+  }
   async function boot(){
     const {data:{session}}=await sb.auth.getSession();state.session=session;if(!session){showAuth();return;}
     try{
@@ -136,6 +147,36 @@
   async function loadTeam(){const j=await api('team');$('#teamBody').innerHTML=(j.team||[]).map(u=>`<tr><td>${esc(u.display_name||'—')}</td><td>${esc(u.email)}</td><td>${esc(u.role)}</td><td>${u.active?'Yes':'No'}</td><td>${dt(u.created_at)}</td></tr>`).join('')||'<tr><td colspan="5">No team members.</td></tr>';}
   window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.returnValue='';}});
 
+  // Compact account dropdown and persistent font preferences.
+  const accountMenuToggle=$('#accountMenuToggle');
+  const accountDropdown=$('#accountDropdown');
+  function closeAccountMenu(){
+    accountDropdown.hidden=true;
+    accountMenuToggle.setAttribute('aria-expanded','false');
+  }
+  accountMenuToggle.addEventListener('click',()=>{
+    const opening=accountDropdown.hidden;
+    accountDropdown.hidden=!opening;
+    accountMenuToggle.setAttribute('aria-expanded',String(opening));
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.portal-account'))closeAccountMenu();
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')closeAccountMenu();
+  });
+  $$('[data-admin-go]').forEach(button=>button.addEventListener('click',closeAccountMenu));
+  const fontSelect=$('#portalFontSelect');
+  const fonts={inter:'Inter,Arial,sans-serif',dm:'"DM Sans",Arial,sans-serif',system:'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',barlow:'"Barlow Condensed",Arial,sans-serif'};
+  const storedFont=(()=>{try{return localStorage.getItem('nta-admin-font')||'inter'}catch{return 'inter'}})();
+  function applyFont(id){
+    const selected=Object.hasOwn(fonts,id)?id:'inter';
+    document.documentElement.style.setProperty('--nta-admin-font',fonts[selected]);
+    fontSelect.value=selected;
+    try{localStorage.setItem('nta-admin-font',selected)}catch{}
+  }
+  applyFont(storedFont);
+  fontSelect.addEventListener('change',()=>applyFont(fontSelect.value));
   // Executive portal shell interactions; existing panel handlers remain unchanged.
   const sidebarToggle=$('#sidebarToggle');
   sidebarToggle?.addEventListener('click',()=>{
