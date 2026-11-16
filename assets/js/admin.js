@@ -27,57 +27,75 @@
     $('#profileRole').textContent=state.admin?.role||'admin';
     $('#profileStatus').textContent=state.admin?.active===false?'Inactive':'Active';
   }
-  async function boot(){
-    const {data:{session}}=await sb.auth.getSession();state.session=session;if(!session){showAuth();return;}
-    try{
-      let me;
-      try{me=await api('me');}
-      catch(err){
-        const email=String(session.user?.email||'').toLowerCase();
-        const message=String(err?.message||'');
-        if(email.endsWith('@ntalog.net') && /administrator access required/i.test(message)){
-          const displayName=String(session.user?.user_metadata?.display_name||email.split('@')[0]||'NTA Administrator');
-          await api('bootstrap_admin',{display_name:displayName});
-          me=await api('me');
-        }else throw err;
+  async function loadAdminWorkspace(){
+    // Dashboard or CMS failures must not revoke a valid login session.
+    const modules=[
+      ['dashboard',loadDashboard],
+      ['tasks',loadTasks],
+      ['blog posts',loadPosts],
+      ['categories',loadTaxonomy],
+      ['media',loadMedia]
+    ];
+    const outcomes=await Promise.allSettled(modules.map(([,loader])=>loader()));
+    const failures=outcomes.flatMap((result,index)=>result.status==='rejected'?[modules[index][0]]:[]);
+    if(failures.length) {
+      console.warn('NTA management: some data could not be loaded:',failures.join(', '));
+      const message=$('#adminLoadStatus');
+      if(message){
+        message.hidden=false;
+        message.textContent='Some information could not be loaded ('+failures.join(', ')+'). Your account is still signed in. Refresh to retry.';
       }
-      state.admin=me.admin;showApp();await Promise.all([loadDashboard(),loadTasks(),loadPosts(),loadTaxonomy(),loadMedia()]);
+    }else {
+      const message=$('#adminLoadStatus');
+      if(message)message.hidden=true;
     }
-    catch(e){await sb.auth.signOut();showAuth();statusBox(e.message,'error');}
+  }
+  async function boot(){
+    let session=null;
+    try {
+      const result=await sb.auth.getSession();
+      if(result.error)throw result.error;
+      session=result.data?.session||null;
+    }catch(error){
+      console.warn('Unable to restore NTA session:',error);
+      showAuth();
+      statusBox('Unable to restore your session right now. Refresh to retry.','error');
+      return;
+    }
+    state.session=session;
+    if(!session){showAuth();return;}
+    try{
+      const me=await api('me');
+      if(!me?.admin?.active)throw new Error('Administrator access is required.');
+      state.admin=me.admin;
+    }catch(error){
+      // Do not sign out on network errors or a temporary admin API outage.
+      console.warn('Unable to verify administrator access:',error);
+      showAuth();
+      statusBox(error?.message||'Unable to verify administrator access. Refresh to retry.','error');
+      return;
+    }
+    showApp();
+    await loadAdminWorkspace();
   }
   $('#signinForm').addEventListener('submit',async e=>{
     e.preventDefault();
-    const form=e.currentTarget, f=new FormData(form), email=String(f.get('email')||'').trim().toLowerCase();
+    const form=e.currentTarget, fields=new FormData(form);
+    const email=String(fields.get('email')||'').trim().toLowerCase();
     const submit=form.querySelector('button[type="submit"]');
     if(submit){submit.disabled=true;submit.textContent='Signing In…';}
     statusBox('Signing in…');
-    const {data,error}=await sb.auth.signInWithPassword({email,password:f.get('password')});
-    if(error){statusBox(error.message,'error');if(submit){submit.disabled=false;submit.textContent='Sign In';}return;}
-    state.session=data.session||null;
     try{
-      await api('me');
-    }catch(err){
-      const message=String(err?.message||'');
-      if(email.endsWith('@ntalog.net') && /administrator access required/i.test(message)){
-        const displayName=String(data.user?.user_metadata?.display_name||email.split('@')[0]||'NTA Administrator');
-        try{await api('bootstrap_admin',{display_name:displayName});}
-        catch(claimErr){
-          const claimMessage=String(claimErr?.message||'');
-          if(!/already been completed/i.test(claimMessage)){
-            await sb.auth.signOut();
-            statusBox(claimMessage||'Administrator access is not configured for this account.','error');
-            if(submit){submit.disabled=false;submit.textContent='Sign In';}
-            return;
-          }
-        }
-      }else{
-        await sb.auth.signOut();
-        statusBox(message||'Administrator access is not configured for this account.','error');
-        if(submit){submit.disabled=false;submit.textContent='Sign In';}
-        return;
-      }
+      const {error}=await sb.auth.signInWithPassword({email,password:fields.get('password')});
+      if(error)throw error;
+      // The authenticated client persists the session; don't reload and race
+      // an unnecessary new authorization request against the current sign-in.
+      await boot();
+    }catch(error){
+      statusBox(error?.message||'Sign-in failed. Try again.','error');
+    }finally{
+      if(submit){submit.disabled=false;submit.textContent='Sign In';}
     }
-    location.reload();
   });
   $('#signOutBtn').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
