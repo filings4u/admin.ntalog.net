@@ -272,3 +272,14 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
  .admin-shell.sidebar-open .admin-sidebar{transform:translateX(0)}
  .admin-shell.sidebar-open .sidebar-edge-toggle{left:0}
 }
+
+/* Mobile keeps a slim sidebar handle visible for reopening. */
+@media(max-width:760px){
+ .admin-shell .admin-sidebar,.admin-shell.sidebar-collapsed .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:32px;height:100dvh;padding:0 2px;transform:none;overflow:visible;z-index:80}
+ .admin-shell .admin-brand,.admin-shell .admin-nav,.admin-shell.sidebar-collapsed .admin-brand,.admin-shell.sidebar-collapsed .admin-nav{display:none}
+ .admin-shell .sidebar-edge-toggle,.admin-shell.sidebar-collapsed .sidebar-edge-toggle{position:absolute;left:auto;right:-12px;top:58px;width:27px;height:36px;transform:none;border-radius:5px}
+ .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:11px 10px}
+ .admin-shell.sidebar-open .admin-brand{display:flex}
+ .admin-shell.sidebar-open .admin-nav{display:grid}
+ .admin-shell.sidebar-open .sidebar-edge-toggle{left:auto;right:-12px;top:12px}
+}
