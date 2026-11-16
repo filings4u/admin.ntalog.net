@@ -37,6 +37,8 @@
     $('#factorEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
   }
   document.addEventListener('click', e=>{
+    const shortcut=e.target.closest('[data-crm-shortcut]');
+    if(shortcut){const select=$('#crmType');select.value=shortcut.dataset.crmShortcut;document.querySelector('[data-admin-panel="crm"]')?.click();}
     const panel=e.target.closest('[data-admin-panel="factoring"]');
     if(panel)setTimeout(load,0);
     const item=e.target.closest('[data-edit-factor]');
