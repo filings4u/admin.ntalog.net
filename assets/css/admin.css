@@ -273,3 +273,40 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
 
 /* Recoverable data errors must not look like authentication failures. */
 #adminLoadStatus:not([hidden]){padding:10px 14px;margin:12px 0;border:1px solid #dfc58a;border-radius:7px;background:#fff9e8;color:#684d17;font-size:12px;line-height:1.5}
+
+
+/* The selected layout has no top header strip. Keep controls inside their respective regions. */
+.admin-workspace{position:relative;min-width:0}
+.admin-brand{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 5px 12px;margin-bottom:5px}
+.admin-brand img{width:min(159px,calc(100% - 37px));height:auto;max-height:79px;object-fit:contain}
+.admin-brand .sidebar-edge-toggle{position:static!important;inset:auto!important;transform:none!important;flex:0 0 27px;width:27px;height:29px;margin:0;box-shadow:none}
+.admin-sidebar{overflow-y:auto;overflow-x:hidden}
+.portal-header,.portal-menu,.portal-header-right{display:none!important}
+.portal-account-bar{position:sticky;top:0;height:0;z-index:65;display:flex;justify-content:flex-end;overflow:visible;pointer-events:none}
+.portal-account-bar>.portal-account{position:relative;pointer-events:auto;margin:9px 16px 0 0}
+.portal-account-bar .portal-profile{display:flex;align-items:center;gap:6px;background:#092847;border:1px solid #416585;border-radius:7px;padding:5px 9px;color:white;line-height:1.2;font-size:calc(12px * var(--nta-font-scale));cursor:pointer}
+.portal-account-bar .portal-profile:hover,.portal-account-bar .portal-profile[aria-expanded="true"]{background:#174b75}
+.portal-account-bar .account-dropdown{top:calc(100% + 5px)}
+.dashboard-hero{margin-top:0}
+.dashboard-hero-content{padding-right:155px}
+.admin-panel:not([data-panel="dashboard"]){padding-top:52px}
+.admin-shell.sidebar-collapsed .admin-sidebar{width:42px;padding:0 3px;overflow:hidden}
+.admin-shell.sidebar-collapsed .admin-brand{display:flex!important;justify-content:center;padding:11px 0}
+.admin-shell.sidebar-collapsed .admin-brand img{display:none}
+.admin-shell.sidebar-collapsed .admin-brand .sidebar-edge-toggle{margin:0}
+.admin-shell.sidebar-collapsed .admin-nav{display:none}
+@media(max-width:760px){
+ .admin-sidebar,.admin-shell.sidebar-collapsed .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:37px;height:100dvh;padding:0 3px;overflow:hidden;transform:none}
+ .admin-brand,.admin-shell.sidebar-collapsed .admin-brand{display:flex!important;justify-content:center;padding:11px 0}
+ .admin-brand img,.admin-shell.sidebar-collapsed .admin-brand img{display:none}
+ .admin-brand .sidebar-edge-toggle,.admin-shell.sidebar-collapsed .admin-brand .sidebar-edge-toggle{position:static!important;right:auto!important;left:auto!important;top:auto!important;transform:none!important}
+ .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:11px 10px;overflow-y:auto}
+ .admin-shell.sidebar-open .admin-brand{justify-content:space-between;padding:5px}
+ .admin-shell.sidebar-open .admin-brand img{display:block;width:min(157px,calc(100% - 37px))}
+ .admin-shell.sidebar-open .admin-nav{display:grid}
+ .admin-workspace{margin-left:37px}
+ .portal-account-bar>.portal-account{margin:7px 8px 0 0}
+ .portal-account-bar .portal-profile{padding:4px 6px;font-size:11px}
+ .dashboard-hero-content{padding-right:115px}
+ .admin-panel:not([data-panel="dashboard"]){padding-top:48px}
+}
