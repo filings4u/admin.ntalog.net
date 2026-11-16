@@ -345,3 +345,21 @@ body.nta-idle-modal-open{overflow:hidden}
 @media(max-width:950px){.nta-admin .dashboard-v2 .dashboard-section-grid{grid-template-columns:1fr}.nta-admin .dashboard-v2 .dashboard-action-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.nta-admin .dashboard-v2 .dashboard-hero-content{padding-right:110px}.nta-admin .dashboard-v2 .dashboard-refresh{bottom:12px;right:9px;padding:7px}.nta-admin .dashboard-v2 .dashboard-refresh span{display:none}.nta-admin .dashboard-content{padding:14px 1px}.nta-admin .dashboard-v2 .dashboard-action-list{grid-template-columns:1fr}}
 @media(max-width:490px){.nta-admin .dashboard-v2 .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.nta-admin .dashboard-v2 .metric-card{padding:10px;min-height:98px}.nta-admin .dashboard-v2 .metric-card .metric-icon{width:30px;height:30px}.nta-admin .dashboard-v2 .metric-card{grid-template-columns:30px minmax(0,1fr)}.nta-admin .dashboard-v2 .dashboard-summary{align-items:flex-start;flex-direction:column}.nta-admin .dashboard-v2 .operations-body{grid-template-columns:1fr}}
+
+/* Dashboard visual refinements: reduce unused vertical space and keep a tidy fold. */
+.nta-admin .dashboard-v2 .dashboard-hero{min-height:118px}
+.nta-admin .dashboard-v2 .dashboard-hero-content{padding-top:16px;padding-bottom:15px}
+.nta-admin .dashboard-v2 .dashboard-content{padding-top:12px}
+.nta-admin .dashboard-v2 .dashboard-summary{margin-bottom:10px}
+.nta-admin .dashboard-v2 .metric-card{min-height:93px;padding:11px 12px}
+.nta-admin .dashboard-v2 .dashboard-section-grid{gap:12px;margin-top:12px;align-items:start}
+.nta-admin .dashboard-v2 .dashboard-tasks-widget .widget-body,
+.nta-admin .dashboard-v2 .dashboard-actions-widget .widget-body{min-height:0}
+.nta-admin .dashboard-v2 .dashboard-empty{min-height:116px}
+.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action{min-height:76px}
+.nta-admin .dashboard-v2 .dashboard-widget{min-width:0}
+.nta-admin .dashboard-v2 .recent-item{min-width:0}
+@media(max-width:1450px){.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action-list{grid-template-columns:repeat(3,minmax(0,1fr))}.nta-admin .dashboard-v2 .dashboard-action{gap:6px;padding:10px 8px}.nta-admin .dashboard-v2 .action-trailing{display:none}}
+@media(max-width:1150px){.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action-list{grid-template-columns:1fr}.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action{min-height:54px}}
+@media(max-width:950px){.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action-list{grid-template-columns:1fr}}
