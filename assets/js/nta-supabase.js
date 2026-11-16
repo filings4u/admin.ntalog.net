@@ -15,8 +15,10 @@ window.NTA_CONFIG = Object.freeze({
   blogFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-blog-public"
 });
 
-window.NTASupabase = window.supabase?.createClient
+// One authenticated client is shared by all admin modules to prevent competing sessions.
+window.NTAAdminClient = window.supabase?.createClient
   ? window.supabase.createClient(window.NTA_CONFIG.supabaseUrl, window.NTA_CONFIG.publishableKey, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     })
   : null;
+window.NTASupabase = window.NTAAdminClient;
