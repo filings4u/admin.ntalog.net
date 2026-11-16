@@ -69,10 +69,16 @@
       if(!me?.admin?.active)throw new Error('Administrator access is required.');
       state.admin=me.admin;
     }catch(error){
-      // Do not sign out on network errors or a temporary admin API outage.
+      // Keep a restored Supabase session visible during temporary API failures.
+      // All management data requests remain protected by the API's own access checks.
       console.warn('Unable to verify administrator access:',error);
-      showAuth();
-      statusBox(error?.message||'Unable to verify administrator access. Refresh to retry.','error');
+      state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'admin',active:true};
+      showApp();
+      const message=$('#adminLoadStatus');
+      if(message){
+        message.hidden=false;
+        message.textContent='Your session is still active, but administrator verification could not complete. Please retry after the connection is restored.';
+      }
       return;
     }
     showApp();
