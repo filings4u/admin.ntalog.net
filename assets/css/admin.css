@@ -246,3 +246,29 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
 .nta-admin .btn{font-size:calc(12px * var(--nta-font-scale))}
 .nta-admin .admin-panel label,.nta-admin .admin-panel input,.nta-admin .admin-panel select,.nta-admin .admin-panel textarea{font-size:calc(12px * var(--nta-font-scale))}
 @media(max-width:760px){.dashboard-hero h1{font-size:calc(27px * var(--nta-font-scale))}.widget-title h2{font-size:calc(15px * var(--nta-font-scale))}.metric-card strong{font-size:calc(24px * var(--nta-font-scale))}.portal-header strong{font-size:calc(11px * var(--nta-font-scale))}}
+
+
+/* Sidebar-mounted show/hide control — no hamburger or caret glyphs */
+.admin-sidebar{overflow:visible;position:sticky}
+.admin-sidebar .admin-nav{max-height:calc(100vh - 130px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#6d8199 transparent}
+.sidebar-edge-toggle{position:absolute;z-index:60;top:13px;right:-13px;width:27px;height:30px;display:grid;place-items:center;border:1px solid #7f9ab7;border-radius:5px;background:#092846;color:#fff;cursor:pointer;box-shadow:0 2px 8px #0004}
+.sidebar-edge-toggle:hover,.sidebar-edge-toggle:focus-visible{background:#184a76;outline-offset:2px}
+.admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}
+.admin-shell.sidebar-collapsed .admin-sidebar{width:42px;padding:0 2px;overflow:visible}
+.admin-shell.sidebar-collapsed .admin-brand,.admin-shell.sidebar-collapsed .admin-nav{display:none}
+.admin-shell.sidebar-collapsed .sidebar-edge-toggle{right:6px;top:12px}
+.portal-profile{border-left:0;padding-left:8px}
+@media(max-width:950px) and (min-width:761px){.admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}}
+@media(max-width:760px){
+ .admin-sidebar{position:fixed;left:0;top:0;bottom:0;height:100dvh;width:min(270px,84vw);overflow:visible;transform:translateX(-105%);z-index:80}
+ .admin-sidebar .admin-nav{max-height:calc(100dvh - 115px);overflow-y:auto}
+ .admin-shell.sidebar-collapsed{display:block}
+ .admin-shell.sidebar-collapsed .admin-sidebar{width:min(270px,84vw);padding:11px 10px}
+ .admin-shell.sidebar-collapsed .admin-brand,.admin-shell.sidebar-collapsed .admin-nav{display:grid}
+ .admin-shell .sidebar-edge-toggle,.admin-shell.sidebar-collapsed .sidebar-edge-toggle{position:fixed;left:0;right:auto;top:58px;width:30px;height:35px;border-radius:0 7px 7px 0;transform:translateX(min(270px,84vw))}
+ .admin-shell:not(.sidebar-open) .sidebar-edge-toggle{transform:translateX(calc(min(270px,84vw) + 0px))}
+ .admin-shell:not(.sidebar-open) .admin-sidebar{transform:translateX(calc(-1 * min(270px,84vw)))}
+ .admin-shell:not(.sidebar-open) .sidebar-edge-toggle{left:calc(min(270px,84vw) - 1px)}
+ .admin-shell.sidebar-open .admin-sidebar{transform:translateX(0)}
+ .admin-shell.sidebar-open .sidebar-edge-toggle{left:0}
+}
