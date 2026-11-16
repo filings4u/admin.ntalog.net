@@ -20,6 +20,7 @@
   const idleModal=$('#idleWarningModal');
   const idleCountdown=$('#idleCountdown');
   let idleKey=null, idleInterval=null, idleLoggingOut=false, lastActivityWrite=0;
+  let idleStartedForSession=null;
   function idleLastActivity(){
     if(!idleKey)return 0;
     try{return Number(localStorage.getItem(idleKey))||0}catch{return lastActivityWrite}
@@ -60,11 +61,14 @@
     else hideIdleWarning();
   }
   function startIdleTracking(session){
-    const nextKey='nta-admin-last-activity:'+session.user.id;
+    // Per-login timestamp: an old login must never expire a new authenticated session.
+    const loginId=session.user?.last_sign_in_at||String(session.expires_at||'session');
+    const nextKey='nta-admin-last-activity:'+session.user.id+':'+loginId;
     if(idleKey!==nextKey){
       idleKey=nextKey;
+      idleStartedForSession=loginId;
       lastActivityWrite=0;
-      // A newly signed-in session is initialized in the sign-in handler.
+      // A missing timestamp is not a timeout: initialize from the restored login.
       if(!idleLastActivity())recordActivity(true);
     }
     clearInterval(idleInterval);
@@ -76,13 +80,19 @@
     hideIdleWarning();
     if(idleKey){try{localStorage.removeItem(idleKey)}catch{}}
     idleKey=null;
+    idleStartedForSession=null;
+    idleLoggingOut=false;
   }
   ['pointerdown','keydown','touchstart','wheel','scroll'].forEach(eventName=>
     document.addEventListener(eventName,()=>recordActivity(),{passive:true})
   );
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkIdle()});
+  // A user-initiated refresh is activity; don't treat a new document load as idle time.
+  window.addEventListener('pagehide',()=>{if(state.session&&!idleLoggingOut&&idleModal.hidden)recordActivity(true)});
   window.addEventListener('focus',checkIdle);
-  window.addEventListener('storage',event=>{if(event.key===idleKey)checkIdle()});
+  window.addEventListener('storage',event=>{
+    if(event.key===idleKey)checkIdle();
+  });
   $('#idleStaySignedIn').addEventListener('click',()=>{
     // Explicit acknowledgement starts a new activity window.
     hideIdleWarning();
@@ -140,6 +150,7 @@
     }
     state.session=session;
     if(!session){endIdleTracking();showAuth();return;}
+    idleLoggingOut=false;
     startIdleTracking(session);
     if(idleLoggingOut)return;
     try{
@@ -150,13 +161,12 @@
       // Keep a restored Supabase session visible during temporary API failures.
       // All management data requests remain protected by the API's own access checks.
       console.warn('Unable to verify administrator access:',error);
-      state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'admin',active:true};
+      // Auth is still valid. Keep the session and retry API verification without
+      // pretending permission checks succeeded or displaying a recurring sign-in error.
+      state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'pending',active:null};
       showApp();
       const message=$('#adminLoadStatus');
-      if(message){
-        message.hidden=false;
-        message.textContent='Your session is still active, but administrator verification could not complete. Please retry after the connection is restored.';
-      }
+      if(message){message.hidden=false;message.textContent='Management data is temporarily unavailable. Your login is still active.';}
       return;
     }
     showApp();
@@ -174,7 +184,10 @@
       if(error)throw error;
       idleLoggingOut=false;
       const current=(await sb.auth.getSession()).data?.session;
-      if(current?.user?.id){try{localStorage.setItem('nta-admin-last-activity:'+current.user.id,String(Date.now()))}catch{}}
+      if(current?.user?.id){
+        const loginId=current.user.last_sign_in_at||String(current.expires_at||'session');
+        try{localStorage.setItem('nta-admin-last-activity:'+current.user.id+':'+loginId,String(Date.now()))}catch{}
+      }
       // The authenticated client persists the session; don't reload and race
       // an unnecessary new authorization request against the current sign-in.
       await boot();
