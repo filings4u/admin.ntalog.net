@@ -124,6 +124,7 @@
     ];
     const outcomes=await Promise.allSettled(modules.map(([,loader])=>loader()));
     const failures=outcomes.flatMap((result,index)=>result.status==='rejected'?[modules[index][0]]:[]);
+    const updated=$('#dashboardUpdated');if(updated)updated.textContent=outcomes[0].status==='fulfilled'?'Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Dashboard unavailable';
     if(failures.length) {
       console.warn('NTA management: some data could not be loaded:',failures.join(', '));
       const message=$('#adminLoadStatus');
@@ -204,37 +205,74 @@
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
   $$('[data-admin-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminPanel)));
   $('[data-goto-crm]')?.addEventListener('click',()=>activate('crm'));
+  // Dashboard tiles navigate to the same live CRM, accounts and CMS screens as the sidebar.
+  function openDashboardMetric(key){
+    if(key==='shippers'||key==='carriers'){
+      const tab=document.querySelector('[data-accounts-type="'+(key==='shippers'?'shipper':'carrier')+'"]');
+      if(tab)tab.click();
+      return;
+    }
+    if(key==='published_posts'){activate('blog');return;}
+    if(key==='open_tasks'){activate('tasks');return;}
+    const type=key==='inquiries'?'inquiry':'quote';
+    $('#crmType').value=type;
+    $('#crmSearch').value='';
+    $('#crmStatus').value='';
+    activate('crm');
+  }
+  async function refreshDashboard(){
+    const refresh=$('[data-refresh-dashboard]');
+    if(refresh?.disabled)return;
+    if(refresh)refresh.disabled=true;
+    const updated=$('#dashboardUpdated');
+    if(updated)updated.textContent='Refreshing…';
+    const results=await Promise.allSettled([loadDashboard(),loadTasks()]);
+    const failed=results.filter(x=>x.status==='rejected');
+    if(updated)updated.textContent=failed.length?'Some sections could not refresh':('Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}));
+    if(refresh)refresh.disabled=false;
+    if(failed.length)console.warn('NTA dashboard refresh failures:',failed.map(x=>x.reason));
+  }
   async function loadDashboard(){
     const j=await api('dashboard');
     state.metrics=j.metrics||{};
-    const labels=[['Shippers','shippers','♧'],['Carriers','carriers','▰'],['Quotes','quotes','▤'],['Inquiries','inquiries','☏'],['Open Tasks','open_tasks','☑'],['Published Posts','published_posts','◈']];
-    $('#metricCards').innerHTML=labels.map(([l,k,icon])=>`<div class="metric-card"><span class="metric-icon" aria-hidden="true">${icon}</span><span>${esc(l)}</span><strong>${Number(state.metrics[k]||0)}</strong></div>`).join('');
+    const icons={
+      shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑',published_posts:'◈'
+    };
+    const labels=[['Shippers','shippers'],['Carriers','carriers'],['Quotes','quotes'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Published Posts','published_posts']];
+    $('#metricCards').innerHTML=labels.map(([label,key])=>`<button type="button" class="metric-card metric-action" data-dashboard-metric="${key}" aria-label="View ${esc(label)}"><span class="metric-icon" aria-hidden="true">${icons[key]}</span><span class="metric-label">${esc(label)}</span><strong>${Number(state.metrics[key]||0)}</strong><span class="metric-hint" aria-hidden="true">View details →</span></button>`).join('');
+    $$('#metricCards [data-dashboard-metric]').forEach(btn=>btn.addEventListener('click',()=>openDashboardMetric(btn.dataset.dashboardMetric)));
     const breakdown=[['Quotes','quotes'],['Published Posts','published_posts'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Shippers','shippers'],['Carriers','carriers']];
-    const total=breakdown.reduce((n,[,k])=>n+Number(state.metrics[k]||0),0);
+    const total=breakdown.reduce((n,[,key])=>n+Number(state.metrics[key]||0),0);
     $('#snapshotTotal').textContent=String(total);
-    const quoteCount=Number(state.metrics.quotes||0);
-    const blogCount=Number(state.metrics.published_posts||0);
-    const qPct=total?100*quoteCount/total:0;
-    const bPct=total?100*blogCount/total:0;
-    $('#snapshotDonut').style.background=total?`conic-gradient(#075095 0% ${qPct}%, #e9b21d ${qPct}% ${qPct+bPct}%, #a7b6c9 ${qPct+bPct}% 100%)`:'conic-gradient(#dce5ef 0% 100%)';
-    $('#snapshotLegend').innerHTML=breakdown.map(([label,key])=>{const v=Number(state.metrics[key]||0);return `<div class="snapshot-row"><span class="snapshot-dot"></span><span>${esc(label)}</span><b>${v}</b><em>${total?Math.round(v/total*100):0}%</em></div>`}).join('');
-    loadRecentActivity().catch(()=>{ $('#recentActivity').textContent='Recent activity is temporarily unavailable.'; });
+    const colors=['#0b5a9d','#edb522','#4193ad','#7f9ec3','#9b78b2','#6aafa0'];
+    let start=0;
+    const sectors=breakdown.map(([,key],i)=>{const pct=total?100*Number(state.metrics[key]||0)/total:0;const sector=`${colors[i]} ${start}% ${start+pct}%`;start+=pct;return sector;});
+    $('#snapshotDonut').style.background=total?`conic-gradient(${sectors.join(', ')})`:'conic-gradient(#dce5ef 0% 100%)';
+    $('#snapshotLegend').innerHTML=breakdown.map(([label,key],i)=>{const count=Number(state.metrics[key]||0);return `<div class="snapshot-row"><span class="snapshot-dot" style="background:${colors[i]}"></span><span>${esc(label)}</span><b>${count}</b><em>${total?Math.round(count/total*100):0}%</em></div>`}).join('');
+    await loadRecentActivity();
   }
   async function loadRecentActivity(){
     const events=[];
     const outputs=await Promise.allSettled([api('blog_list'),api('crm_list',{entity_type:'quote',limit:20})]);
     if(outputs[0].status==='fulfilled')for(const post of outputs[0].value.posts||[]){
-      if(post.status==='published'&&post.published_at)events.push({type:'Blog post published',description:post.title||'A blog post was published.',date:post.published_at,icon:'◈'});
+      if(post.status==='published'&&post.published_at)events.push({type:'Blog post published',description:post.title||'A blog post was published.',date:post.published_at,icon:'◈',target:'blog',id:post.id});
     }
     if(outputs[1].status==='fulfilled')for(const quote of outputs[1].value.rows||[]){
-      if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤'});
+      if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤',target:'quote',id:quote.id});
     }
     events.sort((a,b)=>new Date(b.date)-new Date(a.date));
     const relativeTime=d=>{const ms=Date.now()-new Date(d).getTime();if(!Number.isFinite(ms)||ms<0)return new Date(d).toLocaleDateString();const min=Math.floor(ms/60000);if(min<60)return min<=1?'Just now':min+' min ago';const h=Math.floor(min/60);if(h<24)return h+' hour'+(h===1?'':'s')+' ago';const days=Math.floor(h/24);return days===1?'Yesterday':days<7?days+' days ago':new Date(d).toLocaleDateString()};
-    $('#recentActivity').innerHTML=events.slice(0,5).map(e=>`<div class="recent-item"><span class="recent-item-icon" aria-hidden="true">${e.icon}</span><div class="recent-item-main"><strong>${esc(e.type)}</strong><small>${esc(e.description)}</small></div><time datetime="${esc(e.date)}">${esc(relativeTime(e.date))}</time></div>`).join('')||'<p>No recent quote or publishing activity yet.</p>';
+    $('#recentActivity').innerHTML=events.slice(0,5).map(e=>`<button type="button" class="recent-item recent-action" data-activity-target="${esc(e.target)}" data-activity-id="${esc(e.id)}"><span class="recent-item-icon" aria-hidden="true">${e.icon}</span><span class="recent-item-main"><strong>${esc(e.type)}</strong><small>${esc(e.description)}</small></span><time datetime="${esc(e.date)}">${esc(relativeTime(e.date))}</time></button>`).join('')||'<p class="dashboard-empty">No recent quote or publishing activity yet.</p>';
+    $('#recentActivity [data-activity-target]').forEach(btn=>btn.addEventListener('click',()=>{
+      if(btn.dataset.activityTarget==='blog'){editPost(btn.dataset.activityId).catch(err=>console.warn('Unable to open post:',err));return;}
+      $('#crmType').value='quote';$('#crmSearch').value='';$('#crmStatus').value='';
+      activate('crm');
+      // Open only after the CRM list has loaded.
+      loadCrm().then(()=>openCrm(btn.dataset.activityId)).catch(err=>console.warn('Unable to open quote:',err));
+    }));
   }
-  $('[data-refresh-dashboard]')?.addEventListener('click',loadDashboard);
-  async function loadTasks(){const j=await api('tasks');const rows=j.tasks||[];$('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,6).map(t=>`<div class="timeline-item"><strong>${esc(t.title)}</strong><br><small>${esc(t.priority)} · ${dt(t.due_at)}</small></div>`).join('')||'<p>No open tasks.</p>';}
+  $('[data-refresh-dashboard]')?.addEventListener('click',refreshDashboard);
+  async function loadTasks(){const j=await api('tasks');const rows=j.tasks||[];$('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,4).map(t=>`<div class="dashboard-task"><span class="task-priority">${esc(t.priority||'normal')}</span><div><strong>${esc(t.title)}</strong><small>${t.due_at?'Due '+esc(dt(t.due_at)):'No due date'}</small></div></div>`).join('')||'<div class="dashboard-empty"><span class="dashboard-empty-mark">✓</span><strong>All caught up</strong><small>No open tasks need your attention.</small><button type="button" class="dashboard-empty-link" data-admin-go="tasks">Go to tasks →</button></div>';$('#dashboardTasks [data-admin-go]')?.addEventListener('click',()=>activate('tasks'));}
   $('#tasksRefresh')?.addEventListener('click',loadTasks);
   const crmCols={quote:[['Reference','reference_number'],['Company','company_name'],['Contact','contact_name'],['Route',r=>`${r.pickup_city||''}, ${r.pickup_state||''} → ${r.delivery_city||''}, ${r.delivery_state||''}`],['Equipment','equipment_type'],['Status','status'],['Submitted','created_at']],shipper:[['Reference','reference_number'],['Company','company_name'],['Contact','primary_contact_name'],['Email','primary_contact_email'],['Industry','industry'],['Status','status'],['Created','created_at']],carrier:[['Reference','reference_number'],['Company','legal_company_name'],['Contact','primary_contact_name'],['USDOT','dot_number'],['MC','mc_number'],['Status','status'],['Created','created_at']],inquiry:[['Reference','reference_number'],['Company','company_name'],['Name','name'],['Email','email'],['Topic','topic'],['Status','status'],['Created','created_at']]};
   async function loadCrm(){state.crmType=$('#crmType').value;const j=await api('crm_list',{entity_type:state.crmType,q:$('#crmSearch').value,status:$('#crmStatus').value,limit:100});state.crmRows=j.rows||[];$('#crmCount').textContent=`${j.count} records`;const cols=crmCols[state.crmType];$('#crmHead').innerHTML='<tr>'+cols.map(c=>`<th>${esc(c[0])}</th>`).join('')+'</tr>';$('#crmBody').innerHTML=state.crmRows.map(r=>'<tr data-id="'+r.id+'">'+cols.map(([l,k])=>{let v=typeof k==='function'?k(r):r[k];if(k==='status')return `<td><span class="status-pill ${esc(v||'new')}">${esc(v||'new')}</span></td>`;if(k==='created_at')v=dt(v);return `<td>${esc(v||'—')}</td>`;}).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}">No records found.</td></tr>`;$$('#crmBody tr[data-id]').forEach(tr=>tr.addEventListener('click',()=>openCrm(tr.dataset.id)));}
