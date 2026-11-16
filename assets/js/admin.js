@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const cfg = window.NTA_CONFIG || {};
-  const sb = window.supabase?.createClient(cfg.supabaseUrl, cfg.publishableKey, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const sb = window.NTAAdminClient;
   if (!sb) return;
   const $ = (q,r=document)=>r.querySelector(q), $$=(q,r=document)=>[...r.querySelectorAll(q)];
   const state={session:null,admin:null,metrics:null,crmType:'quote',crmRows:[],currentRecord:null,posts:[],post:null,categories:[],tags:[],media:[],dirty:false,autosave:null};
