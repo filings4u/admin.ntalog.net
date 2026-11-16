@@ -320,3 +320,20 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
 .dashboard-hero{min-height:105px}
 .dashboard-hero-content{padding-top:14px;padding-bottom:13px}
 @media (min-width:1321px){.metric-card{min-height:78px}.metric-cards{gap:10px}}
+
+/* Branded NTA inactivity warning – displayed during the final minute. */
+.nta-idle-overlay[hidden]{display:none!important}
+.nta-idle-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,17,35,.72);backdrop-filter:blur(3px)}
+.nta-idle-dialog{width:min(430px,100%);background:#fff;border:1px solid #b9c9dc;border-radius:10px;box-shadow:0 25px 65px rgba(0,0,0,.3);overflow:hidden;text-align:center}
+.nta-idle-heading{display:flex;align-items:center;justify-content:center;min-height:100px;background:linear-gradient(115deg,#04172e,#0a3056);border-bottom:4px solid #f0b51c;padding:16px}
+.nta-idle-heading img{width:152px;height:66px;object-fit:contain}
+.nta-idle-content{padding:23px 26px 26px}
+.nta-idle-lock{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 12px;border:1px solid #f3db95;border-radius:50%;background:#fff7de;color:#a87800}
+.nta-idle-content h2{font:750 19px/1.35 Inter,Arial,sans-serif;color:#0a2847;margin:0 0 10px}
+.nta-idle-content p{font:400 13px/1.6 Inter,Arial,sans-serif;color:#52677c;margin:0 0 15px}
+.nta-idle-content .nta-idle-timer{margin:0 0 19px;color:#123959;font-weight:600}
+.nta-idle-timer strong{color:#a76d00;font-size:20px;font-variant-numeric:tabular-nums}
+.nta-idle-actions{display:flex;justify-content:center;gap:10px}
+.nta-idle-actions .btn{min-height:38px;font-size:12px}
+body.nta-idle-modal-open{overflow:hidden}
+@media(max-width:460px){.nta-idle-content{padding:21px 16px}.nta-idle-actions{flex-direction:column}.nta-idle-actions .btn{width:100%}}
