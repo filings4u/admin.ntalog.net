@@ -128,7 +128,7 @@ body.nta-admin{background:#f5f8fb;color:#091b34}
 
 
 /* Compact portal density and account navigation */
-:root{--nta-admin-font:Inter,Arial,sans-serif}
+:root{--nta-admin-font:Inter,Arial,sans-serif;--nta-font-scale:1}
 body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin button{font-family:var(--nta-admin-font)}
 .nta-admin .admin-shell h1,.nta-admin .admin-shell h2,.nta-admin .admin-shell h3,.nta-admin .admin-shell h4,.nta-admin .portal-header strong,.nta-admin .metric-card strong{font-family:var(--nta-admin-font)}
 .admin-shell{grid-template-columns:232px minmax(0,1fr)}
@@ -207,3 +207,42 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
 @media(max-width:1320px){.metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:950px){.admin-shell{grid-template-columns:212px minmax(0,1fr)}.dashboard-section-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.admin-shell{display:block}.admin-sidebar{width:min(270px,84vw)}.admin-main{padding:0 10px 20px}.dashboard-hero{margin:0 -10px 10px}.dashboard-hero-content{padding:15px}.dashboard-hero h1{font-size:27px}.portal-header{padding:0 10px}.portal-header strong{font-size:11px}.portal-profile{gap:5px}.metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-card{grid-template-columns:34px 1fr;min-height:80px;padding:9px}.metric-card .metric-icon{width:32px;height:32px;font-size:17px}.metric-card strong{font-size:24px}.widget-title h2{font-size:15px}.widget-body{padding:11px}.operations-body{grid-template-columns:1fr}.account-dropdown{right:0;max-width:calc(100vw - 20px)}}
+
+
+/* User-controlled text size: respects the selected percentage without scaling cards or imagery. */
+.account-menu-font .font-size-controls{display:flex;align-items:center;gap:8px}
+.account-menu-font .font-size-controls input{width:100%;min-width:0;accent-color:#d7a21b;cursor:pointer}
+.account-menu-font .font-size-controls span{white-space:nowrap;font-size:12px;font-weight:800;color:#163659}
+.account-menu-font output{float:right;font-size:12px;font-weight:800;color:#163659}
+.account-menu-font .font-size-reset{display:block;width:100%;margin-top:8px;padding:5px;background:#f2f5fa;border:1px solid #dce4ee;border-radius:5px;color:#193652;font-size:11px;cursor:pointer}
+.account-menu-font .font-size-reset:hover{background:#e6edf6}
+.admin-nav button{font-size:calc(12px * var(--nta-font-scale))}
+.admin-nav .nav-kicker{font-size:calc(10px * var(--nta-font-scale))}
+.portal-header{font-size:calc(12px * var(--nta-font-scale))}
+.portal-header strong{font-size:calc(12px * var(--nta-font-scale))}
+.portal-profile{font-size:calc(12px * var(--nta-font-scale))}
+.account-dropdown>button,.account-dropdown>a{font-size:calc(12px * var(--nta-font-scale))}
+.account-menu-heading strong{font-size:calc(13px * var(--nta-font-scale))}
+.account-menu-heading small{font-size:calc(11px * var(--nta-font-scale))}
+.dashboard-hero h1{font-size:calc(30px * var(--nta-font-scale))}
+.dashboard-hero p{font-size:calc(12px * var(--nta-font-scale))}
+.metric-card span{font-size:calc(10px * var(--nta-font-scale))}
+.metric-card strong{font-size:calc(27px * var(--nta-font-scale))}
+.widget-title h2{font-size:calc(16px * var(--nta-font-scale))}
+.widget-link,.widget-period{font-size:calc(11px * var(--nta-font-scale))}
+.task-preview{font-size:calc(12px * var(--nta-font-scale))}
+.snapshot-inner strong{font-size:calc(31px * var(--nta-font-scale))}
+.snapshot-inner span{font-size:calc(9px * var(--nta-font-scale))}
+.snapshot-row{font-size:calc(10px * var(--nta-font-scale))}
+.recent-item-main{font-size:calc(11px * var(--nta-font-scale))}
+.recent-item-main small,.recent-item time{font-size:calc(10px * var(--nta-font-scale))}
+.admin-topbar h1{font-size:calc(26px * var(--nta-font-scale))}
+.admin-topbar p{font-size:calc(12px * var(--nta-font-scale))}
+.admin-card h2{font-size:calc(18px * var(--nta-font-scale))}
+.admin-card h3{font-size:calc(15px * var(--nta-font-scale))}
+.toolbar-row input,.toolbar-row select{font-size:calc(12px * var(--nta-font-scale))}
+.admin-table th{font-size:calc(10px * var(--nta-font-scale))}
+.admin-table td{font-size:calc(12px * var(--nta-font-scale))}
+.nta-admin .btn{font-size:calc(12px * var(--nta-font-scale))}
+.nta-admin .admin-panel label,.nta-admin .admin-panel input,.nta-admin .admin-panel select,.nta-admin .admin-panel textarea{font-size:calc(12px * var(--nta-font-scale))}
+@media(max-width:760px){.dashboard-hero h1{font-size:calc(27px * var(--nta-font-scale))}.widget-title h2{font-size:calc(15px * var(--nta-font-scale))}.metric-card strong{font-size:calc(24px * var(--nta-font-scale))}.portal-header strong{font-size:calc(11px * var(--nta-font-scale))}}
