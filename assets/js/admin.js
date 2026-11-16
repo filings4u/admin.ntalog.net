@@ -153,6 +153,9 @@
     idleLoggingOut=false;
     startIdleTracking(session);
     if(idleLoggingOut)return;
+    // Show the restored signed-in portal immediately, without flashing the login form.
+    state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'pending',active:null};
+    showApp();
     try{
       const me=await api('me');
       if(!me?.admin?.active)throw new Error('Administrator access is required.');
