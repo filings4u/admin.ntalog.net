@@ -270,3 +270,6 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
  .admin-shell.sidebar-open .sidebar-edge-toggle{top:20px;right:5px}
  .admin-workspace{margin-left:36px}
 }
+
+/* Recoverable data errors must not look like authentication failures. */
+#adminLoadStatus:not([hidden]){padding:10px 14px;margin:12px 0;border:1px solid #dfc58a;border-radius:7px;background:#fff9e8;color:#684d17;font-size:12px;line-height:1.5}
