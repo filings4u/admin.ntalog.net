@@ -72,7 +72,35 @@
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
   $$('[data-admin-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminPanel)));
   $('[data-goto-crm]')?.addEventListener('click',()=>activate('crm'));
-  async function loadDashboard(){const j=await api('dashboard');state.metrics=j.metrics;const labels=[['Shippers','shippers'],['Carriers','carriers'],['Quotes','quotes'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Published Posts','published_posts']];$('#metricCards').innerHTML=labels.map(([l,k])=>`<div class="metric-card"><span>${esc(l)}</span><strong>${Number(j.metrics[k]||0)}</strong></div>`).join('');}
+  async function loadDashboard(){
+    const j=await api('dashboard');
+    state.metrics=j.metrics||{};
+    const labels=[['Shippers','shippers','♧'],['Carriers','carriers','▰'],['Quotes','quotes','▤'],['Inquiries','inquiries','☏'],['Open Tasks','open_tasks','☑'],['Published Posts','published_posts','◈']];
+    $('#metricCards').innerHTML=labels.map(([l,k,icon])=>`<div class="metric-card"><span class="metric-icon" aria-hidden="true">${icon}</span><span>${esc(l)}</span><strong>${Number(state.metrics[k]||0)}</strong></div>`).join('');
+    const breakdown=[['Quotes','quotes'],['Published Posts','published_posts'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Shippers','shippers'],['Carriers','carriers']];
+    const total=breakdown.reduce((n,[,k])=>n+Number(state.metrics[k]||0),0);
+    $('#snapshotTotal').textContent=String(total);
+    const quoteCount=Number(state.metrics.quotes||0);
+    const blogCount=Number(state.metrics.published_posts||0);
+    const qPct=total?100*quoteCount/total:0;
+    const bPct=total?100*blogCount/total:0;
+    $('#snapshotDonut').style.background=total?`conic-gradient(#075095 0% ${qPct}%, #e9b21d ${qPct}% ${qPct+bPct}%, #a7b6c9 ${qPct+bPct}% 100%)`:'conic-gradient(#dce5ef 0% 100%)';
+    $('#snapshotLegend').innerHTML=breakdown.map(([label,key])=>{const v=Number(state.metrics[key]||0);return `<div class="snapshot-row"><span class="snapshot-dot"></span><span>${esc(label)}</span><b>${v}</b><em>${total?Math.round(v/total*100):0}%</em></div>`}).join('');
+    loadRecentActivity().catch(()=>{ $('#recentActivity').textContent='Recent activity is temporarily unavailable.'; });
+  }
+  async function loadRecentActivity(){
+    const events=[];
+    const outputs=await Promise.allSettled([api('blog_list'),api('crm_list',{entity_type:'quote',limit:20})]);
+    if(outputs[0].status==='fulfilled')for(const post of outputs[0].value.posts||[]){
+      if(post.status==='published'&&post.published_at)events.push({type:'Blog post published',description:post.title||'A blog post was published.',date:post.published_at,icon:'◈'});
+    }
+    if(outputs[1].status==='fulfilled')for(const quote of outputs[1].value.rows||[]){
+      if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤'});
+    }
+    events.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const relativeTime=d=>{const ms=Date.now()-new Date(d).getTime();if(!Number.isFinite(ms)||ms<0)return new Date(d).toLocaleDateString();const min=Math.floor(ms/60000);if(min<60)return min<=1?'Just now':min+' min ago';const h=Math.floor(min/60);if(h<24)return h+' hour'+(h===1?'':'s')+' ago';const days=Math.floor(h/24);return days===1?'Yesterday':days<7?days+' days ago':new Date(d).toLocaleDateString()};
+    $('#recentActivity').innerHTML=events.slice(0,5).map(e=>`<div class="recent-item"><span class="recent-item-icon" aria-hidden="true">${e.icon}</span><div class="recent-item-main"><strong>${esc(e.type)}</strong><small>${esc(e.description)}</small></div><time datetime="${esc(e.date)}">${esc(relativeTime(e.date))}</time></div>`).join('')||'<p>No recent quote or publishing activity yet.</p>';
+  }
   $('[data-refresh-dashboard]')?.addEventListener('click',loadDashboard);
   async function loadTasks(){const j=await api('tasks');const rows=j.tasks||[];$('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,6).map(t=>`<div class="timeline-item"><strong>${esc(t.title)}</strong><br><small>${esc(t.priority)} · ${dt(t.due_at)}</small></div>`).join('')||'<p>No open tasks.</p>';}
   $('#tasksRefresh')?.addEventListener('click',loadTasks);
@@ -107,5 +135,19 @@
   $('#uploadMedia').onclick=async()=>{const file=$('#mediaFile').files[0];if(!file)return alert('Choose an image first.');const signed=await api('media_upload_url',{file_name:file.name,mime_type:file.type,file_size:file.size});const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});if(error)throw error;await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:$('#mediaAlt').value});$('#mediaFile').value='';$('#mediaAlt').value='';await loadMedia();};
   async function loadTeam(){const j=await api('team');$('#teamBody').innerHTML=(j.team||[]).map(u=>`<tr><td>${esc(u.display_name||'—')}</td><td>${esc(u.email)}</td><td>${esc(u.role)}</td><td>${u.active?'Yes':'No'}</td><td>${dt(u.created_at)}</td></tr>`).join('')||'<tr><td colspan="5">No team members.</td></tr>';}
   window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.returnValue='';}});
+
+  // Executive portal shell interactions; existing panel handlers remain unchanged.
+  const sidebarToggle=$('#sidebarToggle');
+  sidebarToggle?.addEventListener('click',()=>{
+    const open=$('#adminApp').classList.toggle('sidebar-open');
+    sidebarToggle.setAttribute('aria-expanded',String(open));
+  });
+  $('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
+  $('.admin-nav button').forEach(b=>b.addEventListener('click',()=>{
+    $('#adminApp').classList.remove('sidebar-open');
+    sidebarToggle?.setAttribute('aria-expanded','false');
+    $('.admin-nav button').forEach(n=>n.classList.remove('active'));
+    b.classList.add('active');
+  }));
   boot();
 })();
