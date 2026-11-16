@@ -310,3 +310,13 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
  .dashboard-hero-content{padding-right:115px}
  .admin-panel:not([data-panel="dashboard"]){padding-top:48px}
 }
+
+/* Shell corrections: compact navigation, persistent sidebar control and uncluttered dashboard. */
+.admin-shell.sidebar-collapsed .admin-sidebar{overflow:visible}
+.admin-shell.sidebar-collapsed .admin-brand{overflow:visible;min-width:0}
+.admin-shell.sidebar-collapsed .sidebar-edge-toggle{display:grid!important;visibility:visible}
+.admin-sidebar .admin-nav button{font-weight:650}
+.dashboard-widget .widget-body{align-content:start}
+.dashboard-hero{min-height:105px}
+.dashboard-hero-content{padding-top:14px;padding-bottom:13px}
+@media (min-width:1321px){.metric-card{min-height:78px}.metric-cards{gap:10px}}
