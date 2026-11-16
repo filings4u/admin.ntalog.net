@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const cfg=window.NTA_CONFIG;if(!cfg||!window.supabase)return;
-const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const sb=window.NTAAdminClient;if(!sb)return;
 const $=q=>document.querySelector(q);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let records=[];
