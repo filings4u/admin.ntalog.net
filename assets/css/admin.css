@@ -127,206 +127,120 @@ body.nta-admin{background:#f5f8fb;color:#091b34}
 @media(max-width:400px){.metric-card{grid-template-columns:1fr}.metric-card .metric-icon{grid-row:auto}.metric-card strong{margin-top:8px}.portal-header-right{gap:5px}}
 
 
-/* Compact portal density and account navigation */
+
+/* NTA admin shell — one authoritative compact responsive layout. */
 :root{--nta-admin-font:Inter,Arial,sans-serif;--nta-font-scale:1}
-body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin button{font-family:var(--nta-admin-font)}
-.nta-admin .admin-shell h1,.nta-admin .admin-shell h2,.nta-admin .admin-shell h3,.nta-admin .admin-shell h4,.nta-admin .portal-header strong,.nta-admin .metric-card strong{font-family:var(--nta-admin-font)}
-.admin-shell{grid-template-columns:232px minmax(0,1fr)}
-.admin-sidebar{padding:11px 10px}
-.admin-brand{padding:2px 13px 12px;margin:0 0 4px}
-.admin-brand img{width:166px;max-height:80px}
-.admin-nav{gap:1px}
-.admin-nav .nav-kicker{font-size:10px;margin-top:7px;padding:10px 13px 5px}
-.admin-nav button{min-height:33px;padding:6px 12px;font-size:12px;gap:10px;line-height:1.3}
-.admin-nav button:before{flex-basis:17px;width:17px;height:17px;font-size:18px!important;line-height:16px!important}
-.portal-header{height:47px;padding:0 18px;font-size:12px}
-.portal-menu{font-size:19px}
-.portal-header-right{gap:8px}
-.portal-account{position:relative}
-.portal-profile{border:0;background:transparent;color:#fff;display:flex;align-items:center;gap:9px;padding:7px 8px;font:700 12px var(--nta-admin-font);cursor:pointer;border-radius:6px}
-.portal-profile:hover,.portal-profile[aria-expanded="true"]{background:#ffffff18}
-.portal-profile .profile-avatar{width:23px;height:23px;font-size:10px}
-.account-dropdown{position:absolute;z-index:70;top:calc(100% + 7px);right:0;width:265px;padding:7px;background:#fff;color:#0b2442;border:1px solid #d4deea;border-radius:9px;box-shadow:0 18px 40px #071b3755}
-.account-dropdown[hidden]{display:none!important}
-.account-menu-heading{padding:11px 10px 12px;border-bottom:1px solid #e1e8f0;margin-bottom:5px;overflow-wrap:anywhere}
-.account-menu-heading strong{display:block;font-size:13px;color:#081d35}
-.account-menu-heading small{display:block;font-size:11px;color:#63748b;margin-top:3px}
-.account-dropdown>button,.account-dropdown>a{display:block;width:100%;border:0;background:transparent;color:#183453;text-align:left;font-size:12px;font-weight:700;padding:10px 11px;border-radius:6px;cursor:pointer;text-decoration:none}
-.account-dropdown>button:hover,.account-dropdown>a:hover{background:#edf3f9}
-.account-menu-font{padding:8px 10px}
-.account-menu-font label{display:block;margin-bottom:5px;color:#536880;font-size:11px;font-weight:750}
-.account-menu-font select{display:block;width:100%;min-height:33px;padding:5px 8px;border:1px solid #bdcadb;border-radius:5px;background:#fff;font-size:12px}
-.account-menu-divider{height:1px;background:#dce4ed;margin:6px 3px}
-.account-dropdown>.account-signout{color:#a32b2b}
-.admin-main{padding:0 12px 24px}
-.admin-panel:not([data-panel="dashboard"]){padding-top:17px}
-.dashboard-hero{min-height:112px;margin:0 -12px 12px}
-.dashboard-hero-content{padding:15px 28px}
-.dashboard-hero h1{font-size:30px;line-height:1.15;border-left-width:4px;padding-left:15px;margin:0 0 6px}
-.dashboard-hero p{font-size:12px;margin-left:19px}
-.dashboard-hero:after{width:12px;box-shadow:15px 0 0 #d7a42755}
-.metric-cards{gap:10px}
-.metric-card{min-height:84px;padding:11px;grid-template-columns:39px minmax(0,1fr);column-gap:10px;border-radius:10px}
-.metric-card .metric-icon{width:38px;height:38px;font-size:20px;border-radius:8px}
-.metric-card span{font-size:10px;line-height:1.2}
-.metric-card strong{font-size:27px;margin:2px 0 0}
-.dashboard-section-grid{gap:13px;margin-top:13px}
-.dashboard-widget{border-radius:10px}
-.widget-title{min-height:42px;padding:9px 14px}
-.widget-title h2{font-size:16px;gap:8px}
-.widget-symbol{font-size:20px}
-.widget-link,.widget-period{font-size:11px}
-.widget-body{min-height:90px;padding:14px}
-.task-preview{font-size:12px}
-.quick-action-body .editor-actions{gap:8px}
-.quick-action-body .btn{min-height:36px;padding:7px 10px;font-size:11px}
-.operations-body{grid-template-columns:minmax(130px,39%) 1fr;padding:15px;gap:12px}
-.snapshot-donut{max-width:155px;padding:16px}
-.snapshot-inner strong{font-size:31px}
-.snapshot-inner span{font-size:9px}
-.snapshot-row{gap:7px;padding:5px 0;font-size:10px;grid-template-columns:9px minmax(0,1fr) 24px 31px}
-.snapshot-dot{width:7px;height:7px}
-.recent-item{gap:9px;padding:8px 5px}
-.recent-item-icon{width:29px;height:29px;font-size:17px}
-.recent-item-main{font-size:11px}
-.recent-item-main small,.recent-item time{font-size:10px}
-.admin-topbar{margin-bottom:16px}
-.admin-topbar h1{font-size:26px}
-.admin-topbar p{font-size:12px}
-.admin-card{padding:16px;border-radius:10px}
-.admin-card h2{font-size:18px}
-.admin-card h3{font-size:15px}
-.toolbar-row{gap:7px;margin-bottom:12px}
-.toolbar-row input,.toolbar-row select{font-size:12px;padding:8px 10px}
-.admin-table th,.admin-table td{padding:9px 10px;font-size:12px}
-.admin-table th{font-size:10px}
-.editor-card{padding:14px;border-radius:10px}
-.nta-admin .btn{font-size:12px;min-height:33px;padding:7px 11px}
-.profile-details{max-width:780px}
-.profile-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-@media(max-width:1320px){.metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:950px){.admin-shell{grid-template-columns:212px minmax(0,1fr)}.dashboard-section-grid{grid-template-columns:1fr}}
-@media(max-width:760px){.admin-shell{display:block}.admin-sidebar{width:min(270px,84vw)}.admin-main{padding:0 10px 20px}.dashboard-hero{margin:0 -10px 10px}.dashboard-hero-content{padding:15px}.dashboard-hero h1{font-size:27px}.portal-header{padding:0 10px}.portal-header strong{font-size:11px}.portal-profile{gap:5px}.metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-card{grid-template-columns:34px 1fr;min-height:80px;padding:9px}.metric-card .metric-icon{width:32px;height:32px;font-size:17px}.metric-card strong{font-size:24px}.widget-title h2{font-size:15px}.widget-body{padding:11px}.operations-body{grid-template-columns:1fr}.account-dropdown{right:0;max-width:calc(100vw - 20px)}}
-
-
-/* User-controlled text size: respects the selected percentage without scaling cards or imagery. */
-.account-menu-font .font-size-controls{display:flex;align-items:center;gap:8px}
-.account-menu-font .font-size-controls input{width:100%;min-width:0;accent-color:#d7a21b;cursor:pointer}
-.account-menu-font .font-size-controls span{white-space:nowrap;font-size:12px;font-weight:800;color:#163659}
-.account-menu-font output{float:right;font-size:12px;font-weight:800;color:#163659}
-.account-menu-font .font-size-reset{display:block;width:100%;margin-top:8px;padding:5px;background:#f2f5fa;border:1px solid #dce4ee;border-radius:5px;color:#193652;font-size:11px;cursor:pointer}
-.account-menu-font .font-size-reset:hover{background:#e6edf6}
-.admin-nav button{font-size:calc(12px * var(--nta-font-scale))}
-.admin-nav .nav-kicker{font-size:calc(10px * var(--nta-font-scale))}
-.portal-header{font-size:calc(12px * var(--nta-font-scale))}
-.portal-header strong{font-size:calc(12px * var(--nta-font-scale))}
-.portal-profile{font-size:calc(12px * var(--nta-font-scale))}
-.account-dropdown>button,.account-dropdown>a{font-size:calc(12px * var(--nta-font-scale))}
-.account-menu-heading strong{font-size:calc(13px * var(--nta-font-scale))}
-.account-menu-heading small{font-size:calc(11px * var(--nta-font-scale))}
-.dashboard-hero h1{font-size:calc(30px * var(--nta-font-scale))}
-.dashboard-hero p{font-size:calc(12px * var(--nta-font-scale))}
-.metric-card span{font-size:calc(10px * var(--nta-font-scale))}
-.metric-card strong{font-size:calc(27px * var(--nta-font-scale))}
-.widget-title h2{font-size:calc(16px * var(--nta-font-scale))}
-.widget-link,.widget-period{font-size:calc(11px * var(--nta-font-scale))}
-.task-preview{font-size:calc(12px * var(--nta-font-scale))}
-.snapshot-inner strong{font-size:calc(31px * var(--nta-font-scale))}
-.snapshot-inner span{font-size:calc(9px * var(--nta-font-scale))}
-.snapshot-row{font-size:calc(10px * var(--nta-font-scale))}
-.recent-item-main{font-size:calc(11px * var(--nta-font-scale))}
-.recent-item-main small,.recent-item time{font-size:calc(10px * var(--nta-font-scale))}
-.admin-topbar h1{font-size:calc(26px * var(--nta-font-scale))}
-.admin-topbar p{font-size:calc(12px * var(--nta-font-scale))}
-.admin-card h2{font-size:calc(18px * var(--nta-font-scale))}
-.admin-card h3{font-size:calc(15px * var(--nta-font-scale))}
-.toolbar-row input,.toolbar-row select{font-size:calc(12px * var(--nta-font-scale))}
-.admin-table th{font-size:calc(10px * var(--nta-font-scale))}
-.admin-table td{font-size:calc(12px * var(--nta-font-scale))}
+.nta-admin,.nta-admin button,.nta-admin input,.nta-admin select,.nta-admin textarea{font-family:var(--nta-admin-font)}
+.nta-admin .admin-shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.nta-admin .admin-workspace{position:relative;min-width:0}
+.nta-admin .admin-sidebar{position:sticky;top:0;height:100vh;min-height:0;padding:10px;overflow-y:auto;overflow-x:hidden;z-index:40;background:linear-gradient(170deg,#05182d,#061e37 68%,#052a4f)}
+.nta-admin .admin-brand{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 4px 14px;margin:0 0 4px;border-bottom:1px solid #ffffff24}
+.nta-admin .admin-brand img{display:block;width:min(166px,calc(100% - 38px));height:auto;max-height:77px;object-fit:contain}
+.nta-admin .sidebar-edge-toggle{position:static;flex:0 0 28px;width:28px;height:30px;display:grid;place-items:center;padding:0;background:#102f4c;border:1px solid #496781;border-radius:5px;color:#fff;cursor:pointer}
+.nta-admin .sidebar-edge-toggle:hover,.nta-admin .sidebar-edge-toggle:focus-visible{background:#205477;outline-offset:2px}
+.nta-admin .admin-nav{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;padding:4px 0}
+.nta-admin .admin-nav .nav-kicker{font:500 10px/1.4 Inter,Arial,sans-serif;letter-spacing:.11em;color:#afc1d2;text-transform:uppercase;margin:8px 0 2px;padding:9px 12px 4px;border-top:1px solid #ffffff20}
+.nta-admin .admin-nav .nav-kicker:first-child{border-top:0;margin-top:0}
+.nta-admin .admin-nav button{display:flex;align-items:center;gap:9px;width:100%;min-height:33px;padding:6px 11px;border:0;border-radius:5px;background:transparent;color:#f2f7fc;font-size:calc(11.5px * var(--nta-font-scale));font-weight:650;line-height:1.25;text-align:left}
+.nta-admin .admin-nav button:before{flex:0 0 17px;width:17px;height:17px;line-height:17px;text-align:center;font-size:17px}
+.nta-admin .admin-nav button:hover{background:#ffffff19}
+.nta-admin .admin-nav button.active{background:linear-gradient(#ffd65c,#e7ab11);color:#06192e;box-shadow:inset 0 -2px 0 #ae7707;font-weight:750}
+.nta-admin .admin-main{min-width:0;padding:0 12px 26px}
+.nta-admin .admin-panel:not([data-panel="dashboard"]){padding-top:44px}
+.nta-admin .dashboard-hero{min-height:112px;margin:0 -12px 12px;overflow:hidden}
+.nta-admin .dashboard-hero-content{padding:18px 28px;padding-right:150px}
+.nta-admin .dashboard-hero h1{font:750 calc(29px * var(--nta-font-scale))/1.12 Inter,Arial,sans-serif;border-left:4px solid #edb522;padding-left:15px;margin:0 0 5px}
+.nta-admin .dashboard-hero p{font-size:calc(11px * var(--nta-font-scale));margin:0 0 0 19px}
+.nta-admin .dashboard-hero:after{width:12px;box-shadow:14px 0 0 #d7a42755}
+.nta-admin .metric-cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.nta-admin .metric-card{display:grid;grid-template-columns:38px minmax(0,1fr);gap:0 9px;align-items:center;min-height:82px;padding:10px;border-radius:9px}
+.nta-admin .metric-card .metric-icon{width:37px;height:37px;border-radius:7px;grid-row:span 2;font-size:19px}
+.nta-admin .metric-card span{font-size:calc(10px * var(--nta-font-scale));line-height:1.2;overflow-wrap:anywhere;letter-spacing:0}
+.nta-admin .metric-card strong{font:800 calc(25px * var(--nta-font-scale))/1 Inter,Arial,sans-serif;margin:3px 0 0}
+.nta-admin .dashboard-section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.nta-admin .dashboard-widget{padding:0;border-radius:9px;overflow:hidden}
+.nta-admin .widget-title{min-height:41px;padding:9px 13px}
+.nta-admin .widget-title h2{font:750 calc(16px * var(--nta-font-scale))/1.2 Inter,Arial,sans-serif;gap:8px}
+.nta-admin .widget-symbol{font-size:20px}
+.nta-admin .widget-link,.nta-admin .widget-period{font-size:calc(10px * var(--nta-font-scale))}
+.nta-admin .widget-body{min-height:90px;padding:14px}
+.nta-admin .task-preview{font-size:calc(12px * var(--nta-font-scale))}
+.nta-admin .quick-action-body .editor-actions{gap:8px;flex-wrap:wrap}
+.nta-admin .quick-action-body .btn{flex:1 1 125px;min-height:35px;padding:7px 9px;font-size:calc(11px * var(--nta-font-scale))}
+.nta-admin .operations-body{display:grid;grid-template-columns:minmax(125px,39%) minmax(0,1fr);gap:12px;padding:15px}
+.nta-admin .snapshot-donut{width:min(157px,100%);padding:16px}
+.nta-admin .snapshot-inner strong{font-size:calc(31px * var(--nta-font-scale))}
+.nta-admin .snapshot-inner span{font-size:calc(9px * var(--nta-font-scale))}
+.nta-admin .snapshot-row{grid-template-columns:8px minmax(0,1fr) 23px 31px;gap:7px;padding:5px 0;font-size:calc(10px * var(--nta-font-scale))}
+.nta-admin .snapshot-dot{width:7px;height:7px}
+.nta-admin .recent-item{gap:9px;padding:8px 5px}
+.nta-admin .recent-item-icon{height:29px;width:29px;font-size:16px}
+.nta-admin .recent-item-main{font-size:calc(11px * var(--nta-font-scale))}
+.nta-admin .recent-item-main small,.nta-admin .recent-item time{font-size:calc(10px * var(--nta-font-scale))}
+.nta-admin .admin-card{border-radius:9px}
+.nta-admin .admin-topbar h1{font-size:calc(26px * var(--nta-font-scale))}
+.nta-admin .admin-topbar p{font-size:calc(12px * var(--nta-font-scale))}
+.nta-admin .admin-table th,.nta-admin .admin-table td{padding:9px 10px;font-size:calc(12px * var(--nta-font-scale))}
 .nta-admin .btn{font-size:calc(12px * var(--nta-font-scale))}
 .nta-admin .admin-panel label,.nta-admin .admin-panel input,.nta-admin .admin-panel select,.nta-admin .admin-panel textarea{font-size:calc(12px * var(--nta-font-scale))}
-@media(max-width:760px){.dashboard-hero h1{font-size:calc(27px * var(--nta-font-scale))}.widget-title h2{font-size:calc(15px * var(--nta-font-scale))}.metric-card strong{font-size:calc(24px * var(--nta-font-scale))}.portal-header strong{font-size:calc(11px * var(--nta-font-scale))}}
-
-
-/* Sidebar show/hide button stays inside the sidebar, never above the page content. */
-.admin-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden}
-.admin-sidebar .admin-nav{max-height:none;overflow:visible}
-.sidebar-edge-toggle{position:absolute;z-index:4;top:24px;right:6px;width:26px;height:28px;display:grid;place-items:center;border:1px solid #43617c;border-radius:5px;background:#102d4a;color:#fff;cursor:pointer;box-shadow:none}
-.sidebar-edge-toggle:hover,.sidebar-edge-toggle:focus-visible{background:#1b466b;outline-offset:2px}
-.admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}
-.admin-shell.sidebar-collapsed .admin-sidebar{width:42px;padding:0 2px;overflow:hidden}
-.admin-shell.sidebar-collapsed .admin-brand,.admin-shell.sidebar-collapsed .admin-nav{display:none}
-.admin-shell.sidebar-collapsed .sidebar-edge-toggle{top:12px;right:7px}
-.portal-profile{border-left:0;padding-left:8px}
-@media(max-width:950px) and (min-width:761px){.admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}}
+.nta-admin .portal-header,.nta-admin .portal-menu,.nta-admin .portal-header-right{display:none!important}
+.nta-admin .portal-account-bar{position:sticky;top:0;height:0;z-index:65;display:flex;justify-content:flex-end;pointer-events:none;overflow:visible}
+.nta-admin .portal-account-bar>.portal-account{position:relative;pointer-events:auto;margin:9px 15px 0 0}
+.nta-admin .portal-account-bar .portal-profile{display:flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #426784;border-radius:6px;background:#092847;color:#fff;font-size:calc(12px * var(--nta-font-scale));font-weight:700;cursor:pointer}
+.nta-admin .portal-account-bar .portal-profile:hover,.nta-admin .portal-account-bar .portal-profile[aria-expanded="true"]{background:#174b75}
+.nta-admin .profile-avatar{width:23px;height:23px;display:grid;place-items:center;border:1px solid #b8cddd;border-radius:50%;font-size:11px}
+.nta-admin .account-dropdown{position:absolute;right:0;top:calc(100% + 5px);z-index:90;width:264px;max-width:calc(100vw - 25px);padding:7px;background:#fff;color:#142d49;border:1px solid #d2deea;border-radius:8px;box-shadow:0 18px 40px #051b3550}
+.nta-admin .account-dropdown[hidden]{display:none!important}
+.nta-admin .account-menu-heading{padding:10px;border-bottom:1px solid #e2e9f0;overflow-wrap:anywhere}
+.nta-admin .account-menu-heading strong{display:block;font-size:13px}
+.nta-admin .account-menu-heading small{display:block;margin-top:3px;color:#63768a;font-size:11px}
+.nta-admin .account-dropdown>button,.nta-admin .account-dropdown>a{display:block;width:100%;padding:10px 11px;border:0;border-radius:5px;background:transparent;color:#1c3956;text-align:left;font-size:calc(12px * var(--nta-font-scale));font-weight:650;cursor:pointer;text-decoration:none}
+.nta-admin .account-dropdown>button:hover,.nta-admin .account-dropdown>a:hover{background:#edf3f9}
+.nta-admin .account-dropdown>.account-signout{color:#a32b2b}
+.nta-admin .account-menu-divider{height:1px;background:#dce5ed;margin:5px}
+.nta-admin .account-menu-font{padding:9px 10px}
+.nta-admin .account-menu-font label{display:block;margin-bottom:6px;font-size:11px;color:#52677d;font-weight:700}
+.nta-admin .account-menu-font output{float:right;color:#163659;font-size:11px;font-weight:750}
+.nta-admin .font-size-controls{display:flex;align-items:center;gap:8px}
+.nta-admin .font-size-controls input{width:100%;min-width:0;accent-color:#e9b21d;cursor:pointer}
+.nta-admin .font-size-controls span{font-size:12px;font-weight:800}
+.nta-admin .font-size-reset{display:block;width:100%;margin-top:8px;padding:6px;background:#f1f5fa;border:1px solid #d6e1ec;border-radius:5px;color:#163659;font-size:11px;cursor:pointer}
+.nta-admin .admin-shell.sidebar-collapsed{grid-template-columns:44px minmax(0,1fr)}
+.nta-admin .admin-shell.sidebar-collapsed .admin-sidebar{width:44px;padding:0 3px;overflow:hidden}
+.nta-admin .admin-shell.sidebar-collapsed .admin-brand{display:flex;justify-content:center;padding:11px 0;border-bottom:0}
+.nta-admin .admin-shell.sidebar-collapsed .admin-brand img,.nta-admin .admin-shell.sidebar-collapsed .admin-nav{display:none}
+.nta-admin .admin-shell.sidebar-collapsed .sidebar-edge-toggle{display:grid;visibility:visible;margin:0}
+#adminLoadStatus:not([hidden]){padding:10px 14px;margin:12px 0;border:1px solid #dfc58a;border-radius:7px;background:#fff9e8;color:#684d17;font-size:12px}
+@media(max-width:1320px){.nta-admin .metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:950px){.nta-admin .dashboard-section-grid{grid-template-columns:1fr}.nta-admin .operations-body{grid-template-columns:minmax(145px,35%) 1fr}}
 @media(max-width:760px){
- .admin-shell,.admin-shell.sidebar-collapsed{display:block}
- .admin-sidebar,.admin-shell.sidebar-collapsed .admin-sidebar{position:fixed;top:0;left:0;bottom:0;height:100dvh;width:36px;padding:0;transform:none;overflow:hidden;z-index:80}
- .admin-shell .admin-brand,.admin-shell .admin-nav,.admin-shell.sidebar-collapsed .admin-brand,.admin-shell.sidebar-collapsed .admin-nav{display:none}
- .admin-shell .sidebar-edge-toggle,.admin-shell.sidebar-collapsed .sidebar-edge-toggle{position:absolute;top:11px;right:4px;left:auto;width:27px;height:30px;transform:none}
- .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:11px 10px;overflow-y:auto}
- .admin-shell.sidebar-open .admin-brand{display:flex}
- .admin-shell.sidebar-open .admin-nav{display:grid}
- .admin-shell.sidebar-open .sidebar-edge-toggle{top:20px;right:5px}
- .admin-workspace{margin-left:36px}
+ .nta-admin .admin-shell,.nta-admin .admin-shell.sidebar-collapsed{display:block}
+ .nta-admin .admin-sidebar,.nta-admin .admin-shell.sidebar-collapsed .admin-sidebar{position:fixed;top:0;left:0;bottom:0;width:38px;height:100dvh;padding:0 3px;transform:none;overflow:hidden;z-index:80}
+ .nta-admin .admin-brand,.nta-admin .admin-shell.sidebar-collapsed .admin-brand{display:flex;justify-content:center;padding:10px 0;border-bottom:0}
+ .nta-admin .admin-brand img{display:none}
+ .nta-admin .admin-sidebar .admin-nav{display:none}
+ .nta-admin .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:9px;overflow-y:auto;box-shadow:9px 0 35px #0005}
+ .nta-admin .admin-shell.sidebar-open .admin-brand{justify-content:space-between;padding:7px 4px 14px;border-bottom:1px solid #ffffff24}
+ .nta-admin .admin-shell.sidebar-open .admin-brand img{display:block}
+ .nta-admin .admin-shell.sidebar-open .admin-nav{display:grid}
+ .nta-admin .admin-workspace{margin-left:38px}
+ .nta-admin .admin-main{padding:0 10px 20px}
+ .nta-admin .dashboard-hero{margin:0 -10px 10px}
+ .nta-admin .dashboard-hero-content{padding:16px 120px 16px 15px}
+ .nta-admin .dashboard-hero h1{font-size:calc(24px * var(--nta-font-scale))}
+ .nta-admin .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .nta-admin .metric-card{min-height:76px}
+ .nta-admin .operations-body{grid-template-columns:1fr}
+ .nta-admin .portal-account-bar>.portal-account{margin:7px 8px 0 0}
+ .nta-admin .portal-account-bar .portal-profile{font-size:11px}
 }
-
-/* Recoverable data errors must not look like authentication failures. */
-#adminLoadStatus:not([hidden]){padding:10px 14px;margin:12px 0;border:1px solid #dfc58a;border-radius:7px;background:#fff9e8;color:#684d17;font-size:12px;line-height:1.5}
-
-
-/* The selected layout has no top header strip. Keep controls inside their respective regions. */
-.admin-workspace{position:relative;min-width:0}
-.admin-brand{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 5px 12px;margin-bottom:5px}
-.admin-brand img{width:min(159px,calc(100% - 37px));height:auto;max-height:79px;object-fit:contain}
-.admin-brand .sidebar-edge-toggle{position:static!important;inset:auto!important;transform:none!important;flex:0 0 27px;width:27px;height:29px;margin:0;box-shadow:none}
-.admin-sidebar{overflow-y:auto;overflow-x:hidden}
-.portal-header,.portal-menu,.portal-header-right{display:none!important}
-.portal-account-bar{position:sticky;top:0;height:0;z-index:65;display:flex;justify-content:flex-end;overflow:visible;pointer-events:none}
-.portal-account-bar>.portal-account{position:relative;pointer-events:auto;margin:9px 16px 0 0}
-.portal-account-bar .portal-profile{display:flex;align-items:center;gap:6px;background:#092847;border:1px solid #416585;border-radius:7px;padding:5px 9px;color:white;line-height:1.2;font-size:calc(12px * var(--nta-font-scale));cursor:pointer}
-.portal-account-bar .portal-profile:hover,.portal-account-bar .portal-profile[aria-expanded="true"]{background:#174b75}
-.portal-account-bar .account-dropdown{top:calc(100% + 5px)}
-.dashboard-hero{margin-top:0}
-.dashboard-hero-content{padding-right:155px}
-.admin-panel:not([data-panel="dashboard"]){padding-top:52px}
-.admin-shell.sidebar-collapsed .admin-sidebar{width:42px;padding:0 3px;overflow:hidden}
-.admin-shell.sidebar-collapsed .admin-brand{display:flex!important;justify-content:center;padding:11px 0}
-.admin-shell.sidebar-collapsed .admin-brand img{display:none}
-.admin-shell.sidebar-collapsed .admin-brand .sidebar-edge-toggle{margin:0}
-.admin-shell.sidebar-collapsed .admin-nav{display:none}
-@media(max-width:760px){
- .admin-sidebar,.admin-shell.sidebar-collapsed .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:37px;height:100dvh;padding:0 3px;overflow:hidden;transform:none}
- .admin-brand,.admin-shell.sidebar-collapsed .admin-brand{display:flex!important;justify-content:center;padding:11px 0}
- .admin-brand img,.admin-shell.sidebar-collapsed .admin-brand img{display:none}
- .admin-brand .sidebar-edge-toggle,.admin-shell.sidebar-collapsed .admin-brand .sidebar-edge-toggle{position:static!important;right:auto!important;left:auto!important;top:auto!important;transform:none!important}
- .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:11px 10px;overflow-y:auto}
- .admin-shell.sidebar-open .admin-brand{justify-content:space-between;padding:5px}
- .admin-shell.sidebar-open .admin-brand img{display:block;width:min(157px,calc(100% - 37px))}
- .admin-shell.sidebar-open .admin-nav{display:grid}
- .admin-workspace{margin-left:37px}
- .portal-account-bar>.portal-account{margin:7px 8px 0 0}
- .portal-account-bar .portal-profile{padding:4px 6px;font-size:11px}
- .dashboard-hero-content{padding-right:115px}
- .admin-panel:not([data-panel="dashboard"]){padding-top:48px}
-}
-
-/* Shell corrections: compact navigation, persistent sidebar control and uncluttered dashboard. */
-.admin-shell.sidebar-collapsed .admin-sidebar{overflow:visible}
-.admin-shell.sidebar-collapsed .admin-brand{overflow:visible;min-width:0}
-.admin-shell.sidebar-collapsed .sidebar-edge-toggle{display:grid!important;visibility:visible}
-.admin-sidebar .admin-nav button{font-weight:650}
-.dashboard-widget .widget-body{align-content:start}
-.dashboard-hero{min-height:105px}
-.dashboard-hero-content{padding-top:14px;padding-bottom:13px}
-@media (min-width:1321px){.metric-card{min-height:78px}.metric-cards{gap:10px}}
-
-/* Branded NTA inactivity warning – displayed during the final minute. */
+@media(max-width:420px){.nta-admin .dashboard-hero-content{padding-right:98px}.nta-admin .dashboard-hero h1{font-size:21px}.nta-admin .quick-action-body .btn{flex-basis:100%}}
+/* NTA-branded inactivity dialog */
 .nta-idle-overlay[hidden]{display:none!important}
 .nta-idle-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,17,35,.72);backdrop-filter:blur(3px)}
-.nta-idle-dialog{width:min(430px,100%);background:#fff;border:1px solid #b9c9dc;border-radius:10px;box-shadow:0 25px 65px rgba(0,0,0,.3);overflow:hidden;text-align:center}
-.nta-idle-heading{display:flex;align-items:center;justify-content:center;min-height:100px;background:linear-gradient(115deg,#04172e,#0a3056);border-bottom:4px solid #f0b51c;padding:16px}
-.nta-idle-heading img{width:152px;height:66px;object-fit:contain}
+.nta-idle-dialog{width:min(430px,100%);background:#fff;border:1px solid #b9c9dc;border-radius:10px;box-shadow:0 25px 65px #0005;overflow:hidden;text-align:center}
+.nta-idle-heading{display:flex;align-items:center;justify-content:center;min-height:95px;background:linear-gradient(115deg,#04172e,#0a3056);border-bottom:4px solid #f0b51c;padding:16px}
+.nta-idle-heading img{width:152px;height:65px;object-fit:contain}
 .nta-idle-content{padding:23px 26px 26px}
 .nta-idle-lock{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 12px;border:1px solid #f3db95;border-radius:50%;background:#fff7de;color:#a87800}
 .nta-idle-content h2{font:750 19px/1.35 Inter,Arial,sans-serif;color:#0a2847;margin:0 0 10px}
@@ -337,53 +251,3 @@ body.nta-admin,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin
 .nta-idle-actions .btn{min-height:38px;font-size:12px}
 body.nta-idle-modal-open{overflow:hidden}
 @media(max-width:460px){.nta-idle-content{padding:21px 16px}.nta-idle-actions{flex-direction:column}.nta-idle-actions .btn{width:100%}}
-
-/* Unified compact dashboard and sidebar corrections (desktop and mobile). */
-.nta-admin .admin-shell{grid-template-columns:218px minmax(0,1fr)}
-.nta-admin .admin-sidebar{padding:9px 9px;min-width:0}
-.nta-admin .admin-brand{padding:6px 3px 13px;gap:8px;min-height:76px}
-.nta-admin .admin-brand img{width:min(154px,calc(100% - 38px));max-height:70px}
-.nta-admin .admin-nav{padding:8px 0}
-.nta-admin .admin-nav button{min-height:31px;padding:5px 10px;font-size:calc(11px * var(--nta-font-scale));font-weight:650;line-height:1.3;border-radius:5px}
-.nta-admin .admin-nav .nav-kicker{padding:11px 10px 5px;font-size:9px}
-.nta-admin .admin-main{padding:0 12px 24px}
-.nta-admin .dashboard-hero{min-height:98px;margin:0 -12px 11px}
-.nta-admin .dashboard-hero-content{padding:16px 22px;padding-right:145px}
-.nta-admin .dashboard-hero h1{font-size:calc(25px * var(--nta-font-scale));font-weight:750}
-.nta-admin .dashboard-hero p{font-size:calc(11px * var(--nta-font-scale))}
-.nta-admin .metric-card{min-height:74px;padding:9px;grid-template-columns:34px minmax(0,1fr);column-gap:8px;border-radius:7px}
-.nta-admin .metric-card .metric-icon{width:34px;height:34px;font-size:17px}
-.nta-admin .metric-card span{font-size:calc(9px * var(--nta-font-scale));letter-spacing:0}
-.nta-admin .metric-card strong{font-size:calc(23px * var(--nta-font-scale));line-height:1.1}
-.nta-admin .dashboard-section-grid{gap:10px;margin-top:11px}
-.nta-admin .dashboard-widget{border-radius:7px}
-.nta-admin .widget-title{min-height:38px;padding:8px 11px}
-.nta-admin .widget-title h2{font-size:calc(14px * var(--nta-font-scale))}
-.nta-admin .widget-body{padding:12px}
-.nta-admin .quick-action-body .btn{font-size:calc(10px * var(--nta-font-scale));min-height:32px}
-.nta-admin .portal-account-bar>.portal-account{margin:8px 12px 0 0}
-.nta-admin .portal-account-bar .portal-profile{font-size:calc(11px * var(--nta-font-scale))}
-.nta-admin .admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}
-.nta-admin .admin-shell.sidebar-collapsed .admin-sidebar{width:42px;padding:0 3px;overflow:visible}
-.nta-admin .admin-shell.sidebar-collapsed .admin-brand{display:flex!important;justify-content:center;min-height:44px;padding:9px 0}
-.nta-admin .admin-shell.sidebar-collapsed .admin-brand img{display:none}
-.nta-admin .admin-shell.sidebar-collapsed .admin-brand .sidebar-edge-toggle{position:static!important;display:grid!important;visibility:visible}
-.nta-admin .admin-shell.sidebar-collapsed .admin-nav{display:none}
-@media(max-width:1320px) and (min-width:951px){
- .nta-admin .metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:950px) and (min-width:761px){
- .nta-admin .admin-shell{grid-template-columns:200px minmax(0,1fr)}
- .nta-admin .admin-shell.sidebar-collapsed{grid-template-columns:42px minmax(0,1fr)}
- .nta-admin .metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:760px){
- .nta-admin .admin-shell,.nta-admin .admin-shell.sidebar-collapsed{display:block}
- .nta-admin .admin-sidebar,.nta-admin .admin-shell.sidebar-collapsed .admin-sidebar{width:37px;padding:0 3px;overflow:hidden}
- .nta-admin .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:9px;overflow-y:auto}
- .nta-admin .admin-shell.sidebar-open .admin-brand img{display:block}
- .nta-admin .admin-main{padding:0 10px 20px}
- .nta-admin .dashboard-hero{margin:0 -10px 10px}
- .nta-admin .dashboard-hero-content{padding:15px 125px 15px 14px}
- .nta-admin .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
