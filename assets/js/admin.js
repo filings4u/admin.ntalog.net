@@ -166,17 +166,26 @@
     if(e.key==='Escape')closeAccountMenu();
   });
   $$('[data-admin-go]').forEach(button=>button.addEventListener('click',closeAccountMenu));
-  const fontSelect=$('#portalFontSelect');
-  const fonts={inter:'Inter,Arial,sans-serif',dm:'"DM Sans",Arial,sans-serif',system:'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',barlow:'"Barlow Condensed",Arial,sans-serif'};
-  const storedFont=(()=>{try{return localStorage.getItem('nta-admin-font')||'inter'}catch{return 'inter'}})();
-  function applyFont(id){
-    const selected=Object.hasOwn(fonts,id)?id:'inter';
-    document.documentElement.style.setProperty('--nta-admin-font',fonts[selected]);
-    fontSelect.value=selected;
-    try{localStorage.setItem('nta-admin-font',selected)}catch{}
+  const fontSizeSlider=$('#portalFontSize');
+  const fontSizeOutput=$('#portalFontSizeValue');
+  const fontSizeReset=$('#resetPortalFontSize');
+  const clampFontSize=value=>{
+    const n=Number(value);
+    return Number.isFinite(n)?Math.max(80,Math.min(125,Math.round(n/5)*5)):100;
+  };
+  function setPortalFontSize(value){
+    const size=clampFontSize(value);
+    document.documentElement.style.setProperty('--nta-font-scale',String(size/100));
+    fontSizeSlider.value=String(size);
+    fontSizeOutput.value=size+'%';
+    fontSizeOutput.textContent=size+'%';
+    try{localStorage.setItem('nta-admin-font-size',String(size))}catch{}
   }
-  applyFont(storedFont);
-  fontSelect.addEventListener('change',()=>applyFont(fontSelect.value));
+  let initialFontSize=100;
+  try{initialFontSize=clampFontSize(localStorage.getItem('nta-admin-font-size')||100)}catch{}
+  setPortalFontSize(initialFontSize);
+  fontSizeSlider.addEventListener('input',()=>setPortalFontSize(fontSizeSlider.value));
+  fontSizeReset.addEventListener('click',()=>setPortalFontSize(100));
   // Executive portal shell interactions; existing panel handlers remain unchanged.
   const sidebarToggle=$('#sidebarToggle');
   sidebarToggle?.addEventListener('click',()=>{
