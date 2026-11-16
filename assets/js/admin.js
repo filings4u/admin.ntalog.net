@@ -267,8 +267,8 @@
       if(btn.dataset.activityTarget==='blog'){editPost(btn.dataset.activityId).catch(err=>console.warn('Unable to open post:',err));return;}
       $('#crmType').value='quote';$('#crmSearch').value='';$('#crmStatus').value='';
       activate('crm');
-      // Open only after the CRM list has loaded.
-      loadCrm().then(()=>openCrm(btn.dataset.activityId)).catch(err=>console.warn('Unable to open quote:',err));
+      // CRM is already loading from activate(); the detail endpoint can be opened directly.
+      openCrm(btn.dataset.activityId).catch(err=>console.warn('Unable to open quote:',err));
     }));
   }
   $('[data-refresh-dashboard]')?.addEventListener('click',refreshDashboard);
