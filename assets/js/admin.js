@@ -142,11 +142,11 @@
     const open=$('#adminApp').classList.toggle('sidebar-open');
     sidebarToggle.setAttribute('aria-expanded',String(open));
   });
-  $('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
-  $('.admin-nav button').forEach(b=>b.addEventListener('click',()=>{
+  $$('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
+  $$('.admin-nav button').forEach(b=>b.addEventListener('click',()=>{
     $('#adminApp').classList.remove('sidebar-open');
     sidebarToggle?.setAttribute('aria-expanded','false');
-    $('.admin-nav button').forEach(n=>n.classList.remove('active'));
+    $$('.admin-nav button').forEach(n=>n.classList.remove('active'));
     b.classList.add('active');
   }));
   boot();
