@@ -221,8 +221,8 @@ body.nta-admin{background:#f5f8fb;color:#091b34}
  .nta-admin .admin-sidebar .admin-nav{display:none}
  .nta-admin .admin-shell.sidebar-open .admin-sidebar{width:min(270px,84vw);padding:9px;overflow-y:auto;box-shadow:9px 0 35px #0005}
  .nta-admin .admin-shell.sidebar-open .admin-brand{justify-content:space-between;padding:7px 4px 14px;border-bottom:1px solid #ffffff24}
- .nta-admin .admin-shell.sidebar-open .admin-brand img{display:block}
- .nta-admin .admin-shell.sidebar-open .admin-nav{display:grid}
+ .nta-admin .admin-shell.sidebar-open .admin-brand img,.nta-admin .admin-shell.sidebar-collapsed.sidebar-open .admin-brand img{display:block}
+ .nta-admin .admin-shell.sidebar-open .admin-nav,.nta-admin .admin-shell.sidebar-collapsed.sidebar-open .admin-nav{display:grid}
  .nta-admin .admin-workspace{margin-left:38px}
  .nta-admin .admin-main{padding:0 10px 20px}
  .nta-admin .dashboard-hero{margin:0 -10px 10px}
