@@ -35,7 +35,7 @@
 <div class="account-menu-divider"></div>
 <button type="button" id="signOutBtn" class="account-signout">Sign Out</button>
 </div></div></div></header>
-<main class="admin-main">
+<main class="admin-main"><div id="adminLoadStatus" role="status" aria-live="polite" hidden></div>
 <section class="admin-panel active" data-panel="dashboard">
  <div class="dashboard-hero"><div class="dashboard-hero-content"><h1>Dashboard</h1><p>Live NTA website activity and operations workload.</p></div></div>
  <div id="metricCards" class="metric-cards" aria-live="polite"></div>
@@ -68,4 +68,4 @@ function toggleAdminPassword(){
   button.setAttribute('aria-label',showing?'Show password':'Hide password');
   button.title=showing?'Show password':'Hide password';
 }
-</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/nta-supabase.js"></script><script src="assets/js/admin.js?v=20261116sidebar"></script><script src="assets/js/factoring.js"></script><script src="assets/js/accounts.js"></script></body></html>
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/nta-supabase.js"></script><script src="assets/js/admin.js?v=20261116sessionfix"></script><script src="assets/js/factoring.js"></script><script src="assets/js/accounts.js"></script></body></html>
