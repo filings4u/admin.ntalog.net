@@ -188,14 +188,33 @@
   fontSizeReset.addEventListener('click',()=>setPortalFontSize(100));
   // Executive portal shell interactions; existing panel handlers remain unchanged.
   const sidebarToggle=$('#sidebarToggle');
+  function syncSidebarToggle(){
+    const shell=$('#adminApp');
+    const mobile=window.matchMedia('(max-width:760px)').matches;
+    const visible=mobile?shell.classList.contains('sidebar-open'):!shell.classList.contains('sidebar-collapsed');
+    sidebarToggle.setAttribute('aria-expanded',String(visible));
+    sidebarToggle.setAttribute('aria-label',visible?'Hide sidebar':'Show sidebar');
+    sidebarToggle.title=visible?'Hide sidebar':'Show sidebar';
+    sidebarToggle.innerHTML=visible
+      ? '<svg class="sidebar-toggle-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.5" width="18" height="17" rx="2"/><path d="M9 3.5v17"/><path d="m15 9-3 3 3 3"/></svg>'
+      : '<svg class="sidebar-toggle-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.5" width="18" height="17" rx="2"/><path d="M9 3.5v17"/><path d="m13 9 3 3-3 3"/></svg>';
+  }
   sidebarToggle?.addEventListener('click',()=>{
-    const open=$('#adminApp').classList.toggle('sidebar-open');
-    sidebarToggle.setAttribute('aria-expanded',String(open));
+    const shell=$('#adminApp');
+    if(window.matchMedia('(max-width:760px)').matches) shell.classList.toggle('sidebar-open');
+    else {
+      shell.classList.toggle('sidebar-collapsed');
+      try{localStorage.setItem('nta-sidebar-collapsed',shell.classList.contains('sidebar-collapsed')?'true':'false')}catch{}
+    }
+    syncSidebarToggle();
   });
+  try{if(localStorage.getItem('nta-sidebar-collapsed')==='true')$('#adminApp').classList.add('sidebar-collapsed')}catch{}
+  syncSidebarToggle();
+  window.addEventListener('resize',syncSidebarToggle);
   $$('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
   $$('.admin-nav button').forEach(b=>b.addEventListener('click',()=>{
-    $('#adminApp').classList.remove('sidebar-open');
-    sidebarToggle?.setAttribute('aria-expanded','false');
+    if(window.matchMedia('(max-width:760px)').matches)$('#adminApp').classList.remove('sidebar-open');
+    syncSidebarToggle();
     $$('.admin-nav button').forEach(n=>n.classList.remove('active'));
     b.classList.add('active');
   }));
