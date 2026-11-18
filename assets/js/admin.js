@@ -236,6 +236,7 @@
   async function loadDashboard(){
     const j=await api('dashboard');
     state.metrics=j.metrics||{};
+    const livePosts=document.querySelector('#dashboardPublishedPosts');if(livePosts)livePosts.textContent=String(Number(state.metrics.published_posts||0));
     const icons={
       shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑',published_posts:'◈'
     };
@@ -265,6 +266,31 @@
       if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤',target:'quote',id:quote.id});
     }
     events.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const trend=document.querySelector('#dashboardActivityTrend');
+    if(trend){
+      const today=new Date(),day=86400000;
+      const days=Array.from({length:7},(_,i)=>{const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()-(6-i));return {date:d,key:d.toLocaleDateString('en-CA'),label:d.toLocaleDateString(undefined,{month:'short',day:'numeric'}),posts:0,quotes:0}});
+      for(const e of events){
+        const date=new Date(e.date);
+        if(!Number.isFinite(date.getTime()))continue;
+        const key=new Date(date.getFullYear(),date.getMonth(),date.getDate()).toLocaleDateString('en-CA');
+        const record=days.find(d=>d.key===key);
+        if(record)record[e.target==='blog'?'posts':'quotes']++;
+      }
+      const max=Math.max(1,...days.map(d=>d.posts+d.quotes));
+      const bars=days.map((d,i)=>{const x=37+i*40,w=19,scale=145/max;
+        const a=d.posts*scale,b=d.quotes*scale;
+        return '<rect class="trend-bar-posts" x="'+x+'" y="'+(172-a)+'" width="'+w+'" height="'+a+'" rx="2"/>'+
+        '<rect class="trend-bar-quotes" x="'+x+'" y="'+(172-a-b)+'" width="'+w+'" height="'+b+'" rx="2"/>'+
+        '<text class="trend-label" x="'+(x+w/2)+'" y="193" text-anchor="middle">'+d.label+'</text>';
+      }).join('');
+      const grid=Array.from({length:5},(_,i)=>{const y=172-i*36;
+        return '<line class="trend-grid" x1="33" x2="309" y1="'+y+'" y2="'+y+'"/><text class="trend-label" x="24" y="'+(y+3)+'" text-anchor="end">'+Math.round(max*i/4)+'</text>';
+      }).join('');
+      trend.innerHTML='<svg role="img" aria-label="Daily published posts and received quote requests for the last seven days" viewBox="0 0 330 211" preserveAspectRatio="xMidYMid meet">'+grid+bars+'</svg>'+
+        '<div class="trend-legend"><span><i style="background:#e7ae20"></i>Published posts</span><span><i style="background:#0c538e"></i>Quotes</span></div>';
+    }
+
     const relativeTime=d=>{const ms=Date.now()-new Date(d).getTime();if(!Number.isFinite(ms)||ms<0)return new Date(d).toLocaleDateString();const min=Math.floor(ms/60000);if(min<60)return min<=1?'Just now':min+' min ago';const h=Math.floor(min/60);if(h<24)return h+' hour'+(h===1?'':'s')+' ago';const days=Math.floor(h/24);return days===1?'Yesterday':days<7?days+' days ago':new Date(d).toLocaleDateString()};
     $('#recentActivity').innerHTML=events.slice(0,5).map(e=>`<button type="button" class="recent-item recent-action" data-activity-target="${esc(e.target)}" data-activity-id="${esc(e.id)}"><span class="recent-item-icon" aria-hidden="true">${e.icon}</span><span class="recent-item-main"><strong>${esc(e.type)}</strong><small>${esc(e.description)}</small></span><time datetime="${esc(e.date)}">${esc(relativeTime(e.date))}</time></button>`).join('')||'<p class="dashboard-empty">No recent quote or publishing activity yet.</p>';
     $$('#recentActivity [data-activity-target]').forEach(btn=>btn.addEventListener('click',()=>{
