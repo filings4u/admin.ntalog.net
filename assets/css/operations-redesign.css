@@ -138,3 +138,64 @@ body.nta-admin{--admin-bg:#f3f6fb;--admin-border:#d6e0ed;--admin-navy:#061a35;--
  .nta-admin .dashboard-v2 .dashboard-snapshot-widget,.nta-admin .dashboard-v2 .dashboard-trend-widget,.nta-admin .dashboard-v2 .dashboard-performance-widget{grid-column:1;grid-row:auto;min-height:0}
  .nta-admin .dashboard-v2 .dashboard-widget .widget-body{min-height:170px}
 }
+
+
+/* Selected mockup layout fidelity: dedicated top bar and fixed compact dashboard grid. */
+.nta-admin .admin-workspace{min-width:0}
+.nta-admin .portal-account-bar{position:relative;top:auto;left:auto;right:auto;height:52px;min-height:52px;padding:0 16px 0 28px;background:linear-gradient(100deg,#071c36,#103f67);border-bottom:1px solid #365675;display:flex;align-items:center;justify-content:space-between;gap:18px;pointer-events:auto;z-index:80}
+.nta-admin .portal-breadcrumb{display:flex;align-items:center;gap:10px;white-space:nowrap;color:#e6edf6;font-size:12px;font-weight:700}
+.nta-admin .portal-breadcrumb span:first-child{font-size:20px;color:#fff}
+.nta-admin .portal-search{width:clamp(260px,30vw,415px);margin:0 154px 0 auto;position:relative;flex:0 1 415px;z-index:81}
+.nta-admin .portal-search label[hidden]{display:none!important}
+.nta-admin .portal-search input{height:36px;border:1px solid #a2b5c9;border-radius:9px;background:#f0f4fb;color:#203b59;font-size:12px}
+.nta-admin .portal-account-bar>.portal-account{position:absolute;right:14px;top:7px;margin:0}
+.nta-admin .portal-account-bar .portal-profile{min-height:38px;white-space:nowrap}
+.nta-admin .admin-sidebar{padding:9px 12px;scrollbar-width:thin;scrollbar-color:#657d94 transparent}
+.nta-admin .admin-brand{min-height:104px;padding:3px 8px 12px;margin-bottom:0}
+.nta-admin .admin-brand img{max-height:82px}
+.nta-admin .admin-nav .nav-kicker{padding:13px 12px 7px}
+.nta-admin .admin-nav button{min-height:36px;padding:7px 11px}
+.nta-admin .dashboard-v2 .dashboard-hero{height:116px;min-height:116px;margin:0 -14px;border-bottom:0}
+.nta-admin .dashboard-v2 .dashboard-hero:before{inset:0 12% 0 44%;background:linear-gradient(90deg,#071d36 0%,rgba(7,29,54,.12) 55%),url('https://ntalog.net/assets/images/truck2.png') center 42%/cover no-repeat;opacity:.28}
+.nta-admin .dashboard-v2 .dashboard-hero:after{right:18%;width:11px}
+.nta-admin .dashboard-v2 .dashboard-hero-content{padding:17px 195px 16px 29px}
+.nta-admin .dashboard-v2 .dashboard-hero h1{font-size:29px;line-height:1.14;margin:5px 0 4px}
+.nta-admin .dashboard-v2 .dashboard-hero p{font-size:11px}
+.nta-admin .dashboard-v2 .dashboard-refresh{bottom:17px;right:17px}
+.nta-admin .dashboard-v2 .dashboard-content{padding:12px 2px 20px}
+.nta-admin .dashboard-v2 .dashboard-summary{margin-bottom:10px}
+.nta-admin .dashboard-v2 .dashboard-summary h2{font-size:15px}
+.nta-admin .dashboard-v2 .dashboard-summary p{font-size:10px}
+.nta-admin .dashboard-v2 .metric-cards{grid-template-columns:repeat(6,minmax(0,1fr));gap:11px}
+.nta-admin .dashboard-v2 .metric-card{min-height:96px;padding:11px 10px}
+.nta-admin .dashboard-v2 .dashboard-section-grid{grid-template-columns:1.16fr 1fr 1.11fr;grid-template-rows:272px 302px;grid-auto-rows:auto;align-items:stretch;gap:12px;margin-top:15px}
+.nta-admin .dashboard-v2 .dashboard-tasks-widget,.nta-admin .dashboard-v2 .dashboard-actions-widget,.nta-admin .dashboard-v2 .dashboard-activity-widget{min-height:0;height:100%;max-height:272px}
+.nta-admin .dashboard-v2 .dashboard-snapshot-widget,.nta-admin .dashboard-v2 .dashboard-trend-widget,.nta-admin .dashboard-v2 .dashboard-performance-widget{min-height:0;height:100%;max-height:302px}
+.nta-admin .dashboard-v2 .dashboard-widget .widget-title{min-height:43px;padding:10px 13px}
+.nta-admin .dashboard-v2 .dashboard-widget .widget-body{min-height:0;overflow:hidden}
+.nta-admin .dashboard-v2 .dashboard-activity-widget .widget-body{overflow-y:auto;scrollbar-width:thin;padding:3px 12px}
+.nta-admin .dashboard-v2 .recent-action{min-height:50px;padding:7px 2px}
+.nta-admin .dashboard-v2 .recent-action .recent-item-main strong{font-size:10px}
+.nta-admin .dashboard-v2 .recent-action .recent-item-main small{font-size:9px}
+.nta-admin .dashboard-v2 .dashboard-actions-widget .dashboard-action{min-height:82px}
+.nta-admin .dashboard-v2 .dashboard-actions-widget .widget-body{padding:13px}
+.nta-admin .dashboard-v2 .dashboard-snapshot-widget .operations-body{overflow:visible}
+@media(max-width:1320px){
+ .nta-admin .dashboard-v2 .dashboard-section-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto}
+ .nta-admin .dashboard-v2 .dashboard-tasks-widget,.nta-admin .dashboard-v2 .dashboard-actions-widget,.nta-admin .dashboard-v2 .dashboard-activity-widget,.nta-admin .dashboard-v2 .dashboard-snapshot-widget,.nta-admin .dashboard-v2 .dashboard-trend-widget,.nta-admin .dashboard-v2 .dashboard-performance-widget{grid-column:auto;grid-row:auto;max-height:none;min-height:260px;height:auto}
+ .nta-admin .dashboard-v2 .dashboard-activity-widget .widget-body{max-height:230px}
+ .nta-admin .dashboard-v2 .metric-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:950px){
+ .nta-admin .dashboard-v2 .dashboard-section-grid{grid-template-columns:1fr}
+ .nta-admin .dashboard-v2 .dashboard-tasks-widget,.nta-admin .dashboard-v2 .dashboard-actions-widget,.nta-admin .dashboard-v2 .dashboard-activity-widget,.nta-admin .dashboard-v2 .dashboard-snapshot-widget,.nta-admin .dashboard-v2 .dashboard-trend-widget,.nta-admin .dashboard-v2 .dashboard-performance-widget{grid-column:1}
+ .nta-admin .portal-search{width:clamp(160px,30vw,280px);margin-right:135px}
+}
+@media(max-width:760px){
+ .nta-admin .portal-account-bar{height:50px;min-height:50px;padding:0 12px 0 52px}
+ .nta-admin .portal-breadcrumb{font-size:11px}
+ .nta-admin .portal-search{display:none}
+ .nta-admin .dashboard-v2 .dashboard-hero{min-height:145px;height:auto}
+ .nta-admin .dashboard-v2 .dashboard-hero-content{padding:18px 95px 22px 16px}
+ .nta-admin .dashboard-v2 .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
