@@ -24,10 +24,10 @@
 <button type="button" data-admin-panel="media" data-nav-icon="image">Media Library</button>
 <button type="button" data-admin-panel="categories" data-nav-icon="layers">Categories</button>
 </nav>
-<div class="command-status"><span>SYSTEM STATUS</span><strong><i></i> Connected to NTA</strong></div>
+<div class="command-status"><span>SECURE WORKSPACE</span><strong><i></i> NTA Management Portal</strong></div>
 </aside>
 <div class="admin-workspace">
-<div class="portal-account-bar"><div class="portal-breadcrumb" aria-label="Current page"><span class="command-path">NTA / CONTROL ROOM</span></div><div class="portal-search"><label for="portalPageSearch" hidden>Search portal pages</label><input type="search" id="portalPageSearch" placeholder="Search records, tasks, quotes..." autocomplete="off" aria-label="Search portal pages"><div id="portalSearchResults" class="portal-search-results" hidden></div></div><button type="button" class="command-new-record" data-admin-go="crm">+ New record</button><div class="portal-account">
+<div class="portal-account-bar"><div class="portal-breadcrumb" aria-label="Current page"><span class="command-path">NTA / CONTROL ROOM</span></div><div class="portal-search"><label for="portalPageSearch" hidden>Search portal pages</label><input type="search" id="portalPageSearch" placeholder="Search records, tasks, quotes..." autocomplete="off" aria-label="Search portal pages"><div id="portalSearchResults" class="portal-search-results" hidden></div></div><button type="button" class="command-new-record" id="commandNewRecord">+ New record</button><div class="portal-account">
 <button type="button" class="portal-profile" id="accountMenuToggle" aria-haspopup="true" aria-controls="accountDropdown" aria-expanded="false"><span class="profile-avatar" aria-hidden="true">●</span><span id="accountMenuName">Admin</span></button>
 <div class="account-dropdown" id="accountDropdown" hidden>
 <div class="account-menu-heading"><strong id="adminUserName">Administrator</strong><small id="adminUserEmail"></small></div>
@@ -41,7 +41,7 @@
 <main class="admin-main"><div id="adminLoadStatus" role="status" aria-live="polite" hidden></div>
 <section class="admin-panel active dashboard-v2 command-dashboard" data-panel="dashboard">
   <div class="command-heading">
-    <div><div class="command-kicker">OPERATIONS OVERVIEW</div><h1>Good morning, <span>Admin</span></h1><p>Here is what is happening across the network.</p></div>
+    <div><div class="command-kicker">OPERATIONS OVERVIEW</div><h1 id="commandGreeting">Operations overview</h1><p>Here is what is happening across the network.</p></div>
     <div class="command-heading-actions"><span class="command-live"><span></span> LIVE DATA</span><button type="button" class="command-refresh" data-refresh-dashboard aria-label="Refresh dashboard">↻ <span>Refresh</span></button></div>
   </div>
   <div class="command-metrics">
