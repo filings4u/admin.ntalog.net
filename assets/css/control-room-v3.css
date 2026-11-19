@@ -223,3 +223,19 @@ body.nta-admin{--admin-bg:var(--nta-bg);--admin-card:var(--nta-card);--admin-bor
 @media(max-width:850px){.nta-admin .admin-shell{grid-template-columns:1fr}.nta-admin .admin-sidebar{position:fixed;left:0;top:0;width:248px;max-width:85vw;transform:translateX(-100%);transition:transform .18s ease;box-shadow:20px 0 60px #0006}.nta-admin .admin-shell.sidebar-open .admin-sidebar{transform:translateX(0)}.nta-admin .admin-main{padding:0 17px 25px}.nta-admin .portal-account-bar{height:65px;min-height:65px;padding:0 17px 0 55px}.nta-admin .portal-search{display:none}.nta-admin .command-main-grid,.nta-admin .command-bottom-grid{grid-template-columns:1fr}.nta-admin .command-dashboard .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.nta-admin .editor-layout{grid-template-columns:1fr}.nta-admin .admin-grid-2{grid-template-columns:1fr}}
 @media(max-width:520px){.nta-admin .command-heading{align-items:flex-start;gap:8px}.nta-admin .command-heading h1{font-size:23px}.nta-admin .command-heading p{font-size:11px}.nta-admin .command-heading-actions{gap:6px}.nta-admin .command-refresh span{display:none}.nta-admin .command-live{font-size:9px;padding:6px}.nta-admin .command-dashboard .metric-card{min-height:125px;padding:14px}.nta-admin .command-dashboard .metric-card strong{font-size:32px}.nta-admin .command-dashboard .metric-card .metric-hint{margin-top:5px}.nta-admin .command-card{padding:15px}.nta-admin .command-launch-grid{gap:7px}.nta-admin .command-launch-item{padding:10px;min-height:68px}.nta-admin .command-launch-item strong{font-size:10px}.nta-admin .admin-topbar{align-items:flex-start;flex-wrap:wrap}.nta-admin .admin-topbar h1{font-size:23px}.nta-admin .command-new-record{padding:11px 9px;font-size:10px;right:8px}.nta-admin .portal-account{right:110px}.nta-admin .portal-breadcrumb{font-size:10px}.nta-admin .command-data-title span{display:none}.nta-admin .detail-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.nta-admin *{animation:none!important;transition:none!important}}
+
+/* Shared branded account-access screens */
+.nta-admin .command-auth-brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+.nta-admin .command-auth-brand .command-brand-mark{font-size:27px}
+.nta-admin .command-auth-brand>span:last-child{display:grid;gap:3px}
+.nta-admin .command-auth-brand strong{font-size:16px;font-weight:800;color:#f1f6fc;letter-spacing:-.01em}
+.nta-admin .command-auth-brand small{font-size:9px;font-weight:800;letter-spacing:.18em;color:#a2b8c9}
+.nta-admin .auth-card{width:min(490px,100%)}
+.nta-admin .auth-head{padding:30px 34px 25px}
+.nta-admin .auth-body{padding:30px 34px 34px}
+.nta-admin .auth-head h1{font-size:25px;margin:0 0 8px}
+.nta-admin .auth-head p{font-size:12px;line-height:1.7;margin:0}
+.nta-admin .auth-body .field{margin-bottom:13px}
+.nta-admin .auth-body .field input{width:100%}
+.nta-admin .auth-body .password-field{position:relative}
+.nta-admin .auth-body .password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:#e5b647;border:0;background:transparent}
