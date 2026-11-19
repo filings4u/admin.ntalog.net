@@ -16,7 +16,8 @@ items?.querySelectorAll('button').forEach(b=>b.addEventListener('click',open));
 document.querySelectorAll('.admin-nav button[data-admin-panel],.admin-nav button[data-accounts-type],.admin-nav button[data-crm-shortcut]').forEach(b=>{
   b.addEventListener('click',()=>{
     if(items?.contains(b)){open();contentClose();return}
-    if(contentItems?.contains(b)||b===contentToggle){contentOpen();close();return}
+    if(b===contentToggle){close();return}
+    if(contentItems?.contains(b)){contentOpen();close();return}
     close();contentClose();
   });
 });
