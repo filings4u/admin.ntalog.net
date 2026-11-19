@@ -239,3 +239,24 @@ body.nta-admin{--admin-bg:var(--nta-bg);--admin-card:var(--nta-card);--admin-bor
 .nta-admin .auth-body .field input{width:100%}
 .nta-admin .auth-body .password-field{position:relative}
 .nta-admin .auth-body .password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:#e5b647;border:0;background:transparent}
+
+/* Explicit SVG navigation to avoid browser-dependent icon fonts. */
+.nta-admin .admin-nav button[data-nav-icon]:before{display:none!important;content:none!important}
+.nta-admin .command-nav-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;min-width:18px;color:#8caac0;flex:none}
+.nta-admin .command-nav-icon svg{display:block;width:17px;height:17px}
+.nta-admin .admin-nav button.active .command-nav-icon{color:var(--nta-gold)}
+.nta-admin .admin-nav button:hover .command-nav-icon{color:#f1c25c}
+.nta-admin .command-nav-submenu .command-nav-icon{width:15px;min-width:15px}
+/* Retain functioning font-scale preference from the account menu. */
+.nta-admin .admin-nav button{font-size:calc(12px * var(--nta-font-scale,1))}
+.nta-admin .portal-breadcrumb,.nta-admin .command-heading p{font-size:calc(13px * var(--nta-font-scale,1))}
+.nta-admin .command-heading h1{font-size:calc(29px * var(--nta-font-scale,1))}
+.nta-admin .command-card h2{font-size:calc(17px * var(--nta-font-scale,1))}
+.nta-admin .command-dashboard .metric-card strong{font-size:calc(42px * var(--nta-font-scale,1))}
+.nta-admin .command-dashboard .metric-card .metric-label,.nta-admin .command-dashboard .metric-card .metric-hint{font-size:calc(10px * var(--nta-font-scale,1))}
+.nta-admin .admin-topbar h1{font-size:calc(28px * var(--nta-font-scale,1))}
+.nta-admin .admin-table td,.nta-admin input,.nta-admin select,.nta-admin textarea,.nta-admin .btn{font-size:calc(12px * var(--nta-font-scale,1))}
+@media(max-width:1040px) and (min-width:761px){.nta-admin .command-main-grid,.nta-admin .command-bottom-grid{grid-template-columns:1fr}.nta-admin .command-dashboard .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Sidebar JS uses the same 760px breakpoint; don't visually hide it at 850px. */
+@media(min-width:761px) and (max-width:850px){.nta-admin .admin-shell{grid-template-columns:210px minmax(0,1fr)}.nta-admin .admin-sidebar{position:sticky;transform:none;max-width:none;width:auto;box-shadow:none}.nta-admin .portal-account-bar{height:78px;min-height:78px}}
+@media(max-width:520px){.nta-admin .command-heading h1{font-size:calc(23px * var(--nta-font-scale,1))}.nta-admin .command-dashboard .metric-card strong{font-size:calc(32px * var(--nta-font-scale,1))}}
