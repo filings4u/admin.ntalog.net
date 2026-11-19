@@ -87,3 +87,10 @@ body.nta-admin{background:#081626;color:#eaf2fc}
 @media(max-width:890px){.nta-admin .command-main-grid,.nta-admin .command-bottom-grid{grid-template-columns:1fr}.nta-admin .command-dashboard .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.nta-admin .portal-search{display:none}}
 @media(max-width:760px){.nta-admin .admin-shell{grid-template-columns:1fr}.nta-admin .portal-account-bar{min-height:65px;height:65px!important}.nta-admin .admin-panel.command-dashboard{padding-top:20px}.nta-admin .command-heading h1{font-size:25px}.nta-admin .command-card{padding:17px}.nta-admin .command-new-record{right:12px}.nta-admin .portal-account-bar>.portal-account{right:130px}.nta-admin .command-heading-actions{gap:5px}}
 @media(max-width:470px){.nta-admin .command-dashboard .metric-cards{gap:9px}.nta-admin .command-dashboard .metric-card{min-height:120px}.nta-admin .command-dashboard .metric-card strong{font-size:32px}.nta-admin .command-launch-grid{gap:7px}.nta-admin .command-launch-item{padding:9px}.nta-admin .command-heading{align-items:flex-start}.nta-admin .command-refresh span{display:none}}
+
+/* Seven-day trend visual uses actual activity records; no fabricated chart data. */
+.nta-admin .command-dashboard .command-chart-line{fill:none;stroke:#f0b729;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.nta-admin .command-dashboard .command-chart-point{fill:#f0b729;stroke:#f0b729}
+.nta-admin .command-dashboard .trend-grid{stroke:#27435d;stroke-width:1}
+.nta-admin .command-dashboard .trend-label{fill:#93acc0;font-size:9px}
+.nta-admin .command-dashboard #dashboardActivityTrend svg{width:100%;max-width:670px;height:206px}
