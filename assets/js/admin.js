@@ -273,6 +273,13 @@
       if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤',target:'quote',id:quote.id});
     }
     events.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const firstQuote=events.find(e=>e.target==='quote');
+    const quoteDetail=$('#priorityQuoteDetail');
+    if(quoteDetail&&firstQuote)quoteDetail.textContent=firstQuote.description+' · '+new Date(firstQuote.date).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    const lastPost=events.find(e=>e.target==='blog');
+    const contentDetail=$('#priorityContentDetail');
+    if(contentDetail&&lastPost)contentDetail.textContent='Latest: '+lastPost.description;
+
     const trend=document.querySelector('#dashboardActivityTrend');
     if(trend){
       const today=new Date(),day=86400000;
