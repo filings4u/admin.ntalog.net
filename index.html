@@ -19,10 +19,12 @@
 <button type="button" data-admin-panel="factoring" data-nav-icon="database">Factoring</button>
 <button type="button" data-admin-panel="tasks" data-nav-icon="square-check">Tasks</button>
 <div class="nav-kicker">CONTENT</div>
-<button type="button" data-admin-panel="blog" data-nav-icon="newspaper">Blog &amp; Content</button>
+<div class="command-nav-group"><button type="button" data-admin-panel="blog" data-nav-icon="newspaper" id="contentNavToggle" aria-expanded="false" aria-controls="contentNavItems">Blog &amp; Content <span class="command-chevron" aria-hidden="true">⌄</span></button>
+<div id="contentNavItems" class="command-nav-submenu" hidden>
 <button type="button" data-admin-panel="editor" data-nav-icon="pen-line">Blog Editor</button>
-<button type="button" data-admin-panel="media" data-nav-icon="image">Media Library</button>
 <button type="button" data-admin-panel="categories" data-nav-icon="layers">Categories</button>
+</div></div>
+<button type="button" data-admin-panel="media" data-nav-icon="image">Media Library</button>
 </nav>
 <div class="command-status"><span>SECURE WORKSPACE</span><strong><i></i> NTA Management Portal</strong></div>
 </aside>
