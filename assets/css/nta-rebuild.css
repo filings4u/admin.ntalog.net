@@ -243,3 +243,94 @@ body.nta-admin{--admin-bg:#f4f7fb;--admin-card:#fff;--admin-border:#dce4ed;--adm
 @media(max-width:1080px){.nta-admin .portal-account-bar.nta-topbar-v2{grid-template-columns:minmax(125px,auto) minmax(160px,1fr) auto!important;gap:12px!important;padding-left:55px!important}.nta-admin .nta-page-kicker{font-size:8px!important}.nta-admin .nta-page-title{font-size:16px!important}.nta-admin .nta-page-subtitle{display:none!important}.nta-admin .nta-topbar-v2 .portal-profile #accountMenuName{display:none!important}.nta-admin .nta-topbar-v2 .portal-profile .account-chevron{display:none!important}}
 @media(max-width:760px){.nta-admin .portal-account-bar.nta-topbar-v2{grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;min-height:68px!important;height:68px!important;padding:0 12px 0 54px!important}.nta-admin .nta-topbar-center{display:none!important}.nta-admin .nta-page-kicker{display:none!important}.nta-admin .nta-page-title{font-size:17px!important}.nta-admin .nta-topbar-v2 .command-new-record{width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;justify-content:center!important}.nta-admin .nta-topbar-v2 .nta-new-label{display:none!important}.nta-admin .nta-topbar-v2 .nta-notification-button{height:38px!important;width:38px!important;min-width:38px!important}.nta-admin .nta-topbar-v2 .portal-profile{height:38px!important;min-height:38px!important;padding:3px!important}.nta-admin .nta-topbar-v2 .profile-avatar{height:30px!important;width:30px!important;min-width:30px!important}}
 @media(max-width:400px){.nta-admin .nta-topbar-v2 .nta-notification-button{display:none!important}.nta-admin .nta-page-title{font-size:15px!important}}
+
+/* Dashboard V3 — redesigned operational summaries, lists and activity panels. */
+.nta-admin .nta-overview-body{padding-top:31px!important}
+.nta-admin .nta-overview-heading{display:flex!important;justify-content:space-between!important;align-items:flex-end!important;gap:18px!important;margin-bottom:22px!important}
+.nta-admin .nta-overview-kicker{display:block;color:#8a6b1e!important;font-size:10px!important;font-weight:800!important;letter-spacing:.13em!important;line-height:1.4!important}
+.nta-admin .nta-overview-heading h2{margin:6px 0 4px!important;color:#122e53!important;font-size:26px!important;font-weight:850!important;letter-spacing:-.045em!important;line-height:1.2!important}
+.nta-admin .nta-overview-heading p{font-size:12px!important;color:#7b8da4!important;margin:0!important}
+.nta-admin .nta-overview-meta{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;justify-content:flex-end!important;color:#607996!important;font-size:11px!important}
+.nta-admin .nta-overview-meta .dashboard-updated{display:block!important;width:100%!important;text-align:right!important;color:#97a6b6!important;font-size:10px!important}
+.nta-live-indicator{width:7px;height:7px;display:inline-block;border-radius:50%;background:#249a6a;box-shadow:0 0 0 4px #249a6a1d}
+.nta-admin .nta-overview-section-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:29px 0 15px!important}
+.nta-admin .nta-overview-section-title h2{margin:5px 0 0!important;font-size:19px!important;font-weight:840!important;letter-spacing:-.038em!important;color:#163456!important}
+.nta-admin .nta-overview-text-action{border:0!important;background:transparent!important;color:#0754b8!important;font-size:11px!important;font-weight:750!important}
+.nta-admin .nta-overview-text-action span{margin-left:6px}
+.nta-admin .command-metrics{margin-bottom:0!important}
+.nta-admin #metricCards{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:13px!important}
+.nta-admin #metricCards .metric-card.nta-kpi{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:space-between!important;gap:0!important;min-height:160px!important;background:#fff!important;border:1px solid #dae5f0!important;border-radius:13px!important;padding:19px 20px 14px!important;box-shadow:0 5px 16px #112f5908!important;text-align:left!important;position:relative!important}
+.nta-admin #metricCards .metric-card.nta-kpi:before{content:"";position:absolute;top:0;left:20px;right:20px;height:3px;border-radius:0 0 5px 5px;background:#0754b8}
+.nta-admin #metricCards .metric-card.nta-kpi-2:before{background:#2d7aa0}
+.nta-admin #metricCards .metric-card.nta-kpi-3:before{background:#d7a21b}
+.nta-admin #metricCards .metric-card.nta-kpi-4:before{background:#2f8b69}
+.nta-admin #metricCards .metric-card.nta-kpi:hover:not(:disabled){border-color:#8bb4e5!important;transform:translateY(-2px)!important;box-shadow:0 10px 25px #112f5914!important}
+.nta-admin .nta-kpi-header{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:10px!important}
+.nta-admin .nta-kpi-label{color:#607790!important;font-size:12px!important;font-weight:730!important;text-transform:none!important;letter-spacing:0!important}
+.nta-admin .nta-kpi-icon{display:grid!important;place-items:center!important;width:33px!important;height:33px!important;min-width:33px!important;border-radius:9px!important;color:#0754b8!important;background:#eef4fd!important}
+.nta-admin .nta-kpi-icon svg{height:17px!important;width:17px!important}
+.nta-admin .nta-kpi-value{display:block!important;color:#122e53!important;font-size:34px!important;line-height:1.05!important;letter-spacing:-.05em!important;font-weight:850!important;margin:8px 0 13px!important}
+.nta-admin .nta-kpi-footer{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;font-size:10px!important;color:#8a9db0!important;font-weight:560!important;letter-spacing:0!important;text-transform:none!important}
+.nta-admin .nta-kpi-arrow{font-size:16px!important;color:#0754b8!important;font-weight:700!important}
+.nta-admin .command-main-grid{display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr)!important;gap:17px!important;margin-bottom:0!important;align-items:stretch!important}
+.nta-admin .command-bottom-grid{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr)!important;gap:17px!important;align-items:stretch!important}
+.nta-admin .command-main-grid>.command-card,.nta-admin .command-bottom-grid>.command-card{border:1px solid #dfe7f0!important;border-radius:13px!important;background:#fff!important;box-shadow:0 5px 16px #132b5108!important;min-width:0!important}
+.nta-admin .command-main-grid .command-card header,.nta-admin .command-bottom-grid .command-card header{min-height:81px!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:14px!important;padding:17px 20px!important;border-bottom:1px solid #e9eef4!important;background:#fff!important}
+.nta-admin .nta-panel-heading{display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important}
+.nta-admin .nta-panel-emblem{display:grid!important;place-items:center!important;flex:none!important;width:35px!important;height:35px!important;border-radius:10px!important;background:#eaf2fd!important;color:#0754b8!important;font-size:20px!important;font-weight:750!important}
+.nta-admin .nta-panel-tasks-icon{background:#eaf6ef!important;color:#21815a!important}
+.nta-admin .nta-panel-chart-icon{background:#fff5dc!important;color:#9e7515!important}
+.nta-admin .nta-panel-heading h2{font-size:14px!important;line-height:1.25!important;font-weight:820!important;color:#142f50!important;margin:0 0 4px!important}
+.nta-admin .nta-panel-heading p{font-size:10px!important;line-height:1.3!important;color:#8b9cb0!important;margin:0!important;font-weight:500!important}
+.nta-admin .command-main-grid .dashboard-view-all,.nta-admin .command-bottom-grid .dashboard-view-all{display:inline-flex!important;gap:7px!important;align-items:center!important;border:1px solid #d8e5f4!important;border-radius:8px!important;color:#0754b8!important;background:#f7faff!important;padding:7px 10px!important;font-size:10px!important;white-space:nowrap!important;min-height:30px!important}
+.nta-admin .command-main-grid .dashboard-view-all:hover,.nta-admin .command-bottom-grid .dashboard-view-all:hover{background:#eaf3ff!important}
+.nta-admin .command-priority .command-queue{display:grid!important;grid-template-columns:1fr!important;gap:0!important}
+.nta-admin .command-priority .command-queue-item{display:flex!important;align-items:center!important;gap:12px!important;min-height:69px!important;padding:13px 20px!important;border:0!important;border-bottom:1px solid #eef2f7!important;background:#fff!important;color:#1d3a60!important}
+.nta-admin .command-priority .command-queue-item:last-child{border-bottom:0!important}
+.nta-admin .command-priority .command-queue-item:hover{background:#f7faff!important}
+.nta-admin .nta-queue-icon{display:grid!important;place-items:center!important;width:35px!important;height:35px!important;flex:none!important;border-radius:10px!important;background:#e8f2ff!important;color:#0754b8!important;font-size:11px!important;font-weight:850!important}
+.nta-admin .nta-queue-carriers{background:#eef1ff!important;color:#5558b6!important}
+.nta-admin .nta-queue-quotes{background:#fff3d6!important;color:#a77709!important}
+.nta-admin .nta-queue-inquiries{background:#e6f5ef!important;color:#22805f!important}
+.nta-admin .command-priority .command-queue-item>span:nth-child(2){display:flex!important;flex:1!important;flex-direction:column!important;gap:4px!important;min-width:0!important}
+.nta-admin .command-priority .command-queue-item strong{font-size:11px!important;color:#173451!important;font-weight:750!important}
+.nta-admin .command-priority .command-queue-item small{font-size:10px!important;color:#8b9caf!important;line-height:1.35!important}
+.nta-admin .nta-queue-arrow{color:#86a0bc!important;font-size:17px!important}
+.nta-admin .dashboard-actions-widget #dashboardTasks{padding:16px 20px!important;min-height:255px!important}
+.nta-admin .dashboard-actions-widget .dashboard-task{display:flex!important;gap:11px!important;padding:14px 0!important;border-bottom:1px solid #edf1f6!important}
+.nta-admin .dashboard-actions-widget .dashboard-task strong{font-size:12px!important;color:#173451!important}
+.nta-admin .dashboard-actions-widget .dashboard-task small{color:#8ca0b5!important;font-size:10px!important}
+.nta-admin .dashboard-actions-widget .task-priority{color:#875d02!important;background:#fff3d5!important;border-radius:5px!important;padding:3px 7px!important;font-size:9px!important}
+.nta-admin .dashboard-actions-widget .dashboard-empty.nta-task-empty{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:240px!important;padding:20px!important;text-align:center!important}
+.nta-admin .dashboard-actions-widget .dashboard-empty-mark{display:grid!important;place-items:center!important;width:49px!important;height:49px!important;border-radius:50%!important;background:#e6f6ee!important;color:#1b8b61!important;font-size:25px!important;margin:0 0 5px!important}
+.nta-admin .dashboard-actions-widget .dashboard-empty strong{color:#1a3c5d!important;font-size:13px!important}
+.nta-admin .dashboard-actions-widget .dashboard-empty small{color:#8a9bae!important;font-size:11px!important}
+.nta-admin .dashboard-actions-widget .dashboard-empty-link{margin-top:9px!important;padding:8px 12px!important;background:#f2f7ff!important;border:1px solid #dceafa!important;border-radius:8px!important;color:#0754b8!important;font-size:10px!important;font-weight:750!important}
+.nta-admin .command-bottom-grid .dashboard-records{overflow-x:auto!important;padding:5px 19px 18px!important;min-height:292px!important}
+.nta-admin .command-bottom-grid .dashboard-records table{min-width:460px!important;width:100%!important;border-collapse:collapse!important}
+.nta-admin .command-bottom-grid .dashboard-records thead{background:#f6f9fd!important}
+.nta-admin .command-bottom-grid .dashboard-records th{color:#7388a3!important;font-size:9px!important;letter-spacing:.07em!important;text-transform:uppercase!important;font-weight:800!important;padding:12px 10px!important;border-bottom:1px solid #e6edf5!important}
+.nta-admin .command-bottom-grid .dashboard-records td{color:#274567!important;font-size:11px!important;padding:15px 10px!important;border-bottom:1px solid #edf1f6!important}
+.nta-admin .command-bottom-grid .dashboard-records tr:hover td{background:#f9fbff!important}
+.nta-admin .command-performance .dashboard-trend-body{padding:20px!important;min-height:292px!important}
+.nta-admin .nta-activity-totals{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important;padding-bottom:13px!important;border-bottom:1px solid #edf1f6!important}
+.nta-admin .nta-activity-main{display:flex!important;flex-direction:column!important;flex:none!important;gap:4px!important}
+.nta-admin .nta-activity-main>span{font-size:10px!important;font-weight:650!important;color:#71859c!important}
+.nta-admin .nta-activity-main strong{font-size:33px!important;line-height:1.1!important;font-weight:850!important;color:#102f53!important}
+.nta-admin .nta-activity-main small{font-size:10px!important;color:#9eacba!important}
+.nta-admin .nta-activity-spark{min-width:0!important;flex:1!important;max-width:200px!important}
+.nta-admin .nta-activity-spark svg{display:block;width:100%;height:auto;aspect-ratio:4/1}
+.nta-admin .nta-activity-breakdown{display:grid!important;gap:14px!important;margin-top:19px!important}
+.nta-admin .nta-activity-breakdown>div{display:grid!important;grid-template-columns:1fr auto auto!important;align-items:center!important;column-gap:8px!important;row-gap:7px!important}
+.nta-admin .nta-activity-category{font-size:11px!important;font-weight:700!important;color:#244261!important}
+.nta-admin .nta-activity-category i{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:#0754b8}
+.nta-admin .nta-activity-category i.nta-dot-post{background:#d7a21b}
+.nta-admin .nta-activity-breakdown strong{font-size:14px!important;font-weight:850!important;color:#173655!important}
+.nta-admin .nta-activity-breakdown small{font-size:10px!important;color:#96a6b5!important}
+.nta-admin .nta-activity-track{grid-column:1/-1!important;height:7px!important;overflow:hidden!important;border-radius:999px!important;background:#edf2f8!important}
+.nta-admin .nta-activity-track>span{display:block!important;height:100%!important;border-radius:999px!important;background:#0754b8!important;min-width:0!important;max-width:100%!important}
+.nta-admin .nta-activity-breakdown>div:nth-child(2) .nta-activity-track>span{background:#d7a21b!important}
+.nta-admin .nta-activity-note{font-size:9px!important;color:#a1afbf!important;line-height:1.5!important;margin-top:16px!important}
+@media(max-width:1270px){.nta-admin #metricCards{grid-template-columns:repeat(2,minmax(0,1fr))!important}.nta-admin .command-main-grid,.nta-admin .command-bottom-grid{grid-template-columns:1fr!important}.nta-admin .command-priority .command-queue{grid-template-columns:repeat(2,minmax(0,1fr))!important}.nta-admin .command-priority .command-queue-item:nth-child(odd){border-right:1px solid #edf1f6!important}}
+@media(max-width:760px){.nta-admin .nta-overview-body{padding-top:22px!important}.nta-admin .nta-overview-heading{align-items:flex-start!important;flex-direction:column!important;gap:12px!important}.nta-admin .nta-overview-heading h2{font-size:22px!important}.nta-admin .nta-overview-meta{justify-content:flex-start!important}.nta-admin .nta-overview-meta .dashboard-updated{text-align:left!important}.nta-admin .nta-overview-section-title h2{font-size:17px!important}.nta-admin #metricCards .metric-card.nta-kpi{min-height:142px!important;padding:15px!important}.nta-admin .nta-kpi-value{font-size:29px!important}.nta-admin .command-priority .command-queue{grid-template-columns:1fr!important}.nta-admin .command-priority .command-queue-item:nth-child(odd){border-right:0!important}.nta-admin .command-main-grid .command-card header,.nta-admin .command-bottom-grid .command-card header{padding:15px!important}.nta-admin .nta-panel-heading h2{font-size:13px!important}.nta-admin .nta-panel-heading p{font-size:9px!important}}
+@media(max-width:390px){.nta-admin #metricCards{grid-template-columns:1fr!important}.nta-admin .nta-overview-text-action{display:none!important}}
