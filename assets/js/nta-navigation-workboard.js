@@ -3,7 +3,8 @@
 const app=document.getElementById('adminApp');
 const menu=document.getElementById('sidebarToggle');
 const close=()=>{app?.classList.remove('nta-next-navopen');menu?.setAttribute('aria-expanded','false');};
-const toggle=()=>{const isOpen=app?.classList.toggle('nta-next-navopen');menu?.setAttribute('aria-expanded',String(!!isOpen));};
+const toggle=()=>{const isOpen=app?.classList.toggle('nta-next-navopen');menu?.setAttribute('aria-expanded',String(!!isOpen));menu?.setAttribute('aria-label',isOpen?'Close all navigation':'Open all navigation');};
+menu?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();toggle();},true);
 document.querySelector('[data-toggle-all-pages]')?.addEventListener('click',toggle);
 document.querySelector('.nta-next-drawer .admin-nav')?.addEventListener('click',e=>{if(e.target.closest('button') && !e.target.closest('#applicationNavToggle'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
