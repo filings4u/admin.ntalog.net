@@ -47,7 +47,7 @@ syncRail();
 /* Render live, filterable inbox from the records already fetched by admin.js. */
 const source=$('#dashboardCrmRows');
 const inbox=$('#opsInboxList');
-const filters=$('[data-ops-inbox-filter]');
+const filters=$$('[data-ops-inbox-filter]');
 let activeInboxFilter='all';
 const labels={all:'Recent requests',quote:'Quote requests',shipper:'Shipper applications',carrier:'Carrier applications',inquiry:'General inquiries'};
 const classify=label=>{
@@ -62,7 +62,7 @@ const node=(tag,klass,content)=>{
 };
 const showInboxRecords=()=>{
  if(!source||!inbox)return;
- const tableRows=$('tr',source);
+ const tableRows=$$('tr',source);
  const records=tableRows.filter(r=>r.cells.length>=5&&r.cells[0].colSpan===1).map(r=>{
    const c=r.cells;
    return {type:classify(c[0].textContent||''),category:c[0].textContent.trim(),company:c[1].textContent.trim(),request:c[2].textContent.trim(),status:c[3].textContent.trim(),date:c[4].textContent.trim()};
