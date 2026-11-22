@@ -239,36 +239,144 @@ body.nta-admin .ops-auth .ops-auth-card{border-radius:15px!important}
  body.nta-admin #commandNewRecord.nta26-create .ops-create-label{display:none!important}
 }
 
-/* Fully styled standalone authentication screen, independent of retired themes. */
-body.nta-admin .admin-auth.ops-auth{display:grid!important;place-items:center!important;min-height:100vh!important;padding:26px!important;background:#edf2f7!important;color:#18324d!important;overflow:auto!important}
+/* Full-viewport authentication: single fixed screen, with no document scrolling.
+   The signed-in app is unaffected. */
+html:has(#adminAuth:not([hidden])),
+body.nta-admin:has(#adminAuth:not([hidden])){
+ height:100%!important;
+ max-height:100%!important;
+ overflow:hidden!important;
+ overscroll-behavior:none!important;
+}
+body.nta-admin .admin-auth.ops-auth{
+ position:fixed!important;
+ inset:0!important;
+ z-index:1000!important;
+ display:grid!important;
+ place-items:stretch!important;
+ width:100%!important;
+ height:100vh!important;
+ height:100dvh!important;
+ min-height:0!important;
+ max-height:100dvh!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ background:#edf2f7!important;
+ color:#18324d!important;
+}
 body.nta-admin .admin-auth.ops-auth[hidden]{display:none!important}
-body.nta-admin .ops-auth-shell{display:grid!important;grid-template-columns:1.05fr .95fr!important;width:min(960px,100%)!important;min-height:560px!important;max-width:100%!important;overflow:hidden!important;border-radius:16px!important;background:#fff!important;box-shadow:0 22px 70px #15334d25!important}
-body.nta-admin .ops-auth-side{display:flex!important;flex-direction:column!important;justify-content:space-between!important;gap:35px!important;padding:43px!important;background:linear-gradient(142deg,#101f35,#1b3d5a)!important;color:#fff!important}
+body.nta-admin .ops-auth-shell{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ width:100%!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:100%!important;
+ max-width:none!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+ box-shadow:none!important;
+}
+body.nta-admin .ops-auth-side{
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:space-between!important;
+ gap:26px!important;
+ min-width:0!important;
+ min-height:0!important;
+ height:100%!important;
+ padding:clamp(30px,4vw,68px)!important;
+ background:linear-gradient(142deg,#101f35,#1b3d5a)!important;
+ color:#fff!important;
+ overflow:hidden!important;
+}
 body.nta-admin .ops-auth-brand{display:flex!important;align-items:center!important;gap:13px!important}
 body.nta-admin .ops-auth-brand>span{display:grid!important;place-items:center!important;flex:none!important;width:43px!important;height:43px!important;border-radius:11px!important;background:var(--nta26-gold)!important;color:#14263d!important;font-size:27px!important;font-weight:900!important}
 body.nta-admin .ops-auth-brand>div{display:flex!important;flex-direction:column!important;gap:3px!important}
 body.nta-admin .ops-auth-brand strong{font-size:14px!important;color:#fff!important;letter-spacing:.035em!important}
 body.nta-admin .ops-auth-brand small{font-size:9px!important;color:#b1c4d7!important;letter-spacing:.1em!important}
 body.nta-admin .ops-auth-statement>span{font-size:10px!important;font-weight:800!important;color:#ebbd55!important;letter-spacing:.17em!important}
-body.nta-admin .ops-auth-statement h1{max-width:390px!important;margin:16px 0!important;color:#fff!important;font-size:clamp(30px,3vw,42px)!important;letter-spacing:-.055em!important;line-height:1.14!important;font-weight:850!important}
-body.nta-admin .ops-auth-statement p{max-width:350px!important;margin:0!important;font-size:12px!important;line-height:1.8!important;color:#b9cadd!important}
+body.nta-admin .ops-auth-statement h1{max-width:480px!important;margin:16px 0!important;color:#fff!important;font-size:clamp(34px,3.45vw,56px)!important;letter-spacing:-.055em!important;line-height:1.12!important;font-weight:850!important}
+body.nta-admin .ops-auth-statement p{max-width:400px!important;margin:0!important;font-size:13px!important;line-height:1.8!important;color:#b9cadd!important}
 body.nta-admin .ops-auth-footer{font-size:9px!important;letter-spacing:.12em!important;color:#95acc4!important}
 body.nta-admin .ops-auth-footer span{padding:0 7px;color:var(--nta26-gold)}
-body.nta-admin .ops-auth-card.auth-card{display:flex!important;flex-direction:column!important;justify-content:center!important;width:100%!important;max-width:none!important;margin:0!important;padding:42px!important;min-height:0!important;border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important}
-body.nta-admin .ops-auth-card .auth-head{padding:0!important;margin:0 0 27px!important;border:0!important;background:none!important;color:var(--nta26-ink)!important}
+body.nta-admin .ops-auth-card.auth-card{
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:center!important;
+ align-items:center!important;
+ width:100%!important;
+ max-width:none!important;
+ height:100%!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:clamp(26px,5vw,80px)!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+ background:#fff!important;
+ box-shadow:none!important;
+}
+body.nta-admin .ops-auth-card .auth-head,
+body.nta-admin .ops-auth-card .auth-body{
+ width:min(420px,100%)!important;
+ flex:0 0 auto!important;
+ margin-left:auto!important;
+ margin-right:auto!important;
+}
+body.nta-admin .ops-auth-card .auth-head{padding:0!important;margin-bottom:28px!important;border:0!important;background:none!important;color:var(--nta26-ink)!important}
 body.nta-admin .ops-auth-overline{display:block;color:#a77d2c;font-size:10px;letter-spacing:.14em;font-weight:850}
-body.nta-admin .ops-auth-card .auth-head h1{margin:8px 0!important;color:#1d344e!important;font-size:29px!important;letter-spacing:-.05em!important}
+body.nta-admin .ops-auth-card .auth-head h1{margin:9px 0!important;color:#1d344e!important;font-size:32px!important;letter-spacing:-.05em!important}
 body.nta-admin .ops-auth-card .auth-head p{margin:0!important;color:#8c9aab!important;font-size:12px!important}
 body.nta-admin .ops-auth-card .auth-body{padding:0!important}
-body.nta-admin .ops-auth-card .field{margin-bottom:16px!important}
+body.nta-admin .ops-auth-card .field{margin-bottom:17px!important}
 body.nta-admin .ops-auth-card .field label{display:block!important;margin-bottom:7px!important;color:#4c637a!important;font-size:11px!important;font-weight:750!important}
-body.nta-admin .ops-auth-card .field input{width:100%!important;min-height:43px!important;border:1px solid #dce5ec!important;border-radius:9px!important;padding:11px 12px!important;background:#f9fbfc!important;color:#1d3850!important;font-size:12px!important}
+body.nta-admin .ops-auth-card .field input{width:100%!important;min-height:44px!important;border:1px solid #dce5ec!important;border-radius:9px!important;padding:11px 12px!important;background:#f9fbfc!important;color:#1d3850!important;font-size:12px!important}
 body.nta-admin .ops-auth-card .password-field input{padding-right:49px!important}
 body.nta-admin .ops-auth-card .password-toggle{color:#6c8095!important}
-body.nta-admin .ops-auth-card .ops-auth-submit{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;width:100%!important;min-height:44px!important;padding:10px 14px!important;border:0!important;border-radius:8px!important;background:var(--nta26-gold)!important;color:#182b42!important;font-size:12px!important;font-weight:850!important}
+body.nta-admin .ops-auth-card .ops-auth-submit{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;width:100%!important;min-height:45px!important;padding:10px 14px!important;border:0!important;border-radius:8px!important;background:var(--nta26-gold)!important;color:#182b42!important;font-size:12px!important;font-weight:850!important}
 body.nta-admin .ops-auth-recovery{text-align:center!important;margin:17px 0 0!important}
 body.nta-admin .ops-auth-recovery a{font-size:11px!important;font-weight:750!important;color:#23597b!important;text-decoration:none!important}
-@media(max-width:850px){body.nta-admin .ops-auth-shell{grid-template-columns:1fr!important;max-width:520px!important;min-height:0!important}body.nta-admin .ops-auth-side{gap:12px!important;padding:24px!important}body.nta-admin .ops-auth-statement h1{font-size:23px!important;margin:9px 0!important}body.nta-admin .ops-auth-statement p,body.nta-admin .ops-auth-footer{display:none!important}body.nta-admin .ops-auth-card.auth-card{padding:28px!important}}
+/* Narrow screens keep the same viewport fit. Hide only decorative hero copy. */
+@media(max-width:850px){
+ body.nta-admin .ops-auth-shell{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+ }
+ body.nta-admin .ops-auth-side{
+  height:auto!important;
+  min-height:0!important;
+  padding:clamp(15px,3vh,22px) 22px!important;
+  gap:0!important;
+ }
+ body.nta-admin .ops-auth-statement,body.nta-admin .ops-auth-footer{display:none!important}
+ body.nta-admin .ops-auth-card.auth-card{
+  height:100%!important;
+  min-height:0!important;
+  padding:clamp(16px,3vh,28px) 22px!important;
+ }
+ body.nta-admin .ops-auth-card .auth-head{margin-bottom:20px!important}
+}
+@media(max-height:610px){
+ body.nta-admin .ops-auth-side{padding-top:22px!important;padding-bottom:22px!important}
+ body.nta-admin .ops-auth-statement h1{font-size:clamp(28px,3vw,38px)!important}
+ body.nta-admin .ops-auth-card.auth-card{padding-top:15px!important;padding-bottom:15px!important}
+ body.nta-admin .ops-auth-card .auth-head{margin-bottom:15px!important}
+ body.nta-admin .ops-auth-card .auth-head h1{font-size:26px!important}
+ body.nta-admin .ops-auth-card .field{margin-bottom:11px!important}
+ body.nta-admin .ops-auth-recovery{margin-top:10px!important}
+}
+@media(max-width:850px) and (max-height:530px){
+ /* Exception for keyboards and very short screens: the FORM pane may scroll
+    inside the viewport instead of clipping essential sign-in controls. */
+ body.nta-admin .ops-auth-card.auth-card{overflow-y:auto!important;justify-content:flex-start!important}
+}
 
 /* Final component normalization: avoid inherited spacing from prior dashboard themes. */
 body.nta-admin .admin-panel.nta26-module-page{padding-top:0!important}
