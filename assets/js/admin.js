@@ -248,11 +248,10 @@
     // Load volume and revenue require dedicated backend metrics and are intentionally
     // shown as unavailable until those values exist.
     const metricCards=[
-      {label:'Total Loads',key:null,icon:'truck'},
-      {label:'Shippers',key:'shippers',icon:'people'},
-      {label:'Carriers',key:'carriers',icon:'truck'},
-      {label:'Quote Requests',key:'quotes',icon:'document'},
-      {label:'Est. Revenue',key:null,icon:'dollar'}
+      {label:'Shipper accounts',key:'shippers',icon:'people'},
+      {label:'Carrier network',key:'carriers',icon:'truck'},
+      {label:'Quote requests',key:'quotes',icon:'document'},
+      {label:'Open tasks',key:'open_tasks',icon:'document'}
     ];
     const cardIcons={
       truck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h12v11H3zM15 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
