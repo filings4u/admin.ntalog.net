@@ -433,11 +433,11 @@
     if(window.matchMedia('(max-width:760px)').matches) shell.classList.toggle('sidebar-open');
     else {
       shell.classList.toggle('sidebar-collapsed');
-      try{localStorage.setItem('nta-sidebar-collapsed',shell.classList.contains('sidebar-collapsed')?'true':'false')}catch{}
+      try{localStorage.setItem('nta-sidebar-collapsed-v2',shell.classList.contains('sidebar-collapsed')?'true':'false')}catch{}
     }
     syncSidebarToggle();
   });
-  try{if(localStorage.getItem('nta-sidebar-collapsed')==='true')$('#adminApp').classList.add('sidebar-collapsed')}catch{}
+  try{if(localStorage.getItem('nta-sidebar-collapsed-v2')==='true')$('#adminApp').classList.add('sidebar-collapsed')}catch{}
   syncSidebarToggle();
   window.addEventListener('resize',syncSidebarToggle);
   $$('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
