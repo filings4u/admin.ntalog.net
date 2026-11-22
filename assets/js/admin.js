@@ -244,10 +244,28 @@
     if(contentTitle)contentTitle.textContent=published+' published '+(published===1?'article':'articles');
     if(contentDetail)contentDetail.textContent=published?'Review current published content':'No published articles yet';
     const priorityCount=$('#priorityQueueCount');if(priorityCount)priorityCount.textContent=String(quotes)+' QUOTES';
-    const icons={shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑'};
-    const labels=[['Shippers','shippers'],['Carriers','carriers'],['Quote Requests','quotes'],['Inquiries','inquiries'],['Open Tasks','open_tasks']];
-    const metricIcons={shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑'};
-    $('#metricCards').innerHTML=labels.map(([label,key])=>`<button type="button" class="metric-card metric-action" data-dashboard-metric="${key}" aria-label="View ${esc(label)}"><span class="metric-top"><span class="metric-icon" aria-hidden="true">${metricIcons[key]}</span><span class="metric-label">${esc(label)}</span></span><strong>${Number(state.metrics[key]||0)}</strong><span class="metric-hint" aria-hidden="true">View details →</span></button>`).join('');
+    // Five-card Concept 01 layout; use real API figures rather than mockup numbers.
+    // Load volume and revenue require dedicated backend metrics and are intentionally
+    // shown as unavailable until those values exist.
+    const metricCards=[
+      {label:'Total Loads',key:null,icon:'truck'},
+      {label:'Shippers',key:'shippers',icon:'people'},
+      {label:'Carriers',key:'carriers',icon:'truck'},
+      {label:'Quote Requests',key:'quotes',icon:'document'},
+      {label:'Est. Revenue',key:null,icon:'dollar'}
+    ];
+    const cardIcons={
+      truck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h12v11H3zM15 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+      people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M18 15a5 5 0 0 1 3 5"/></svg>',
+      document:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 3h10l4 4v14H5zM15 3v5h4M8 12h8M8 16h8"/></svg>',
+      dollar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 6c-2-2-9-2-9 2 0 5 9 2 9 7 0 4-7 5-10 2"/></svg>'
+    };
+    $('#metricCards').innerHTML=metricCards.map(({label,key,icon})=>{
+      const available=key!==null&&Number.isFinite(Number(state.metrics[key]));
+      const count=available?Number(state.metrics[key]).toLocaleString():'—';
+      const tag=available?'View details':'Not yet tracked';
+      return `<button type="button" class="metric-card metric-action" ${available?`data-dashboard-metric="${key}"`:'disabled'} aria-label="${available?'View':'Unavailable:'} ${esc(label)}"><span class="metric-top"><span class="metric-icon" aria-hidden="true">${cardIcons[icon]}</span><span class="metric-label">${esc(label)}</span></span><strong>${count}</strong><span class="metric-hint">${tag}</span></button>`;
+    }).join('');
     $$('#metricCards [data-dashboard-metric]').forEach(btn=>btn.addEventListener('click',()=>openDashboardMetric(btn.dataset.dashboardMetric)));
     const breakdown=[['Quotes','quotes'],['Published Posts','published_posts'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Shippers','shippers'],['Carriers','carriers']];
     const total=breakdown.reduce((n,[,key])=>n+Number(state.metrics[key]||0),0);
