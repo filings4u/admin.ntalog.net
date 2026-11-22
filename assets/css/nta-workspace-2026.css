@@ -1,0 +1,240 @@
+/* NTA Logistics — Workspace 2026.
+   Structural redesign: persistent navigation, dashboard workspace, CRM tables and editors.
+   Original NTA navy / gold identity retained. This is the single portal design layer. */
+:root{--nta26-navy:#101f35;--nta26-navy2:#172d47;--nta26-gold:#e6b447;--nta26-gold-soft:#fff5dd;--nta26-bg:#f4f6f9;--nta26-white:#fff;--nta26-ink:#16283c;--nta26-muted:#697b90;--nta26-line:#e1e7ee;--nta26-shadow:0 9px 28px rgba(21,38,59,.035)}
+body.nta-admin{margin:0!important;overflow-x:hidden!important;background:var(--nta26-bg)!important;color:var(--nta26-ink)!important;font-family:Inter,Arial,sans-serif!important;font-size:13px!important;line-height:1.5!important;color-scheme:light}
+body.nta-admin *,body.nta-admin *::before,body.nta-admin *::after{box-sizing:border-box}
+body.nta-admin :is(button,input,textarea,select){font-family:inherit}
+body.nta-admin button{cursor:pointer}
+body.nta-admin :is(button,a,input,textarea,select):focus-visible{outline:3px solid #e6b44799!important;outline-offset:2px}
+body.nta-admin [hidden]{display:none!important}
+body.nta-admin .admin-shell{display:grid!important;grid-template-columns:246px minmax(0,1fr)!important;max-width:none!important;min-height:100vh!important;background:var(--nta26-bg)!important}
+body.nta-admin .admin-shell.sidebar-collapsed{grid-template-columns:0 minmax(0,1fr)!important}
+body.nta-admin .admin-shell.sidebar-collapsed .admin-sidebar{display:none!important}
+body.nta-admin .admin-sidebar.nta26-sidebar{position:sticky!important;top:0!important;left:auto!important;transform:none!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;width:246px!important;min-width:0!important;height:100vh!important;padding:0 12px 12px!important;overflow-y:auto!important;overflow-x:hidden!important;background:var(--nta26-navy)!important;border:0!important;border-right:1px solid #293951!important;box-shadow:none!important;z-index:60!important;scrollbar-width:thin}
+body.nta-admin .nta26-sidebar-brand{display:flex;align-items:center;gap:12px;padding:24px 12px 26px;margin-bottom:6px;border-bottom:1px solid #ffffff19}
+body.nta-admin .nta26-brand-icon{display:grid;place-items:center;flex:none;width:39px;height:39px;border-radius:11px;background:var(--nta26-gold);color:#14243a;font-size:24px;font-weight:900;letter-spacing:-2px}
+body.nta-admin .nta26-brand-text{display:flex;flex-direction:column;gap:1px}
+body.nta-admin .nta26-brand-text strong{font-size:13px;letter-spacing:.065em;color:#fff;font-weight:850;white-space:nowrap}
+body.nta-admin .nta26-brand-text small{font-size:9px;color:#8ea5bf;font-weight:750;letter-spacing:.18em}
+body.nta-admin .admin-nav.nta26-navigation{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:3px!important;padding:10px 0 18px!important;margin:0!important;width:100%!important;background:none!important;border:0!important}
+body.nta-admin .nta26-nav-kicker{display:block!important;padding:21px 13px 7px!important;font-size:9px!important;font-weight:850!important;letter-spacing:.16em!important;color:#8196b0!important}
+body.nta-admin .admin-nav.nta26-navigation>button,body.nta-admin .nta26-navigation .command-nav-submenu>button{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;position:relative!important;width:100%!important;min-height:39px!important;height:auto!important;padding:10px 12px!important;margin:0!important;background:transparent!important;border:1px solid transparent!important;border-radius:9px!important;box-shadow:none!important;color:#b9c8d9!important;text-align:left!important;font-size:calc(12px * var(--nta-font-scale,1))!important;font-weight:600!important;line-height:1.4!important;letter-spacing:0!important;white-space:nowrap!important}
+body.nta-admin .nta26-navigation button .ops-nav-caption{position:static!important;clip:auto!important;clip-path:none!important;overflow:visible!important;width:auto!important;height:auto!important;white-space:nowrap!important;font-size:inherit!important;line-height:inherit!important}
+body.nta-admin .nta26-navigation button .command-nav-icon{display:grid!important;place-items:center!important;flex:none!important;width:19px!important;height:19px!important;color:#9cafc5!important}
+body.nta-admin .nta26-navigation button .command-nav-icon svg{width:17px!important;height:17px!important}
+body.nta-admin .nta26-navigation button:hover{background:#ffffff13!important;color:#fff!important}
+body.nta-admin .nta26-navigation button.active{background:#e7b643!important;border-color:#e7b643!important;color:#15253b!important;font-weight:800!important;box-shadow:none!important}
+body.nta-admin .nta26-navigation button.active .command-nav-icon{color:#15253b!important}
+body.nta-admin .nta26-navigation .command-nav-submenu{display:flex!important;flex-direction:column!important;gap:2px!important;margin:2px 0 3px 29px!important;padding:0 0 0 8px!important;border-left:1px solid #ffffff29!important;background:none!important;box-shadow:none!important}
+body.nta-admin .nta26-navigation .command-nav-submenu[hidden]{display:none!important}
+body.nta-admin .nta26-navigation .command-nav-submenu>button{padding:7px 8px!important;min-height:33px!important;font-size:11px!important;color:#a2b4c9!important}
+body.nta-admin .nta26-navigation .command-nav-submenu .command-nav-icon{width:15px!important;height:15px!important}
+body.nta-admin .nta26-sidebar-footer{display:flex;align-items:center;gap:10px;margin-top:auto;padding:17px 12px 7px;border-top:1px solid #ffffff19;color:#a5b7ca}
+body.nta-admin .nta26-sidebar-footer .nta26-live-dot{display:block;width:8px;height:8px;flex:none;border-radius:50%;background:#4ac89b;box-shadow:0 0 0 4px #4ac89b19}
+body.nta-admin .nta26-sidebar-footer strong{display:block;color:#e8f0f7;font-size:11px;font-weight:700}
+body.nta-admin .nta26-sidebar-footer small{display:block;color:#8195ae;font-size:10px}
+body.nta-admin .admin-workspace.nta26-workspace{min-width:0!important;max-width:none!important;width:100%!important;margin:0!important;background:var(--nta26-bg)!important;overflow:visible!important}
+body.nta-admin .portal-account-bar.nta26-header{position:sticky!important;top:0!important;z-index:70!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;min-height:78px!important;height:78px!important;margin:0!important;padding:0 31px!important;background:#fff!important;border:0!important;border-bottom:1px solid var(--nta26-line)!important;box-shadow:none!important}
+body.nta-admin .nta26-header-left{display:flex;align-items:center;gap:16px;min-width:180px}
+body.nta-admin #sidebarToggle.nta26-nav-toggle{position:static!important;inset:auto!important;transform:none!important;display:grid!important;place-items:center!important;flex:none!important;width:36px!important;height:36px!important;margin:0!important;padding:0!important;background:#f5f7fa!important;border:1px solid var(--nta26-line)!important;border-radius:9px!important;color:#405872!important;box-shadow:none!important;visibility:visible!important}
+body.nta-admin .nta26-current-page{display:flex;flex-direction:column;min-width:0;gap:2px}
+body.nta-admin #ntaPageLabel{color:#1c314a!important;font-size:calc(14px * var(--nta-font-scale,1))!important;font-weight:800!important;line-height:1.25!important}
+body.nta-admin #ntaPageSubtitle{color:#8090a2!important;font-size:calc(10px * var(--nta-font-scale,1))!important;line-height:1.4!important}
+body.nta-admin .nta26-header-right{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;flex:1}
+body.nta-admin .nta26-header .portal-search{position:relative!important;display:block!important;width:min(360px,40vw)!important;min-width:150px!important;max-width:360px!important;margin:0 5px 0 0!important;flex:0 1 360px!important}
+body.nta-admin .nta26-header .portal-search::before{display:none!important}
+body.nta-admin .nta26-header .portal-search>svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#8294a8;pointer-events:none}
+body.nta-admin .nta26-header .portal-search input{width:100%!important;height:38px!important;min-height:38px!important;padding:0 12px 0 40px!important;background:#f6f8fa!important;border:1px solid #e0e7ed!important;border-radius:9px!important;color:var(--nta26-ink)!important;font-size:11px!important;box-shadow:none!important}
+body.nta-admin .nta26-header .portal-search-results{position:absolute!important;top:calc(100% + 8px)!important;left:0!important;right:0!important;z-index:100!important;max-height:320px;overflow:auto;background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:10px!important;box-shadow:0 14px 36px #14293a20!important}
+body.nta-admin .portal-search-results button{display:block;width:100%;padding:11px;border:0;border-bottom:1px solid #edf0f4;background:#fff;color:#193451;text-align:left}
+body.nta-admin .portal-search-results button:hover{background:#f6f8fa}
+body.nta-admin #commandNewRecord.nta26-create{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-width:0!important;min-height:38px!important;height:38px!important;padding:0 15px!important;background:var(--nta26-navy2)!important;border:1px solid var(--nta26-navy2)!important;border-radius:9px!important;color:#fff!important;font-size:11px!important;font-weight:750!important;transform:none!important;box-shadow:none!important;white-space:nowrap!important}
+body.nta-admin #commandNewRecord.nta26-create:hover{background:#294765!important}
+body.nta-admin .nta26-header .portal-account{position:relative!important;inset:auto!important;margin:0!important}
+body.nta-admin .nta26-header .portal-profile{display:flex!important;align-items:center!important;gap:7px!important;height:39px!important;min-height:39px!important;padding:3px 7px 3px 3px!important;border:1px solid #e0e6eb!important;border-radius:10px!important;background:#fff!important;color:var(--nta26-ink)!important;box-shadow:none!important}
+body.nta-admin .nta26-header .profile-avatar{display:grid!important;place-items:center!important;width:31px!important;height:31px!important;min-width:31px!important;border-radius:8px!important;background:#f3dc9e!important;color:#2b3442!important;font-size:10px!important;font-weight:900!important}
+body.nta-admin .nta26-header #accountMenuName{display:block!important;max-width:100px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px!important;font-weight:700!important}
+body.nta-admin .nta26-header .account-chevron{font-size:13px;color:#7e8ea0}
+body.nta-admin .nta26-header .account-dropdown{position:absolute!important;top:calc(100% + 10px)!important;right:0!important;left:auto!important;z-index:99!important;width:288px!important;min-width:250px!important;padding:8px!important;background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:13px!important;box-shadow:0 20px 45px #142a4240!important;color:var(--nta26-ink)!important}
+body.nta-admin .account-menu-heading{padding:13px 12px!important}
+body.nta-admin .account-dropdown :is(button,a){color:#2c4058!important}
+body.nta-admin .admin-main{max-width:none!important;min-width:0!important;margin:0!important;padding:35px clamp(24px,3.25vw,54px) 70px!important}
+body.nta-admin .admin-panel{display:none!important;max-width:1450px!important;margin:0 auto!important}
+body.nta-admin .admin-panel.active{display:block!important}
+body.nta-admin .nta26-dashboard{color:var(--nta26-ink)!important}
+body.nta-admin .nta26-overview-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;margin:0 0 28px}
+body.nta-admin .nta26-eyebrow{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:#9a701b;font-size:10px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
+body.nta-admin .nta26-eyebrow i{display:block;width:7px;height:7px;border-radius:100%;background:#dba52c}
+body.nta-admin .nta26-overview-heading h1{margin:0!important;color:#12263e!important;font-size:calc(31px * var(--nta-font-scale,1))!important;letter-spacing:-.055em!important;line-height:1.18!important;font-weight:850!important}
+body.nta-admin .nta26-overview-heading p{margin:9px 0 0!important;color:var(--nta26-muted)!important;font-size:calc(12px * var(--nta-font-scale,1))!important}
+body.nta-admin .nta26-overview-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+body.nta-admin .nta26-overview-actions label{font-size:10px!important;font-weight:700;color:var(--nta26-muted)}
+body.nta-admin .nta26-overview-actions select,body.nta-admin .nta26-overview-actions button{height:37px!important;border:1px solid #dce5ed!important;border-radius:8px!important;background:#fff!important;color:#294461!important;padding:0 12px!important;font-size:11px!important;font-weight:750!important;box-shadow:none!important}
+body.nta-admin .nta26-overview-actions button{display:flex;align-items:center;gap:7px}
+body.nta-admin .dashboard-updated{display:block;flex-basis:100%;text-align:right;color:#95a3b2;font-size:10px}
+body.nta-admin #metricCards.nta26-metric-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:15px!important;max-width:none!important;margin:0 0 23px!important}
+body.nta-admin #metricCards .metric-card{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;width:100%!important;min-height:148px!important;padding:19px 20px 16px!important;background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:13px!important;color:#162a40!important;box-shadow:var(--nta26-shadow)!important;text-align:left!important;transform:none!important;cursor:pointer!important}
+body.nta-admin #metricCards .metric-card:hover{border-color:#cbb17b!important;transform:translateY(-1px)!important}
+body.nta-admin #metricCards .nta-kpi-header{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:10px!important;width:100%!important}
+body.nta-admin #metricCards .nta-kpi-label{color:#667a8e!important;letter-spacing:0!important;text-transform:none!important;font-size:calc(11px * var(--nta-font-scale,1))!important;font-weight:700!important}
+body.nta-admin #metricCards .nta-kpi-icon{display:grid!important;place-items:center!important;width:34px!important;height:34px!important;background:#f2f5f8!important;color:#4e6981!important;border-radius:10px!important}
+body.nta-admin #metricCards .nta-kpi-icon svg{width:17px!important;height:17px!important}
+body.nta-admin #metricCards .nta-kpi-value{display:block!important;margin:4px 0 7px!important;font-size:calc(32px * var(--nta-font-scale,1))!important;line-height:1.2!important;letter-spacing:-.06em!important;color:#13273e!important;font-weight:850!important}
+body.nta-admin #metricCards .nta-kpi-footer{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;width:100%!important;margin-top:auto!important;color:#91a0af!important;font-size:10px!important;letter-spacing:0!important;text-transform:none!important;font-weight:500!important}
+body.nta-admin #metricCards .nta-kpi-footer span{display:inline!important;color:inherit!important;text-transform:none!important;letter-spacing:0!important;font-size:inherit!important;font-weight:inherit!important}
+body.nta-admin #metricCards .nta-kpi-arrow{color:#b08a35!important;font-size:16px!important}
+body.nta-admin .nta26-dashboard-columns{display:grid!important;grid-template-columns:minmax(0,1.9fr) minmax(280px,.85fr)!important;align-items:start!important;gap:22px!important}
+body.nta-admin .nta26-main-column,body.nta-admin .nta26-side-column{display:grid!important;gap:20px!important;min-width:0!important}
+body.nta-admin .nta26-card{min-width:0;background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:14px!important;box-shadow:var(--nta26-shadow)!important;overflow:hidden}
+body.nta-admin .nta26-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:23px 23px 19px}
+body.nta-admin .nta26-card-kicker{display:block;margin-bottom:5px;color:#b38225;font-size:9px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+body.nta-admin .nta26-card-head h2{margin:0!important;color:#192e47!important;font-size:calc(17px * var(--nta-font-scale,1))!important;letter-spacing:-.035em!important;line-height:1.3!important;font-weight:800!important}
+body.nta-admin .nta26-card-head p{margin:6px 0 0;color:#8b9bad;font-size:11px}
+body.nta-admin .nta26-text-button{display:flex;align-items:center;gap:6px;flex:none;align-self:center;padding:7px 0;background:none!important;border:0!important;color:#31536e!important;font-size:11px!important;font-weight:800!important;white-space:nowrap}
+body.nta-admin .nta26-text-button:hover{text-decoration:underline}
+body.nta-admin .nta26-tab-list{display:flex;align-items:center;gap:5px;padding:0 20px 15px;overflow-x:auto;scrollbar-width:thin}
+body.nta-admin .nta26-tab-list button{display:flex;align-items:center;gap:7px;flex:none;min-height:33px;padding:7px 11px;background:#fff!important;border:1px solid transparent!important;border-radius:8px!important;color:#77899b!important;font-size:10px!important;font-weight:750!important;white-space:nowrap}
+body.nta-admin .nta26-tab-list button:hover{background:#f4f6f8!important}
+body.nta-admin .nta26-tab-list button.active{background:#192f49!important;border-color:#192f49!important;color:#fff!important}
+body.nta-admin .nta26-tab-list button span[data-ops-count]{display:grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border-radius:5px;background:#edf1f5;color:#4c647a;font-size:10px;font-weight:800}
+body.nta-admin .nta26-tab-list button.active span[data-ops-count]{background:#ffffff24;color:#fff}
+body.nta-admin .nta26-feed-head{display:grid;grid-template-columns:minmax(0,1fr) 105px 78px;padding:12px 25px;background:#f8fafb;border-top:1px solid #edf1f4;border-bottom:1px solid #edf1f4;color:#91a0ae;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+body.nta-admin #opsInboxList{min-height:258px!important;max-height:460px;overflow-y:auto!important;background:#fff!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-row{display:grid!important;grid-template-columns:minmax(0,1fr) 105px 78px 12px!important;align-items:center!important;gap:5px!important;width:100%!important;min-height:78px!important;margin:0!important;padding:14px 23px!important;background:#fff!important;border:0!important;border-bottom:1px solid #ecf0f4!important;border-radius:0!important;box-shadow:none!important;text-align:left!important;color:var(--nta26-ink)!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-row:hover{background:#fafbfc!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-primary{display:flex!important;align-items:center!important;min-width:0!important;gap:12px!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-icon{display:grid!important;place-items:center!important;width:37px!important;height:37px!important;min-width:37px!important;border-radius:10px!important;background:#eef3f8!important;color:#385c79!important;font-size:10px!important;font-weight:900!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-detail{display:flex!important;flex-direction:column!important;min-width:0!important;gap:2px!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-detail strong{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#24374c!important;font-size:12px!important;font-weight:750!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-detail small{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#8b99a8!important;font-size:10px!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-state{justify-self:start!important;padding:5px 8px!important;border-radius:6px!important;background:#eef4f2!important;color:#4c7567!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important;text-transform:capitalize!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-date{font-size:10px!important;color:#8b9bac!important;white-space:nowrap!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-chevron{color:#a6b5c3!important;font-size:16px!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-empty{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;min-height:255px!important;padding:35px 24px!important}
+body.nta-admin #opsInboxList .ops-inbox-empty-glyph{display:grid;place-items:center;width:46px;height:46px;margin-bottom:13px;border-radius:50%;background:#f2f6f9;color:#3f836c;font-size:18px}
+body.nta-admin #opsInboxList .ops-inbox-feed-empty strong{color:#283d55!important;font-size:12px!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-empty p{max-width:260px;margin:5px 0 0!important;font-size:11px;color:#8f9cac}
+body.nta-admin .nta26-card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:49px;padding:12px 24px;border-top:1px solid #eef1f4;color:#8b9aaa;font-size:10px}
+body.nta-admin .nta26-card-foot button{border:0;background:none;color:#294d6b;font-size:10px;font-weight:800}
+body.nta-admin .nta26-side-column .nta26-card-head{padding:21px 20px 16px}
+body.nta-admin #dashboardTasks{min-height:160px;padding:0 20px 15px!important}
+body.nta-admin #dashboardTasks .dashboard-task{display:flex!important;gap:12px!important;align-items:flex-start!important;margin:0!important;padding:13px 0!important;border-bottom:1px solid #edf1f4!important;border-radius:0!important;background:none!important}
+body.nta-admin #dashboardTasks .dashboard-task:last-child{border-bottom:0!important}
+body.nta-admin #dashboardTasks .task-priority{flex:none!important;padding:5px 8px!important;border-radius:5px!important;background:#fff5df!important;color:#a77e2d!important;font-size:9px!important;text-transform:capitalize!important;font-weight:800!important}
+body.nta-admin #dashboardTasks .dashboard-task>div{min-width:0}
+body.nta-admin #dashboardTasks .dashboard-task strong{display:block;color:#263c52!important;font-size:11px!important}
+body.nta-admin #dashboardTasks .dashboard-task small{display:block;margin-top:3px;color:#8a9ba9!important;font-size:10px!important}
+body.nta-admin #dashboardTasks .dashboard-empty{display:flex!important;align-items:center!important;flex-direction:column!important;justify-content:center!important;min-height:165px!important;padding:24px 6px!important;background:none!important;border:0!important;color:#263b52;text-align:center!important}
+body.nta-admin #dashboardTasks .dashboard-empty-mark{display:grid!important;place-items:center!important;width:44px!important;height:44px!important;margin-bottom:11px!important;border-radius:50%!important;background:#e7f5ed!important;color:#2d9964!important;font-size:23px!important}
+body.nta-admin #dashboardTasks .dashboard-empty strong{font-size:12px!important}
+body.nta-admin #dashboardTasks .dashboard-empty small{font-size:11px!important;color:#91a0af!important}
+body.nta-admin #dashboardTasks .dashboard-empty-link{margin-top:10px;border:0;background:none;color:#244f71;font-size:10px;font-weight:800}
+body.nta-admin #dashboardActivityTrend{min-height:180px;padding:7px 22px 23px!important}
+body.nta-admin #dashboardActivityTrend .nta-activity-totals{display:grid!important;grid-template-columns:130px 1fr!important;gap:12px!important;align-items:center!important;margin-bottom:14px!important}
+body.nta-admin #dashboardActivityTrend .nta-activity-main span{display:block!important;font-size:10px;color:#8394a4}
+body.nta-admin #dashboardActivityTrend .nta-activity-main strong{display:block!important;font-size:26px!important;line-height:1.2!important;color:#18324d}
+body.nta-admin #dashboardActivityTrend .nta-activity-main small{display:block!important;color:#97a6b3;font-size:9px}
+body.nta-admin #dashboardActivityTrend .nta-activity-spark svg{display:block;width:100%;max-height:76px}
+body.nta-admin #dashboardActivityTrend .nta-activity-breakdown{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px!important}
+body.nta-admin #dashboardActivityTrend .nta-activity-breakdown>div{min-width:0}
+body.nta-admin #dashboardActivityTrend .nta-activity-category{display:block;color:#6d7f90;font-size:10px}
+body.nta-admin #dashboardActivityTrend .nta-activity-category i{display:inline-block;width:6px;height:6px;margin-right:5px;border-radius:50%;background:#e0ac40}
+body.nta-admin #dashboardActivityTrend .nta-activity-breakdown strong{display:block;margin-top:3px;color:#18324d;font-size:17px}
+body.nta-admin #dashboardActivityTrend .nta-activity-breakdown small{font-size:10px;color:#9ba7b4}
+body.nta-admin #dashboardActivityTrend .nta-activity-track{height:4px;margin:6px 0;background:#edf1f5;border-radius:5px;overflow:hidden}
+body.nta-admin #dashboardActivityTrend .nta-activity-track span{display:block;height:100%;background:#315d80;border-radius:5px}
+body.nta-admin #dashboardActivityTrend .nta-activity-note{margin-top:12px;font-size:10px;color:#98a5b3}
+body.nta-admin .nta26-quicklinks{display:grid;gap:9px;padding:0 19px 20px}
+body.nta-admin .nta26-quicklinks button{display:flex;align-items:center;justify-content:space-between;gap:9px;width:100%;padding:12px 13px!important;background:#f8fafc!important;border:1px solid #e8edf2!important;border-radius:9px!important;color:#344f68!important;text-align:left!important;font-size:11px!important;font-weight:750!important}
+body.nta-admin .nta26-quicklinks button:hover{background:#fff7e6!important;border-color:#e9d19c!important}
+body.nta-admin .nta26-quicklinks button span{color:#a5b3bf}
+body.nta-admin .nta26-module-page .ops-module-id,body.nta-admin .nta26-module-page .nta-module-overline{display:none!important}
+body.nta-admin .nta26-module-page .admin-topbar{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:20px!important;margin:0 0 25px!important;padding:6px 0 2px!important;background:none!important;border:0!important}
+body.nta-admin .nta26-module-page .admin-topbar h1{margin:0!important;color:#14283f!important;font-size:calc(29px * var(--nta-font-scale,1))!important;letter-spacing:-.05em!important;line-height:1.25!important;font-weight:850!important}
+body.nta-admin .nta26-module-page .admin-topbar p{margin:7px 0 0!important;max-width:680px;color:#8291a2!important;font-size:calc(12px * var(--nta-font-scale,1))!important}
+body.nta-admin .nta26-module-page .toolbar-row{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;margin:0 0 18px!important;padding:15px 17px!important;background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:12px!important}
+body.nta-admin .nta26-module-page .toolbar-row :is(input,select){min-width:0!important;max-width:100%!important;height:37px!important;padding:0 12px!important;background:#f8fafb!important;border:1px solid #dfe6ed!important;border-radius:8px!important;color:#304961!important;font-size:11px!important}
+body.nta-admin .nta26-module-page .toolbar-row input:not([type=file]){flex:1 1 230px}
+body.nta-admin .nta26-module-page .toolbar-row select{flex:0 1 160px}
+body.nta-admin .nta26-module-page .btn{display:inline-flex!important;justify-content:center!important;align-items:center!important;gap:6px!important;min-height:37px!important;padding:9px 15px!important;border-radius:8px!important;font-size:11px!important;line-height:1.3!important;font-weight:750!important;box-shadow:none!important}
+body.nta-admin .nta26-module-page .btn-gold{background:#e8b747!important;border-color:#e8b747!important;color:#17263a!important}
+body.nta-admin .nta26-module-page .btn-primary{background:#1d3e5d!important;border-color:#1d3e5d!important;color:#fff!important}
+body.nta-admin .nta26-module-page .btn-ghost{background:#fff!important;border:1px solid #dce5ed!important;color:#35516a!important}
+body.nta-admin .nta26-module-page .command-data-panel,body.nta-admin .nta26-module-page .admin-card,body.nta-admin .nta26-module-page .editor-card{background:#fff!important;border:1px solid var(--nta26-line)!important;border-radius:13px!important;box-shadow:var(--nta26-shadow)!important}
+body.nta-admin .nta26-module-page .command-data-panel{overflow:hidden}
+body.nta-admin .nta26-module-page .command-data-title{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:10px!important;padding:17px 20px!important;background:#fff!important;border-bottom:1px solid #e7ecf1!important}
+body.nta-admin .nta26-module-page .command-data-title strong{font-size:13px!important;color:#203850!important}
+body.nta-admin .nta26-module-page .command-data-title span{color:#a1aebb!important;font-size:9px!important;letter-spacing:.12em!important}
+body.nta-admin .nta26-module-page .admin-table-wrap{overflow:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+body.nta-admin .nta26-module-page .admin-table{width:100%!important;border-collapse:collapse!important}
+body.nta-admin .nta26-module-page .admin-table th{padding:13px 18px!important;background:#f8fafb!important;border-bottom:1px solid #e4ebf1!important;color:#8796a7!important;font-size:9px!important;font-weight:850!important;letter-spacing:.09em!important;white-space:nowrap!important}
+body.nta-admin .nta26-module-page .admin-table td{padding:14px 18px!important;border-bottom:1px solid #edf1f4!important;color:#40536b!important;font-size:11px!important}
+body.nta-admin .nta26-module-page .admin-table tbody tr:hover{background:#fafbfd!important}
+body.nta-admin .nta26-module-page .ops-context-options{margin:0 0 16px!important;padding:16px 19px!important;border:1px solid var(--nta26-line)!important;border-radius:12px!important;background:#fff!important;box-shadow:none!important}
+body.nta-admin .nta26-module-page .ops-context-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:15px!important;margin-bottom:12px!important}
+body.nta-admin .nta26-module-page .ops-context-heading strong{font-size:12px!important;color:#263c53!important}
+body.nta-admin .nta26-module-page .ops-context-heading small{font-size:11px!important;color:#94a1ae!important}
+body.nta-admin .nta26-module-page .ops-type-switch{display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding:0!important;border:0!important;background:none!important}
+body.nta-admin .nta26-module-page .ops-type-switch button{min-height:34px!important;padding:7px 12px!important;background:#f6f8fa!important;border:1px solid #e4e9ef!important;border-radius:8px!important;color:#63798f!important;font-size:11px!important;font-weight:700!important}
+body.nta-admin .nta26-module-page .ops-type-switch button.active{background:#1c3751!important;border-color:#1c3751!important;color:#fff!important}
+body.nta-admin .nta26-module-page .admin-card{padding:22px!important}
+body.nta-admin .nta26-module-page :is(input,textarea,select):not(.toolbar-row *){border-radius:8px}
+body.nta-admin .nta26-module-page .form-grid{gap:14px!important}
+body.nta-admin .nta26-module-page .editor-layout{gap:20px!important}
+body.nta-admin .nta26-module-page .editor-card{padding:18px}
+body.nta-admin .nta26-module-page .admin-card h2,body.nta-admin .nta26-module-page .editor-card h3{color:#20354b!important}
+body.nta-admin .nta26-module-page .status-pill{border-radius:6px!important;font-size:10px!important;text-transform:capitalize!important;letter-spacing:0!important}
+body.nta-admin .nta26-module-page .ops-task-actions{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;padding:13px 17px;border:1px solid var(--nta26-line);border-radius:10px;background:#fff}
+body.nta-admin .nta26-module-page .ops-task-actions button{border:0;background:none;color:#365b75;font-weight:800;font-size:11px}
+body.nta-admin .admin-auth.ops-auth{background:#0c1e33!important;color:#f1f5f9!important}
+body.nta-admin .ops-auth .ops-auth-shell{min-height:100vh}
+body.nta-admin .ops-auth .ops-auth-card{border-radius:15px!important}
+@media(max-width:1280px){
+ body.nta-admin .admin-shell{grid-template-columns:224px minmax(0,1fr)!important}
+ body.nta-admin .admin-sidebar.nta26-sidebar{width:224px!important}
+ body.nta-admin .admin-main{padding:29px 25px 50px!important}
+ body.nta-admin #metricCards.nta26-metric-grid{gap:10px!important}
+ body.nta-admin #metricCards .metric-card{padding:16px!important}
+ body.nta-admin .nta26-dashboard-columns{grid-template-columns:minmax(0,1.4fr) minmax(255px,.85fr)!important;gap:14px!important}
+}
+@media(max-width:1080px){
+ body.nta-admin .nta26-dashboard-columns{grid-template-columns:minmax(0,1fr)!important}
+ body.nta-admin .nta26-side-column{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.nta-admin #metricCards.nta26-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+ body.nta-admin .admin-shell,body.nta-admin .admin-shell.sidebar-collapsed{display:block!important}
+ body.nta-admin .admin-sidebar.nta26-sidebar{position:fixed!important;top:0!important;left:0!important;bottom:0!important;transform:translateX(-110%)!important;width:min(264px,84vw)!important;max-width:84vw!important;z-index:115!important;box-shadow:20px 0 50px #0b182c50!important;transition:transform .2s ease!important}
+ body.nta-admin .admin-shell.sidebar-open .admin-sidebar.nta26-sidebar,body.nta-admin .admin-shell.sidebar-collapsed.sidebar-open .admin-sidebar.nta26-sidebar{display:flex!important;transform:translateX(0)!important;visibility:visible!important}
+ body.nta-admin .portal-account-bar.nta26-header{height:66px!important;min-height:66px!important;padding:0 15px!important;gap:9px!important}
+ body.nta-admin .nta26-header-left{gap:9px;min-width:0}
+ body.nta-admin .nta26-header .portal-search{display:none!important}
+ body.nta-admin #commandNewRecord.nta26-create{padding:0 10px!important}
+ body.nta-admin .nta26-header #accountMenuName{display:none!important}
+ body.nta-admin .admin-main{padding:22px 15px 42px!important}
+ body.nta-admin .nta26-overview-heading{align-items:flex-start;flex-direction:column;gap:15px}
+ body.nta-admin .nta26-overview-heading h1{font-size:calc(27px * var(--nta-font-scale,1))!important}
+ body.nta-admin .nta26-overview-actions{justify-content:flex-start}
+ body.nta-admin .dashboard-updated{text-align:left}
+ body.nta-admin .nta26-side-column{grid-template-columns:1fr!important}
+ body.nta-admin .nta26-module-page .admin-topbar{align-items:flex-start!important;flex-direction:column!important}
+ body.nta-admin .nta26-module-page .toolbar-row{padding:12px!important}
+ body.nta-admin .nta26-module-page .toolbar-row input:not([type=file]){flex-basis:100%}
+ body.nta-admin .nta26-module-page .ops-context-heading{flex-direction:column;align-items:flex-start!important;gap:4px!important}
+}
+@media(max-width:520px){
+ body.nta-admin #metricCards.nta26-metric-grid{gap:9px!important}
+ body.nta-admin #metricCards .metric-card{padding:13px!important;min-height:138px!important}
+ body.nta-admin #metricCards .nta-kpi-value{font-size:28px!important}
+ body.nta-admin .nta26-card-head{padding:17px!important;flex-wrap:wrap}
+ body.nta-admin .nta26-tab-list{padding:0 12px 12px}
+ body.nta-admin .nta26-feed-head{grid-template-columns:minmax(0,1fr) 65px;gap:7px;padding:10px 16px}
+ body.nta-admin .nta26-feed-head span:last-child{display:none}
+ body.nta-admin #opsInboxList .ops-inbox-feed-row{grid-template-columns:minmax(0,1fr) 65px 11px!important;padding:12px 14px!important}
+ body.nta-admin #opsInboxList .ops-inbox-feed-date{display:none!important}
+ body.nta-admin #opsInboxList .ops-inbox-feed-icon{width:30px!important;height:30px!important;min-width:30px!important}
+ body.nta-admin .nta26-card-foot{padding:12px 16px}
+ body.nta-admin .nta26-header-right{gap:6px}
+ body.nta-admin #commandNewRecord.nta26-create .ops-create-label{display:none!important}
+}
