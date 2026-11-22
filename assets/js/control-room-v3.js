@@ -69,7 +69,7 @@ create?.addEventListener('click',()=>{
  if(add && !add.disabled)add.click();
 });
 // The approved design uses a fixed section title, not a time-based greeting.
-const heading=$('#commandGreeting');if(heading)heading.textContent='Operations Overview';
+const heading=$('#commandGreeting');if(heading)heading.textContent='Your operations, at a glance.';
 // Dashboard requests and View All actions use the same existing portal routes.
 document.querySelectorAll('.command-dashboard [data-crm-shortcut]').forEach(button=>{
  button.addEventListener('click',()=>{
@@ -85,4 +85,14 @@ document.querySelectorAll('.command-dashboard [data-goto-crm]').forEach(button=>
 document.addEventListener('click',event=>{
  if(event.target.closest('.admin-nav [data-crm-shortcut]'))open();
 });
+// Keep the global breadcrumb synced with the currently active workspace panel.
+const updatePageLabel=()=>{
+ const active=document.querySelector('.admin-panel.active');
+ const label=document.querySelector('#ntaPageLabel');
+ if(!active||!label)return;
+ const names={dashboard:'Overview',crm:'Intake Center',accounts:document.querySelector('#accountsHeading')?.textContent||'Accounts',factoring:'Factoring Partners',tasks:'My Tasks',blog:'Articles',editor:'Content Editor',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
+ label.textContent=names[active.dataset.panel]||'Workspace';
+};
+document.querySelectorAll('.admin-nav button,[data-admin-go],[data-goto-crm],[data-accounts-type],[data-crm-shortcut]').forEach(button=>button.addEventListener('click',()=>requestAnimationFrame(updatePageLabel)));
+updatePageLabel();
 })();
