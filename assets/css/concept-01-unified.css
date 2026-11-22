@@ -179,3 +179,11 @@ body.nta-admin{--concept-blue:#075bd5;--concept-navy:#0b203d;--concept-ink:#1429
 .nta-admin .account-dropdown{z-index:200!important}
 @media(max-width:1050px){.nta-admin .editor-layout{grid-template-columns:1fr!important}}
 @media(max-width:760px){.nta-admin .admin-table th,.nta-admin .admin-table td{padding:8px!important}.nta-admin .media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* Place the sidebar toggle in the top bar visually, as pictured. */
+.nta-admin #adminApp #sidebarToggle.sidebar-floating-toggle{position:fixed!important;top:15px!important;bottom:auto!important;left:calc(clamp(185px,20%,228px) + 9px)!important;width:28px!important;height:30px!important;background:#fff!important;color:#163a68!important;border:0!important;box-shadow:none!important;border-radius:4px!important;z-index:100!important}
+.nta-admin #adminApp.sidebar-collapsed #sidebarToggle.sidebar-floating-toggle{left:9px!important}
+.nta-admin #adminApp.sidebar-collapsed{grid-template-columns:0 minmax(0,1fr)!important}
+.nta-admin #adminApp.sidebar-collapsed .portal-search{margin-left:48px!important}
+@media(max-width:1000px) and (min-width:761px){.nta-admin #adminApp #sidebarToggle.sidebar-floating-toggle{left:163px!important;top:9px!important}}
+@media(max-width:760px){.nta-admin #adminApp #sidebarToggle.sidebar-floating-toggle{top:13px!important;left:7px!important}.nta-admin #adminApp.sidebar-open #sidebarToggle.sidebar-floating-toggle{left:205px!important}}
