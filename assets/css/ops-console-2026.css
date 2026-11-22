@@ -194,3 +194,83 @@ body.nta-admin .ops-auth-recovery{text-align:center;margin:18px 0 0}
 body.nta-admin .ops-auth-recovery a{font-size:11px;font-weight:750;color:#235d88;text-decoration:none}
 @media(max-width:880px){body.nta-admin .ops-auth-shell{grid-template-columns:1fr!important;min-height:0!important;max-width:510px!important}body.nta-admin .ops-auth-side{padding:22px!important;gap:14px!important}body.nta-admin .ops-auth-statement h1{font-size:24px!important;margin:6px 0!important}body.nta-admin .ops-auth-statement p,body.nta-admin .ops-auth-footer{display:none!important}body.nta-admin .ops-auth-card.auth-card{padding:28px!important}body.nta-admin .ops-admin-panel .ops-context-options{align-items:flex-start!important;flex-direction:column!important}}
 @media(max-width:600px){body.nta-admin .ops-admin-panel .ops-module-id span:last-child{display:none!important}body.nta-admin .ops-type-switch{width:100%!important}body.nta-admin .ops-type-switch button{flex:1 1 140px!important}body.nta-admin .ops-admin-panel[data-panel="editor"] .editor-side{position:static!important}}
+
+/* Live three-pane inbox: working navigation, CRM record stream, contextual insights */
+body.nta-admin .ops-inbox-dashboard{max-width:1650px!important;width:100%!important;min-width:0!important}
+body.nta-admin .ops-inbox-page-heading{display:flex;justify-content:space-between;align-items:center;gap:22px;margin-bottom:24px}
+body.nta-admin .ops-inbox-breadcrumb{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:850;letter-spacing:.14em;color:#ad8433;margin-bottom:7px}
+body.nta-admin .ops-inbox-online{display:inline-block;height:7px;width:7px;background:#26a579;border-radius:50%;box-shadow:0 0 0 3px #27aa7f1c}
+body.nta-admin .ops-inbox-page-heading h1{font-size:29px!important;line-height:1.15!important;font-weight:850!important;letter-spacing:-.045em!important;color:#142e47!important;margin:0 0 7px!important}
+body.nta-admin .ops-inbox-page-heading p{font-size:12px;color:#718699;margin:0}
+body.nta-admin .ops-inbox-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+body.nta-admin .ops-inbox-toolbar label{font-size:10px;color:#6d8498;font-weight:780}
+body.nta-admin .ops-inbox-toolbar select,body.nta-admin .ops-inbox-toolbar button{height:37px!important;min-height:37px!important;border:1px solid #d9e3ed!important;border-radius:7px!important;background:white!important;color:#23465f!important;font-size:11px!important;font-weight:750!important;padding:0 11px!important}
+body.nta-admin .ops-inbox-toolbar button{cursor:pointer}
+body.nta-admin .ops-inbox-toolbar .dashboard-updated{flex-basis:100%;text-align:right;font-size:9px;color:#8495a5}
+body.nta-admin .ops-inbox-layout{display:grid;grid-template-columns:225px minmax(0,1fr) 288px;gap:16px;align-items:start;min-width:0;width:100%}
+body.nta-admin .ops-inbox-queues,body.nta-admin .ops-inbox-feed,body.nta-admin .ops-inbox-widget{min-width:0;background:#fff;border:1px solid #dce6ee;border-radius:11px;box-shadow:0 3px 15px #183e5a09;overflow:hidden}
+body.nta-admin .ops-inbox-queues{display:flex;flex-direction:column;gap:0;padding:14px 10px 14px}
+body.nta-admin .ops-inbox-queues-header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 12px 10px}
+body.nta-admin .ops-inbox-queues-header strong{font-size:10px;letter-spacing:.12em;font-weight:900;color:#8092a4}
+body.nta-admin .ops-inbox-queues-header small{font-size:8px;letter-spacing:.04em;font-weight:700;color:#a6b3bf;white-space:nowrap}
+body.nta-admin .ops-inbox-filter-list{display:flex;flex-direction:column;gap:4px}
+body.nta-admin .ops-inbox-filter-list button{width:100%;display:grid;grid-template-columns:21px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:39px;padding:9px 11px;border:0;border-radius:7px;background:transparent;color:#4b6680;font-size:11px;font-weight:740;text-align:left;cursor:pointer}
+body.nta-admin .ops-inbox-filter-list button:hover{background:#f2f6fa;color:#1d4666}
+body.nta-admin .ops-inbox-filter-list button.active{background:#153c5d;color:white}
+body.nta-admin .ops-inbox-filter-list button.active .ops-filter-sign{color:#ecc05d}
+body.nta-admin .ops-filter-sign{display:grid;place-items:center;width:20px;height:20px;color:#5c87a7;font-size:15px;line-height:1}
+body.nta-admin .ops-filter-count{min-width:22px;border-radius:5px;background:#eaf0f5;color:#4c6a80;display:grid;place-items:center;padding:3px 5px;font-size:9px;font-weight:850}
+body.nta-admin .ops-inbox-filter-list button.active .ops-filter-count{background:#2e5876;color:#fff}
+body.nta-admin .ops-inbox-directory-label{border-top:1px solid #e6edf3;padding-top:17px;margin-top:14px}
+body.nta-admin .ops-inbox-directory-links{display:flex;flex-direction:column}
+body.nta-admin .ops-inbox-directory-links button{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:36px;border:0;background:transparent;text-align:left;padding:9px 12px;border-radius:7px;color:#45647b;font-weight:720;font-size:11px;cursor:pointer}
+body.nta-admin .ops-inbox-directory-links button:hover{background:#f3f7fa;color:#20587a}
+body.nta-admin .ops-inbox-directory-links button span{color:#9cacbb;font-size:13px}
+body.nta-admin .ops-inbox-side-note{border-radius:8px;background:#f2f6f9;padding:15px;margin:20px 2px 0}
+body.nta-admin .ops-inbox-side-note>span{font-size:9px;letter-spacing:.1em;color:#a17c32;font-weight:850}
+body.nta-admin .ops-inbox-side-note p{font-size:10px;line-height:1.65;color:#71879a;margin:7px 0 0}
+body.nta-admin .ops-inbox-feed{min-height:450px;display:flex;flex-direction:column}
+body.nta-admin .ops-inbox-feed-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:23px 23px 21px;border-bottom:1px solid #e5ecf2}
+body.nta-admin .ops-inbox-eyebrow{font-size:9px;color:#a58135;font-weight:880;letter-spacing:.12em}
+body.nta-admin .ops-inbox-feed-heading h2{font-size:21px!important;color:#17344e!important;font-weight:850!important;letter-spacing:-.04em!important;margin:5px 0 5px!important}
+body.nta-admin .ops-inbox-feed-heading p{font-size:11px;color:#8093a4;margin:0}
+body.nta-admin .ops-inbox-feed-heading button{flex:none;background:#edf4f9;border:1px solid #dce8f0;color:#225e86;border-radius:7px;padding:9px 11px;font-size:10px;font-weight:800;cursor:pointer}
+body.nta-admin .ops-inbox-feed-heading button:hover{background:#e2edf5}
+body.nta-admin .ops-inbox-feed-column-head{display:grid;grid-template-columns:minmax(0,1fr) 82px 64px 20px;gap:13px;align-items:center;padding:12px 22px;border-bottom:1px solid #e5ebf0;background:#f8fafb}
+body.nta-admin .ops-inbox-feed-column-head span{font-size:9px;letter-spacing:.07em;color:#899aa9;font-weight:850}
+body.nta-admin .ops-inbox-feed-records{display:flex;flex-direction:column;min-height:250px;flex:1}
+body.nta-admin .ops-inbox-feed-row{display:grid;grid-template-columns:minmax(0,1fr) 82px 64px 20px;gap:13px;align-items:center;min-height:81px;width:100%;border:0;border-bottom:1px solid #e9eff4;background:#fff;padding:13px 22px;text-align:left;cursor:pointer;color:#27435d}
+body.nta-admin .ops-inbox-feed-row:last-child{border-bottom:0}
+body.nta-admin .ops-inbox-feed-row:hover{background:#f4f8fb}
+body.nta-admin .ops-inbox-feed-primary{display:flex;align-items:center;gap:11px;min-width:0}
+body.nta-admin .ops-inbox-feed-icon{width:37px;height:37px;min-width:37px;border-radius:8px;display:grid;place-items:center;background:#eaf2f8;color:#315f80;font-size:10px;font-weight:880;letter-spacing:.03em}
+body.nta-admin .ops-inbox-feed-detail{display:flex;flex-direction:column;gap:5px;min-width:0}
+body.nta-admin .ops-inbox-feed-detail strong{font-size:12px;font-weight:820;color:#25435b;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+body.nta-admin .ops-inbox-feed-detail small{font-size:10px;color:#8b9aaa;line-height:1.4;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+body.nta-admin .ops-inbox-feed-state{color:#597b94;background:#edf3f8;display:inline-block;border-radius:5px;padding:5px 7px;font-size:9px;font-weight:800;text-align:center;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.nta-admin .ops-inbox-feed-date{font-size:10px;color:#8295a5;white-space:nowrap}
+body.nta-admin .ops-inbox-feed-chevron{font-size:16px;color:#8ba4b7;text-align:right}
+body.nta-admin .ops-inbox-feed-empty{padding:48px 22px;min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+body.nta-admin .ops-inbox-empty-glyph{display:grid;place-items:center;width:49px;height:49px;border-radius:50%;background:#eaf3f6;color:#2d8290;font-size:25px;margin-bottom:14px}
+body.nta-admin .ops-inbox-feed-empty strong{font-size:13px;color:#38556b;font-weight:800}
+body.nta-admin .ops-inbox-feed-empty p{font-size:11px;max-width:280px;margin:8px 0 0;color:#8296a6;line-height:1.55}
+body.nta-admin .ops-inbox-feed-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 22px;border-top:1px solid #e7edf2;background:#fafcfd}
+body.nta-admin .ops-inbox-feed-footer>span{font-size:10px;color:#8b9dac}
+body.nta-admin .ops-inbox-feed-footer button{border:0;background:transparent;color:#22658a;font-size:10px;font-weight:850;cursor:pointer}
+body.nta-admin .ops-inbox-insights{display:grid;grid-template-columns:1fr;gap:15px;min-width:0}
+body.nta-admin .ops-inbox-widget header{padding:17px 18px 13px;border-bottom:1px solid #e7eef3;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+body.nta-admin .ops-inbox-widget header>span{display:block;flex-basis:100%;font-size:9px;color:#a48136;letter-spacing:.11em;font-weight:850}
+body.nta-admin .ops-inbox-widget header h2{font-size:15px!important;font-weight:850!important;color:#1c3c56!important;letter-spacing:-.03em!important;margin:0!important}
+body.nta-admin .ops-inbox-widget header button{border:0;background:transparent;color:#28648c;font-size:10px;font-weight:800;cursor:pointer}
+body.nta-admin .ops-inbox-widget #dashboardTasks{min-height:115px;padding:15px 17px;font-size:11px;color:#6a8193}
+body.nta-admin .ops-inbox-widget #dashboardTasks .dashboard-task{padding:10px 0!important;border-bottom:1px solid #ebf0f4}
+body.nta-admin .ops-inbox-widget #dashboardTasks .dashboard-empty{padding:18px 0!important;text-align:center!important}
+body.nta-admin .ops-inbox-widget #dashboardTasks .dashboard-empty-mark{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 10px;border-radius:50%;background:#e3f5eb;color:#188e61;font-size:23px}
+body.nta-admin .ops-inbox-widget #dashboardTasks .dashboard-empty strong{display:block;font-size:11px;color:#254962}
+body.nta-admin .ops-inbox-widget #dashboardTasks .dashboard-empty small{display:block;margin:8px 0;color:#8999a8;font-size:10px}
+body.nta-admin .ops-inbox-widget #dashboardActivityTrend{padding:16px!important;min-height:165px}
+body.nta-admin .ops-inbox-dashboard .command-support[hidden],body.nta-admin .ops-inbox-data-source[hidden]{display:none!important}
+@media(max-width:1400px){body.nta-admin .ops-inbox-layout{grid-template-columns:205px minmax(0,1fr) 265px;gap:13px}body.nta-admin .ops-inbox-feed-heading{padding:19px!important}body.nta-admin .ops-inbox-feed-row{padding:12px 18px!important}}
+@media(max-width:1120px){body.nta-admin .ops-inbox-layout{grid-template-columns:200px minmax(0,1fr)}body.nta-admin .ops-inbox-insights{grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr))}body.nta-admin .ops-inbox-activity-widget{grid-column:1/-1}}
+@media(max-width:790px){body.nta-admin .ops-inbox-page-heading{flex-direction:column;align-items:flex-start}body.nta-admin .ops-inbox-toolbar{justify-content:flex-start}body.nta-admin .ops-inbox-toolbar .dashboard-updated{text-align:left}body.nta-admin .ops-inbox-layout{grid-template-columns:minmax(0,1fr);gap:12px}body.nta-admin .ops-inbox-queues{padding:10px}body.nta-admin .ops-inbox-filter-list{display:flex;flex-direction:row;overflow-x:auto;scrollbar-width:thin;gap:6px}body.nta-admin .ops-inbox-filter-list button{flex:none;width:auto;min-height:36px;padding:8px 10px;grid-template-columns:16px auto auto}body.nta-admin .ops-inbox-queues-header{padding:3px 5px 9px}body.nta-admin .ops-inbox-directory-label,body.nta-admin .ops-inbox-directory-links,body.nta-admin .ops-inbox-side-note{display:none!important}body.nta-admin .ops-inbox-insights{grid-column:1;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){body.nta-admin .ops-inbox-insights{grid-template-columns:1fr}body.nta-admin .ops-inbox-activity-widget{grid-column:auto}body.nta-admin .ops-inbox-feed-heading{flex-wrap:wrap}body.nta-admin .ops-inbox-feed-column-head{grid-template-columns:minmax(0,1fr) 70px 15px;gap:7px;padding:10px 12px}body.nta-admin .ops-inbox-feed-column-head span:nth-child(3){display:none}body.nta-admin .ops-inbox-feed-row{grid-template-columns:minmax(0,1fr) 70px 15px!important;gap:7px;padding:12px!important}body.nta-admin .ops-inbox-feed-date{display:none}body.nta-admin .ops-inbox-feed-detail small{max-width:100%}body.nta-admin .ops-inbox-feed-footer{padding:12px}}
