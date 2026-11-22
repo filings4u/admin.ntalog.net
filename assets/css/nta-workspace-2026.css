@@ -269,3 +269,10 @@ body.nta-admin .ops-auth-card .ops-auth-submit{display:flex!important;align-item
 body.nta-admin .ops-auth-recovery{text-align:center!important;margin:17px 0 0!important}
 body.nta-admin .ops-auth-recovery a{font-size:11px!important;font-weight:750!important;color:#23597b!important;text-decoration:none!important}
 @media(max-width:850px){body.nta-admin .ops-auth-shell{grid-template-columns:1fr!important;max-width:520px!important;min-height:0!important}body.nta-admin .ops-auth-side{gap:12px!important;padding:24px!important}body.nta-admin .ops-auth-statement h1{font-size:23px!important;margin:9px 0!important}body.nta-admin .ops-auth-statement p,body.nta-admin .ops-auth-footer{display:none!important}body.nta-admin .ops-auth-card.auth-card{padding:28px!important}}
+
+/* Final component normalization: avoid inherited spacing from prior dashboard themes. */
+body.nta-admin .admin-panel.nta26-module-page{padding-top:0!important}
+body.nta-admin .nta26-dashboard .dashboard-actions-widget{margin:0!important;padding:0!important;max-width:none!important;min-height:0!important}
+body.nta-admin .nta26-dashboard .nta26-card .nta26-card-head>*{min-width:0}
+body.nta-admin .nta26-dashboard .nta26-card .nta26-text-button{max-width:45%}
+@media(prefers-reduced-motion:reduce){body.nta-admin .admin-sidebar.nta26-sidebar,body.nta-admin .admin-drawer{transition:none!important}}
