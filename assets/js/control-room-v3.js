@@ -68,13 +68,20 @@ create?.addEventListener('click',()=>{
  const add=$('#accountsNew');
  if(add && !add.disabled)add.click();
 });
-function setGreeting(){
- const hour=new Date().getHours();
- const salutation=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
- const el=$('#commandGreeting');
- if(el)el.textContent=salutation+', Admin';
-}
-setGreeting();
+// The approved design uses a fixed section title, not a time-based greeting.
+const heading=$('#commandGreeting');if(heading)heading.textContent='Operations Overview';
+// Dashboard requests and View All actions use the same existing portal routes.
+document.querySelectorAll('.command-dashboard [data-crm-shortcut]').forEach(button=>{
+ button.addEventListener('click',()=>{
+   const select=$('#crmType');if(select)select.value=button.dataset.crmShortcut;
+   const search=$('#crmSearch');if(search)search.value='';
+   const status=$('#crmStatus');if(status)status.value='';
+   $('.admin-nav [data-admin-panel="crm"]')?.click();
+ });
+});
+document.querySelectorAll('.command-dashboard [data-goto-crm]').forEach(button=>{
+ button.addEventListener('click',()=>$('.admin-nav [data-admin-panel="crm"]')?.click());
+});
 document.addEventListener('click',event=>{
  if(event.target.closest('.admin-nav [data-crm-shortcut]'))open();
 });
