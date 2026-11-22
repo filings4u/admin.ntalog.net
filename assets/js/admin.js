@@ -244,11 +244,10 @@
     if(contentTitle)contentTitle.textContent=published+' published '+(published===1?'article':'articles');
     if(contentDetail)contentDetail.textContent=published?'Review current published content':'No published articles yet';
     const priorityCount=$('#priorityQueueCount');if(priorityCount)priorityCount.textContent=String(quotes)+' QUOTES';
-    const icons={
-      shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑',published_posts:'◈'
-    };
-    const labels=[['Shipper Accounts','shippers'],['Carrier Network','carriers'],['Quote Requests','quotes'],['Open Tasks','open_tasks']];
-    $('#metricCards').innerHTML=labels.map(([label,key])=>`<button type="button" class="metric-card metric-action" data-dashboard-metric="${key}" aria-label="View ${esc(label)}"><span class="metric-icon" aria-hidden="true">${icons[key]}</span><span class="metric-label">${esc(label)}</span><strong>${Number(state.metrics[key]||0)}</strong><span class="metric-hint" aria-hidden="true">View details →</span></button>`).join('');
+    const icons={shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑'};
+    const labels=[['Shippers','shippers'],['Carriers','carriers'],['Quote Requests','quotes'],['Inquiries','inquiries'],['Open Tasks','open_tasks']];
+    const metricIcons={shippers:'♧',carriers:'▰',quotes:'▤',inquiries:'☏',open_tasks:'☑'};
+    $('#metricCards').innerHTML=labels.map(([label,key])=>`<button type="button" class="metric-card metric-action" data-dashboard-metric="${key}" aria-label="View ${esc(label)}"><span class="metric-top"><span class="metric-icon" aria-hidden="true">${metricIcons[key]}</span><span class="metric-label">${esc(label)}</span></span><strong>${Number(state.metrics[key]||0)}</strong><span class="metric-hint" aria-hidden="true">View details →</span></button>`).join('');
     $$('#metricCards [data-dashboard-metric]').forEach(btn=>btn.addEventListener('click',()=>openDashboardMetric(btn.dataset.dashboardMetric)));
     const breakdown=[['Quotes','quotes'],['Published Posts','published_posts'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Shippers','shippers'],['Carriers','carriers']];
     const total=breakdown.reduce((n,[,key])=>n+Number(state.metrics[key]||0),0);
@@ -265,13 +264,23 @@
   }
   async function loadRecentActivity(){
     const events=[];
-    const outputs=await Promise.allSettled([api('blog_list'),api('crm_list',{entity_type:'quote',limit:20})]);
+    const outputs=await Promise.allSettled([api('blog_list'),api('crm_list',{entity_type:'quote',limit:20}),api('crm_list',{entity_type:'shipper',limit:10}),api('crm_list',{entity_type:'carrier',limit:10}),api('crm_list',{entity_type:'inquiry',limit:10})]);
     if(outputs[0].status==='fulfilled')for(const post of outputs[0].value.posts||[]){
       if(post.status==='published'&&post.published_at)events.push({type:'Blog post published',description:post.title||'A blog post was published.',date:post.published_at,icon:'◈',target:'blog',id:post.id});
     }
-    if(outputs[1].status==='fulfilled')for(const quote of outputs[1].value.rows||[]){
-      if(quote.created_at)events.push({type:'Quote request received',description:quote.company_name||quote.reference_number||'Freight quote submitted',date:quote.created_at,icon:'▤',target:'quote',id:quote.id});
-    }
+    const crmTypes=[['quote','Quote'],['shipper','Shipper'],['carrier','Carrier'],['inquiry','Inquiry']];
+    const records=[];
+    crmTypes.forEach(([type,label],i)=>{
+      if(outputs[i+1].status!=='fulfilled')return;
+      for(const r of outputs[i+1].value.rows||[]){
+        const record={type,label,company:r.company_name||r.legal_company_name||r.name||r.reference_number||'—',request:r.description||r.topic||r.equipment_type||r.reference_number||'—',status:r.status||'new',date:r.created_at,id:r.id};
+        records.push(record);
+        if(type==='quote'&&r.created_at)events.push({type:'Quote request received',description:record.company,date:r.created_at,icon:'▤',target:'quote',id:r.id});
+      }
+    });
+    records.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    const rows=$('#dashboardCrmRows');
+    if(rows)rows.innerHTML=records.slice(0,5).map(r=>`<tr><td><span class="crm-type-icon" aria-hidden="true">${r.type==='carrier'?'▰':r.type==='shipper'?'♧':r.type==='inquiry'?'☏':'▤'}</span> ${esc(r.label)}</td><td>${esc(r.company)}</td><td>${esc(r.request)}</td><td><span class="status-pill ${esc(String(r.status).toLowerCase().replace(/[^a-z-]/g,''))}">${esc(r.status)}</span></td><td>${r.date?esc(new Date(r.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})):'—'}</td></tr>`).join('')||'<tr><td colspan="5">No CRM records yet.</td></tr>';
     events.sort((a,b)=>new Date(b.date)-new Date(a.date));
     const firstQuote=events.find(e=>e.target==='quote');
     const quoteDetail=$('#priorityQuoteDetail');
@@ -282,23 +291,18 @@
 
     const trend=document.querySelector('#dashboardActivityTrend');
     if(trend){
-      const today=new Date(),day=86400000;
-      const days=Array.from({length:7},(_,i)=>{const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()-(6-i));return {date:d,key:d.toLocaleDateString('en-CA'),label:d.toLocaleDateString(undefined,{month:'short',day:'numeric'}),posts:0,quotes:0}});
-      for(const e of events){
-        const date=new Date(e.date);
-        if(!Number.isFinite(date.getTime()))continue;
-        const key=new Date(date.getFullYear(),date.getMonth(),date.getDate()).toLocaleDateString('en-CA');
-        const record=days.find(d=>d.key===key);
-        if(record)record[e.target==='blog'?'posts':'quotes']++;
-      }
-      const max=Math.max(1,...days.map(d=>d.posts+d.quotes));
-      const values=days.map(d=>d.posts+d.quotes);
-      const points=values.map((value,i)=>({x:30+i*47,y:168-(value/max)*135}));
+      const period=Number($('#dashboardPeriod')?.value||30);
+      const today=new Date();
+      const days=Array.from({length:period},(_,i)=>{const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()-(period-1-i));return {key:d.toLocaleDateString('en-CA'),label:d.toLocaleDateString(undefined,{month:'short',day:'numeric'}),quotes:0,posts:0}});
+      for(const e of events){const d=new Date(e.date);if(!Number.isFinite(d.getTime()))continue;const key=new Date(d.getFullYear(),d.getMonth(),d.getDate()).toLocaleDateString('en-CA');const target=days.find(v=>v.key===key);if(target)target[e.target==='blog'?'posts':'quotes']++;}
+      const groups=period===30?6:7, buckets=Array.from({length:groups},(_,i)=>{const lo=Math.floor(i*period/groups),hi=Math.floor((i+1)*period/groups);return {label:days[Math.min(hi-1,period-1)].label,quotes:days.slice(lo,hi).reduce((n,x)=>n+x.quotes,0),posts:days.slice(lo,hi).reduce((n,x)=>n+x.posts,0)};});
+      const max=Math.max(1,...buckets.map(v=>v.quotes+v.posts));const W=600,H=220,left=38,right=14,bottom=28,top=35,base=H-bottom,step=(W-left-right)/buckets.length;
+      const grid=Array.from({length:5},(_,i)=>{const y=top+i*(base-top)/4;const val=Math.round(max*(4-i)/4);return `<line x1="${left}" y1="${y}" x2="${W-right}" y2="${y}" stroke="#e5ecf6"/><text x="${left-10}" y="${y+4}" text-anchor="end" fill="#51677f" font-size="10">${val}</text>`;}).join('');
+      const bars=buckets.map((v,i)=>{const x=left+i*step+step*.22;const h=v.quotes/max*(base-top);return `<rect x="${x}" y="${base-h}" width="${step*.56}" height="${Math.max(0,h)}" rx="2" fill="#77b6ff"/><text x="${left+i*step+step/2}" y="${H-8}" text-anchor="middle" font-size="10" fill="#536b86">${v.label}</text>`;}).join('');
+      const points=buckets.map((v,i)=>({x:left+i*step+step/2,y:base-((v.quotes+v.posts)/max)*(base-top)}));
       const line=points.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' ');
-      const dots=points.map(p=>'<circle class="command-chart-point" cx="'+p.x+'" cy="'+p.y+'" r="4"/>').join('');
-      const grid=Array.from({length:4},(_,i)=>'<line class="trend-grid" x1="30" x2="312" y1="'+(33+i*45)+'" y2="'+(33+i*45)+'"/>').join('');
-      const labels=days.map((d,i)=>'<text class="trend-label" x="'+(30+i*47)+'" y="192" text-anchor="middle">'+d.label+'</text>').join('');
-      trend.innerHTML='<svg role="img" aria-label="Total daily published posts and received quote requests for the last seven days" viewBox="0 0 345 211" preserveAspectRatio="xMidYMid meet">'+grid+'<path class="command-chart-line" d="'+line+'"/>'+dots+labels+'</svg>';
+      const dots=points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#0755b8"/>`).join('');
+      trend.innerHTML=`<div class="dashboard-chart-legend"><span><i class="bar-key"></i> Quote Requests</span><span><i class="line-key"></i> Total Activity</span></div><svg role="img" aria-label="Real quote requests and total recorded activity for the last ${period} days" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${bars}<path d="${line}" stroke="#0755b8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg>`;
 
     }
 
@@ -319,6 +323,7 @@
     if(taskTitle)taskTitle.textContent=open.length?open.length+' open '+(open.length===1?'task':'tasks'):'All tasks complete';
     if(taskDetail)taskDetail.textContent=open.length?(open[0].title||'Review operational follow-ups'):'No outstanding action items';
     $('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,4).map(t=>`<div class="dashboard-task"><span class="task-priority">${esc(t.priority||'normal')}</span><div><strong>${esc(t.title)}</strong><small>${t.due_at?'Due '+esc(dt(t.due_at)):'No due date'}</small></div></div>`).join('')||'<div class="dashboard-empty"><span class="dashboard-empty-mark">✓</span><strong>All caught up</strong><small>No open tasks need your attention.</small><button type="button" class="dashboard-empty-link" data-admin-go="tasks">Go to tasks →</button></div>';$('#dashboardTasks [data-admin-go]')?.addEventListener('click',()=>activate('tasks'));}
+  $('#dashboardPeriod')?.addEventListener('change',()=>loadRecentActivity().catch(console.warn));
   $('#tasksRefresh')?.addEventListener('click',loadTasks);
   const crmCols={quote:[['Reference','reference_number'],['Company','company_name'],['Contact','contact_name'],['Route',r=>`${r.pickup_city||''}, ${r.pickup_state||''} → ${r.delivery_city||''}, ${r.delivery_state||''}`],['Equipment','equipment_type'],['Status','status'],['Submitted','created_at']],shipper:[['Reference','reference_number'],['Company','company_name'],['Contact','primary_contact_name'],['Email','primary_contact_email'],['Industry','industry'],['Status','status'],['Created','created_at']],carrier:[['Reference','reference_number'],['Company','legal_company_name'],['Contact','primary_contact_name'],['USDOT','dot_number'],['MC','mc_number'],['Status','status'],['Created','created_at']],inquiry:[['Reference','reference_number'],['Company','company_name'],['Name','name'],['Email','email'],['Topic','topic'],['Status','status'],['Created','created_at']]};
   async function loadCrm(){state.crmType=$('#crmType').value;const j=await api('crm_list',{entity_type:state.crmType,q:$('#crmSearch').value,status:$('#crmStatus').value,limit:100});state.crmRows=j.rows||[];$('#crmCount').textContent=`${j.count} records`;const cols=crmCols[state.crmType];$('#crmHead').innerHTML='<tr>'+cols.map(c=>`<th>${esc(c[0])}</th>`).join('')+'</tr>';$('#crmBody').innerHTML=state.crmRows.map(r=>'<tr data-id="'+r.id+'">'+cols.map(([l,k])=>{let v=typeof k==='function'?k(r):r[k];if(k==='status')return `<td><span class="status-pill ${esc(v||'new')}">${esc(v||'new')}</span></td>`;if(k==='created_at')v=dt(v);return `<td>${esc(v||'—')}</td>`;}).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}">No records found.</td></tr>`;$$('#crmBody tr[data-id]').forEach(tr=>tr.addEventListener('click',()=>openCrm(tr.dataset.id)));}
