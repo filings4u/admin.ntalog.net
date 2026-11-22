@@ -149,3 +149,33 @@ body.nta-admin{--concept-blue:#075bd5;--concept-navy:#0b203d;--concept-ink:#1429
 .nta-admin .command-dashboard .metric-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .nta-admin .command-main-grid,.nta-admin .command-bottom-grid{grid-template-columns:1fr!important}
 }
+
+/* Finish the reference KPI treatment and all-page density. */
+.nta-admin .command-dashboard .metric-card:disabled{opacity:1!important;cursor:default!important}
+.nta-admin .command-dashboard .metric-card:disabled:hover{background:#fff!important;border-color:#dbe4ef!important}
+.nta-admin .command-dashboard .metric-card .metric-icon svg{width:17px;height:17px;display:block}
+.nta-admin .command-dashboard .metric-card .metric-hint{color:#64788e!important;font-weight:600!important}
+.nta-admin .command-dashboard .metric-card[data-dashboard-metric] .metric-hint{color:#188456!important}
+.nta-admin .dashboard-period{white-space:nowrap!important}
+.nta-admin .admin-nav button[data-admin-panel="team"]{margin-top:0!important}
+.nta-admin .toolbar-row{gap:9px!important;margin-bottom:13px!important}
+.nta-admin .toolbar-row input,.nta-admin .toolbar-row select{min-height:34px!important;font-size:12px!important}
+.nta-admin .admin-table th,.nta-admin .admin-table td{padding:9px 11px!important}
+.nta-admin .admin-table th{text-transform:none!important;letter-spacing:0!important}
+.nta-admin .editor-layout{gap:13px!important;grid-template-columns:minmax(0,1fr) minmax(230px,290px)!important}
+.nta-admin .editor-main,.nta-admin .editor-side{gap:12px!important}
+.nta-admin .editor-toolbar{padding:7px!important;gap:5px!important}
+.nta-admin .editor-toolbar button{min-height:29px!important}
+.nta-admin .editor-side label,.nta-admin .editor-card label{font-size:11px!important}
+.nta-admin .rich-editor{min-height:350px!important;padding:14px!important}
+.nta-admin .media-grid{gap:10px!important}
+.nta-admin .media-card div{padding:9px!important}
+.nta-admin .detail-grid{gap:10px!important}
+.nta-admin .detail-item{padding:12px!important}
+.nta-admin .admin-drawer{box-shadow:-14px 0 44px #17335722!important}
+.nta-admin .drawer-head{padding:13px 17px!important}
+.nta-admin .drawer-body{padding:17px!important}
+.nta-admin .preview-article{max-width:920px!important}
+.nta-admin .account-dropdown{z-index:200!important}
+@media(max-width:1050px){.nta-admin .editor-layout{grid-template-columns:1fr!important}}
+@media(max-width:760px){.nta-admin .admin-table th,.nta-admin .admin-table td{padding:8px!important}.nta-admin .media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
