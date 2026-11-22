@@ -92,6 +92,11 @@ const updatePageLabel=()=>{
  if(!active||!label)return;
  const names={dashboard:'Overview',crm:'Intake Center',accounts:document.querySelector('#accountsHeading')?.textContent||'Accounts',factoring:'Factoring Partners',tasks:'My Tasks',blog:'Articles',editor:'Content Editor',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
  label.textContent=names[active.dataset.panel]||'Workspace';
+ const subtitle=document.querySelector('#ntaPageSubtitle');
+ if(subtitle){
+  const subtitles={dashboard:'Operations dashboard',crm:'Applications & inquiries',accounts:'Business relationships',factoring:'Partner network',tasks:'Operational follow-ups',blog:'Content management',editor:'Publishing workspace',categories:'Content organization',media:'Images & files',profile:'Account settings',team:'User management'};
+  subtitle.textContent=subtitles[active.dataset.panel]||'Management workspace';
+ }
 };
 document.querySelectorAll('.admin-nav button,[data-admin-go],[data-goto-crm],[data-accounts-type],[data-crm-shortcut]').forEach(button=>button.addEventListener('click',()=>requestAnimationFrame(updatePageLabel)));
 updatePageLabel();
