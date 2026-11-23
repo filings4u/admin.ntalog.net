@@ -34,8 +34,8 @@ const syncRail=()=>{
  const page=active.dataset.panel;
  const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[page]||page;
  const accountType=accounts?.value;
- $('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
- $('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&button.dataset.accountsType===accountType));
+ $$('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
+ $$('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&button.dataset.accountsType===accountType));
 };
 const observer=new MutationObserver(syncRail);
 panelNodes.forEach(panel=>observer.observe(panel,{attributes:true,attributeFilter:['class']}));
