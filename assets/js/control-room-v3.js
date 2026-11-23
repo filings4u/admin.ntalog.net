@@ -65,10 +65,12 @@ const openNavGroupFor=(name)=>{
  const target=navGroups.find(group=>group.dataset.navGroup===name);
  if(target)openGroup(target);
 };
+let operationsAccountMode=false;
 const syncOpenGroup=()=>{
  const page=document.querySelector('.admin-panel.active')?.dataset.panel;
  const target=page==='crm'||page==='crm-detail'||page==='tasks'?'operations':
-  ['accounts','account-editor','factoring','factoring-editor'].includes(page)?'network':
+  ['accounts','account-editor'].includes(page)?(operationsAccountMode?'operations':'network'):
+  ['factoring','factoring-editor'].includes(page)?'network':
   ['blog','editor','article-preview','media','categories'].includes(page)?'publishing':null;
  if(target)openNavGroupFor(target);
  else if(page==='dashboard')closeGroups();
@@ -87,9 +89,33 @@ document.querySelectorAll('.admin-nav [data-crm-shortcut]').forEach(button=>{
    if(select)select.value=type;
    const search=$('#crmSearch');if(search)search.value='';
    const status=$('#crmStatus');if(status)status.value='';
-   $('.admin-nav [data-admin-panel="crm"]')?.click();
+   operationsAccountMode=false;
+   if(window.NTAAdminNavigate)window.NTAAdminNavigate('crm','#/crm/'+type);
+   else $('.admin-nav [data-admin-panel="crm"]')?.click();
    openNavGroupFor('operations');
+   requestAnimationFrame(updatePageLabel);
  });
+});
+
+// The two CRM directories are in Operations, but their existing management
+// pages and forms remain shared with Business Network. No duplicate APIs.
+document.querySelectorAll('.nta26-nav-group[data-nav-group="operations"] [data-operation-account]').forEach(button=>{
+ button.addEventListener('click',()=>{
+   const type=button.dataset.operationAccount;
+   if(!['shipper','carrier'].includes(type))return;
+   operationsAccountMode=true;
+   const open=window.NTAAccountsOpen;
+   if(typeof open==='function'){
+     Promise.resolve(open(type)).catch(error=>console.error('Unable to load '+type+' CRM:',error));
+   }else{
+     document.querySelector('.nta26-nav-group[data-nav-group="network"] [data-accounts-type="'+type+'"]')?.click();
+   }
+   openNavGroupFor('operations');
+   requestAnimationFrame(updatePageLabel);
+ });
+});
+document.querySelectorAll('.nta26-nav-group[data-nav-group="network"] [data-accounts-type]').forEach(button=>{
+ button.addEventListener('click',()=>{operationsAccountMode=false;openNavGroupFor('network')});
 });
 const create=$('#commandNewRecord');
 create?.addEventListener('click',()=>{
@@ -107,11 +133,18 @@ document.querySelectorAll('.command-dashboard [data-crm-shortcut]').forEach(butt
    const select=$('#crmType');if(select)select.value=button.dataset.crmShortcut;
    const search=$('#crmSearch');if(search)search.value='';
    const status=$('#crmStatus');if(status)status.value='';
-   $('.admin-nav [data-admin-panel="crm"]')?.click();
+   if(window.NTAAdminNavigate)window.NTAAdminNavigate('crm','#/crm/'+button.dataset.crmShortcut);
+   else $('.admin-nav [data-admin-panel="crm"]')?.click();
+   openNavGroupFor('operations');
  });
 });
 document.querySelectorAll('.command-dashboard [data-goto-crm]').forEach(button=>{
- button.addEventListener('click',()=>$('.admin-nav [data-admin-panel="crm"]')?.click());
+ button.addEventListener('click',()=>{
+   operationsAccountMode=false;
+   if(window.NTAAdminNavigate)window.NTAAdminNavigate('crm','#/crm/quote');
+   else $('.admin-nav [data-admin-panel="crm"]')?.click();
+   openNavGroupFor('operations');
+ });
 });
 
 // Keep the global breadcrumb synced with the currently active workspace panel.
@@ -119,7 +152,7 @@ const updatePageLabel=()=>{
  const active=document.querySelector('.admin-panel.active');
  const label=document.querySelector('#ntaPageLabel');
  if(!active||!label)return;
- const names={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:document.querySelector('#accountsHeading')?.textContent||'Accounts','account-editor':'Account Management',factoring:'Factoring Partners','factoring-editor':'Factoring Management',tasks:'My Tasks',blog:'Articles',editor:'Content Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
+ const names={dashboard:'Overview',crm:({quote:'Quote requests',carrier:'Carrier applications',shipper:'Shipper applications',inquiry:'Inquiries'})[document.querySelector('#crmType')?.value]||'Requests','crm-detail':'Record Details',accounts:operationsAccountMode?((document.querySelector('#accountsType')?.value==='carrier')?'Carrier CRM':'Shipper CRM'):(document.querySelector('#accountsHeading')?.textContent||'Accounts'),'account-editor':'Account Management',factoring:'Factoring Partners','factoring-editor':'Factoring Management',tasks:'My Tasks',blog:'Articles',editor:'Content Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
  label.textContent=names[active.dataset.panel]||'Workspace';
  const subtitle=document.querySelector('#ntaPageSubtitle');
  if(subtitle){
@@ -127,6 +160,6 @@ const updatePageLabel=()=>{
   subtitle.textContent=subtitles[active.dataset.panel]||'Management workspace';
  }
 };
-document.querySelectorAll('.admin-nav button,[data-admin-go],[data-goto-crm],[data-accounts-type],[data-crm-shortcut]').forEach(button=>button.addEventListener('click',()=>requestAnimationFrame(updatePageLabel)));
+document.querySelectorAll('.admin-nav button,[data-admin-go],[data-goto-crm],[data-accounts-type],[data-crm-shortcut],[data-operation-account]').forEach(button=>button.addEventListener('click',()=>requestAnimationFrame(updatePageLabel)));
 updatePageLabel();
 })();
