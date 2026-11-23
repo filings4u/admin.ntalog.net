@@ -146,8 +146,9 @@
     if(!record||typeof record!=='object')throw new Error('This CRM record is unavailable.');
     const used=new Set(['status','reference_number','id','created_at','updated_at','source_page']);
     const main=(type==='quote'?quoteContent(record,used):otherContent(record,used,type));
+    const contactPanel=contact(record,used,type);
     const more=metadata(record,used);
-    return statusControl(record)+'<div class="nta27-crm-grid"><div class="nta27-crm-primary">'+main+more+'</div><aside class="nta27-crm-side">'+contact(record,used,type)+notesSection(response?.notes)+tasksSection(response?.tasks)+'</aside></div>';
+    return statusControl(record)+'<div class="nta27-crm-grid"><div class="nta27-crm-primary">'+main+more+'</div><aside class="nta27-crm-side">'+contactPanel+notesSection(response?.notes)+tasksSection(response?.tasks)+'</aside></div>';
   }
   window.NTACrmManagementView={render,summary};
 })();
