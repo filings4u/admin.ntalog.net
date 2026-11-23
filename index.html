@@ -28,7 +28,6 @@
     <div class="nta26-nav-group-items" id="nta26PublishingItems" hidden>
       <button type="button" data-admin-panel="blog" data-nav-icon="newspaper"><span class="ops-nav-caption">Articles</span></button>
       <button type="button" data-admin-panel="editor" data-nav-icon="pen-line"><span class="ops-nav-caption">Blog Editor</span></button>
-      <button type="button" data-admin-panel="categories" data-nav-icon="layers"><span class="ops-nav-caption">Categories</span></button>
       <button type="button" data-admin-panel="media" data-nav-icon="image"><span class="ops-nav-caption">Media library</span></button>
     </div>
   </div>
@@ -166,7 +165,44 @@
   </div>
   <section class="nta27-library-table" aria-label="Blog posts"><div class="nta27-library-table-title"><strong>Content Library</strong><span id="blogResultCount">Loading posts…</span></div>
     <div class="admin-table-wrap"><table class="admin-table nta27-posts-table"><thead><tr><th>Blog Post</th><th>Category</th><th>Status</th><th>Published / Scheduled</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="postsBody"><tr><td colspan="6">Loading posts…</td></tr></tbody></table></div>
-  </section><div id="blogListNotice" class="save-state" role="status" aria-live="polite"></div>
+  </section>
+  <section class="nta28-blog-categories" aria-labelledby="blogCategoriesHeading" id="blogCategoriesSection">
+    <header class="nta28-blog-categories-head">
+      <div>
+        <span class="nta27-kicker">BLOG ORGANIZATION</span>
+        <h3 id="blogCategoriesHeading">Blog Categories</h3>
+        <p>Create and manage categories used by your blog posts.</p>
+      </div>
+      <span id="blogCategoryCount" class="nta28-category-count" aria-live="polite">Loading categories…</span>
+    </header>
+    <div class="nta28-blog-categories-layout">
+      <div class="nta28-blog-category-list-panel">
+        <div class="nta28-category-panel-title"><strong>Existing Categories</strong><span>Select Edit to update a category</span></div>
+        <div id="categoryList" class="nta28-blog-category-list" aria-live="polite">
+          <p class="nta28-category-empty">Loading categories…</p>
+        </div>
+      </div>
+      <div class="nta28-blog-category-form-panel">
+        <div class="nta28-category-panel-title"><strong id="categoryFormTitle">Add New Category</strong><span>Visible in Blog Editor</span></div>
+        <form id="categoryForm" class="nta28-category-form">
+          <input id="categoryId" type="hidden">
+          <label for="categoryName">Category name <span aria-hidden="true">*</span></label>
+          <input id="categoryName" name="name" type="text" maxlength="160" placeholder="e.g. Freight Industry News" autocomplete="off" required>
+          <label for="categorySlug">URL slug</label>
+          <input id="categorySlug" name="slug" type="text" maxlength="160" placeholder="freight-industry-news" autocomplete="off">
+          <small>Used in category URLs. Leave blank to generate from the name.</small>
+          <label for="categoryDescription">Description</label>
+          <textarea id="categoryDescription" name="description" maxlength="1000" rows="3" placeholder="What will readers find in this category?"></textarea>
+          <div class="nta28-category-form-actions">
+            <button id="saveCategory" type="submit" class="btn btn-gold">Add Category</button>
+            <button id="cancelCategoryEdit" type="button" class="btn btn-ghost" hidden>Cancel Edit</button>
+          </div>
+          <p id="categoryFormMessage" class="nta28-category-feedback" aria-live="polite" role="status" hidden></p>
+        </form>
+      </div>
+    </div>
+  </section>
+  <div id="blogListNotice" class="save-state" role="status" aria-live="polite"></div>
 </section>
 <section class="admin-panel ops-admin-panel nta26-module-page nta27-blog-editor" data-panel="editor">
   <div class="nta27-editor-topbar">
@@ -220,7 +256,7 @@
 <article class="nta26-preview-article"><div id="previewCategory" class="nta26-card-kicker"></div><h1 id="previewTitle"></h1><p id="previewExcerpt" class="nta26-preview-lead"></p><div id="previewContent" class="preview-content"></div></article>
 </section>
 <section class="admin-panel ops-admin-panel nta26-module-page" data-panel="media"><div class="admin-card"><div class="toolbar-row"><input id="mediaFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><input id="mediaAlt" placeholder="Image alt text"><button id="uploadMedia" class="btn btn-gold">Upload Image</button></div></div><p id="mediaStatus" class="save-state" role="status" aria-live="polite"></p><div id="mediaGrid" class="media-grid" style="margin-top:18px"></div></section>
-<section class="admin-panel ops-admin-panel nta26-module-page" data-panel="categories"><div class="admin-grid-2"><div class="admin-card"><h2>Add / Update Category</h2><div class="field"><label>Name</label><input id="categoryName"></div><div class="field"><label>Slug</label><input id="categorySlug"></div><div class="field"><label>Description</label><textarea id="categoryDescription"></textarea></div><button id="saveCategory" class="btn btn-gold">Save Category</button></div><div class="admin-card"><h2>Categories</h2><div id="categoryList"></div></div></div></section>
+
 <section class="admin-panel ops-admin-panel nta26-module-page" data-panel="profile"><div class="admin-card profile-details"><h2>Account Details</h2><div class="detail-grid"><div class="detail-item"><span>Display Name</span><strong id="profileDisplayName">Administrator</strong></div><div class="detail-item"><span>Email Address</span><strong id="profileEmail">—</strong></div><div class="detail-item"><span>Account Role</span><strong id="profileRole">Administrator</strong></div><div class="detail-item"><span>Account Status</span><strong id="profileStatus">Active</strong></div></div><div class="profile-actions"><a href="forgot-password.html" class="btn btn-primary">Reset Password</a><button type="button" class="btn btn-ghost" data-admin-go="team">View Team &amp; Users</button></div></div></section>
 <section class="admin-panel ops-admin-panel nta26-module-page" data-panel="team"><div class="command-data-panel"><div class="command-data-title"><strong>Authorized team members</strong></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Added</th></tr></thead><tbody id="teamBody"></tbody></table></div></div></section>
 </main></div></div>
