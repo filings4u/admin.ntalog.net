@@ -141,7 +141,7 @@
       '<label class="nta29-wide">Description<textarea name="description" rows="5">'+esc(task.description||'')+'</textarea></label>'+
       '</div><div class="nta29-form-actions"><button type="submit" class="nta29-primary"'+(!options?' disabled':'')+'>Save task</button><a href="'+pageLink('tasks')+'" class="nta29-secondary">Cancel</a></div>'+
       (!options?'<p class="nta29-warning">No CRM records are available to associate with this task. Create a request first.</p>':'')+'</form>';
-    state.taskEdit={id};
+    state.taskEdit={id,assigned_to:task.assigned_to||null};
   };
   const navigate=async()=>{
     const serial=++state.loading;const route=parse(),page=routes[route.page];
@@ -239,7 +239,7 @@
         const [entity_type,entity_id]=String(values.linked||'').split('|');
         if(!types[entity_type]||!isUuid(entity_id))throw Error('Select a valid CRM request for the task.');
         if(!String(values.title||'').trim())throw Error('Task title is required.');
-        await authApi('task_save',{id:state.taskEdit.id==='new'?undefined:state.taskEdit.id,entity_type,entity_id,title:String(values.title).trim(),description:String(values.description||'').trim(),priority:values.priority,status:values.status,due_at:values.due_at?new Date(values.due_at).toISOString():null});
+        await authApi('task_save',{id:state.taskEdit.id==='new'?undefined:state.taskEdit.id,entity_type,entity_id,title:String(values.title).trim(),description:String(values.description||'').trim(),priority:values.priority,status:values.status,assigned_to:state.taskEdit.assigned_to,due_at:values.due_at?new Date(values.due_at).toISOString():null});
         location.hash=pageLink('tasks');return;
       }
     }catch(error){flash(error.message,'error')}
