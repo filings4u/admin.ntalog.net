@@ -297,3 +297,10 @@ body.nta-admin .nta29-company-page .nta29-quote-row small{
  body.nta-admin .nta29-company-page .nta29-form-footer{padding:14px!important}
  body.nta-admin .nta29-company-page .nta29-record-list{padding:0 15px!important}
 }
+
+/* Hidden CRM sections must remain hidden despite the workspace layout rule. */
+body.nta-admin .nta29-company-page #accountsEditor[hidden]{display:none!important}
+body.nta-admin .nta29-company-page [data-account-shipper][hidden],
+body.nta-admin .nta29-company-page [data-account-carrier][hidden],
+body.nta-admin .nta29-company-page [data-account-content][hidden],
+body.nta-admin .nta29-company-page .nta29-inline-form[hidden]{display:none!important}
