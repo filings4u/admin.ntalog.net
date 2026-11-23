@@ -794,3 +794,33 @@ body.nta-admin .nta26-account-menu #signOutBtn.nta26-account-signout:hover{
     display:none!important;
   }
 }
+
+/* Authentication visibility must override the portal grid before the
+   session is verified. Prevent the blank dashboard skeleton on startup. */
+body.nta-admin #adminApp[hidden],
+body.nta-admin #adminAuth[hidden]{
+  display:none!important;
+}
+body.nta-admin .nta26-header .nta26-account-trigger .nta26-menu-hint{
+  display:grid!important;
+  place-items:center!important;
+  flex:none!important;
+  width:22px!important;
+  height:22px!important;
+  margin-left:2px!important;
+  border-radius:6px!important;
+  background:#f2f5f8!important;
+  color:#4e6379!important;
+  font-size:16px!important;
+  font-weight:700!important;
+  line-height:1!important;
+}
+body.nta-admin .nta26-header .nta26-account-trigger[aria-expanded="true"] .nta26-menu-hint{
+  background:#fae7bc!important;
+  color:#4c3b1c!important;
+}
+@media(max-width:760px){
+  body.nta-admin .nta26-header .nta26-account-trigger .nta26-menu-hint{
+    width:19px!important;height:22px!important;font-size:14px!important;
+  }
+}
