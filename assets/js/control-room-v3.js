@@ -111,8 +111,15 @@ document.querySelectorAll('.nta26-nav-group[data-nav-group="operations"] [data-o
 });
 const create=$('#commandNewRecord');
 create?.addEventListener('click',()=>{
+  // Respect the active company directory. Never default a carrier to shipper.
+  const activePage=document.querySelector('.admin-panel.active')?.dataset.panel;
+  const hashMatch=location.hash.match(/^#\/accounts\/(shipper|carrier)(?:\/|$)/);
+  const currentType=document.querySelector('#accountsType')?.value;
+  const type=(activePage==='accounts'||activePage==='account-editor')
+    ? ((hashMatch?.[1]||currentType)==='carrier'?'carrier':'shipper')
+    : 'shipper';
   if(typeof window.NTAAccountsEdit==='function'){
-    Promise.resolve(window.NTAAccountsEdit('shipper','new')).catch(error=>console.error('Unable to create shipper account:',error));
+    Promise.resolve(window.NTAAccountsEdit(type,'new')).catch(error=>console.error('Unable to create '+type+' account:',error));
   }else{
     console.error('Account management module is unavailable.');
   }
