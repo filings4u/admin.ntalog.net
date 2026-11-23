@@ -824,3 +824,23 @@ body.nta-admin .nta26-header .nta26-account-trigger[aria-expanded="true"] .nta26
     width:19px!important;height:22px!important;font-size:14px!important;
   }
 }
+
+/* Account dropdown hotfix: legacy admin.css sets pointer-events:none on
+   .portal-account-bar. The new header wraps the account control inside
+   .nta26-header-right, so the old direct-child re-enable does not apply. */
+body.nta-admin .portal-account-bar.nta26-header,
+body.nta-admin .portal-account-bar.nta26-header .nta26-header-right,
+body.nta-admin .portal-account-bar.nta26-header .portal-account,
+body.nta-admin .portal-account-bar.nta26-header #accountMenuToggle,
+body.nta-admin .portal-account-bar.nta26-header #accountDropdown {
+  pointer-events:auto!important;
+}
+body.nta-admin .portal-account-bar.nta26-header .portal-account{
+  isolation:isolate!important;
+}
+body.nta-admin .portal-account-bar.nta26-header #accountDropdown:not([hidden]){
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
