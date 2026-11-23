@@ -255,7 +255,70 @@
 <div class="nta26-detail-toolbar"><button type="button" id="closePreview" class="btn btn-ghost">Back to Blog Editor</button><span class="nta26-page-note">Article preview · changes are not published</span></div>
 <article class="nta26-preview-article"><div id="previewCategory" class="nta26-card-kicker"></div><h1 id="previewTitle"></h1><p id="previewExcerpt" class="nta26-preview-lead"></p><div id="previewContent" class="preview-content"></div></article>
 </section>
-<section class="admin-panel ops-admin-panel nta26-module-page" data-panel="media"><div class="admin-card"><div class="toolbar-row"><input id="mediaFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><input id="mediaAlt" placeholder="Image alt text"><button id="uploadMedia" class="btn btn-gold">Upload Image</button></div></div><p id="mediaStatus" class="save-state" role="status" aria-live="polite"></p><div id="mediaGrid" class="media-grid" style="margin-top:18px"></div></section>
+<section class="admin-panel ops-admin-panel nta26-module-page nta28-media-library" data-panel="media">
+  <header class="nta28-media-page-heading">
+    <div>
+      <span class="nta27-kicker">PUBLISHING / BLOG ASSETS</span>
+      <h2>Blog Image Library</h2>
+      <p>Upload and organize images for blog posts, featured images, and article content.</p>
+    </div>
+    <button type="button" id="mediaJumpToUpload" class="btn btn-gold">Upload Images</button>
+  </header>
+  <div class="nta28-media-metrics" aria-label="Image library summary">
+    <div><span>Total images</span><strong id="mediaCountTotal">—</strong></div>
+    <div><span>PNG images</span><strong id="mediaCountPng">—</strong></div>
+    <div><span>JPG / JPEG images</span><strong id="mediaCountJpg">—</strong></div>
+  </div>
+  <section class="nta28-media-upload-panel" aria-labelledby="mediaUploadHeading" id="mediaUploadSection">
+    <div class="nta28-media-card-heading">
+      <div><h3 id="mediaUploadHeading">Upload blog images</h3><p>Select or drop PNG, JPG, or JPEG images. Maximum 12 MB per image.</p></div>
+      <span class="nta28-media-formats">PNG · JPG · JPEG</span>
+    </div>
+    <div class="nta28-media-upload-content">
+      <div id="mediaDropzone" class="nta28-media-dropzone" role="button" tabindex="0" aria-label="Choose or drop PNG or JPEG blog images">
+        <div class="nta28-media-upload-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.4"/><path d="m4 17 6-6 4 4 3-3 4 4"/></svg>
+        </div>
+        <strong>Drag images here or choose files</strong>
+        <p>Upload multiple blog images at once</p>
+        <button type="button" id="mediaBrowse" class="btn btn-ghost">Choose Images</button>
+        <input id="mediaFile" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" multiple hidden aria-label="Select PNG or JPEG blog images">
+      </div>
+      <div id="mediaQueueSection" class="nta28-media-queue-section" hidden>
+        <div class="nta28-media-queue-title"><strong>Ready to upload</strong><span id="mediaQueueCount">0 selected</span></div>
+        <div id="mediaQueue" class="nta28-media-queue"></div>
+      </div>
+      <div class="nta28-media-upload-footer">
+        <p>Tip: Add descriptive alt text to make blog images accessible.</p>
+        <button type="button" id="uploadMedia" class="btn btn-gold" disabled>Upload Selected Images</button>
+      </div>
+      <div id="mediaStatus" class="nta28-media-status" role="status" aria-live="polite" hidden></div>
+    </div>
+  </section>
+  <section class="nta28-media-assets-panel" aria-labelledby="mediaLibraryHeading">
+    <div class="nta28-media-card-heading">
+      <div><h3 id="mediaLibraryHeading">Your uploaded images</h3><p>Find an image to insert into a post or use as a featured image.</p></div>
+      <span id="mediaResultCount" class="nta28-media-result-count">Loading images…</span>
+    </div>
+    <div class="nta28-media-filters">
+      <label class="nta27-screen-reader" for="mediaSearch">Search uploaded images</label>
+      <input id="mediaSearch" type="search" placeholder="Search image file names or alt text">
+      <label class="nta27-screen-reader" for="mediaTypeFilter">Filter images by format</label>
+      <select id="mediaTypeFilter" aria-label="Filter image format">
+        <option value="">All formats</option><option value="png">PNG</option>
+        <option value="jpeg">JPG / JPEG</option><option value="other">Other existing images</option>
+      </select>
+      <label class="nta27-screen-reader" for="mediaSort">Sort uploaded images</label>
+      <select id="mediaSort" aria-label="Sort images">
+        <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="name">Name A–Z</option>
+      </select>
+      <button type="button" id="mediaRefresh" class="btn btn-ghost">Refresh</button>
+    </div>
+    <div id="mediaGrid" class="nta28-media-grid" aria-live="polite">
+      <div class="nta28-media-empty"><strong>Loading images…</strong></div>
+    </div>
+  </section>
+</section>
 
 <section class="admin-panel ops-admin-panel nta26-module-page" data-panel="profile"><div class="admin-card profile-details"><h2>Account Details</h2><div class="detail-grid"><div class="detail-item"><span>Display Name</span><strong id="profileDisplayName">Administrator</strong></div><div class="detail-item"><span>Email Address</span><strong id="profileEmail">—</strong></div><div class="detail-item"><span>Account Role</span><strong id="profileRole">Administrator</strong></div><div class="detail-item"><span>Account Status</span><strong id="profileStatus">Active</strong></div></div><div class="profile-actions"><a href="forgot-password.html" class="btn btn-primary">Reset Password</a><button type="button" class="btn btn-ghost" data-admin-go="team">View Team &amp; Users</button></div></div></section>
 <section class="admin-panel ops-admin-panel nta26-module-page" data-panel="team"><div class="command-data-panel"><div class="command-data-title"><strong>Authorized team members</strong></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Added</th></tr></thead><tbody id="teamBody"></tbody></table></div></div></section>
