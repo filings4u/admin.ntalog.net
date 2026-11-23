@@ -2033,3 +2033,25 @@ body.nta-admin .nta27-blog-editor.nta27-editor-focus .nta27-rich-editor{min-heig
   body.nta-admin .nta27-blog-editor .nta27-rich-editor{padding:18px!important}
   body.nta-admin .nta27-blog-toolbar{gap:4px!important;padding:8px!important}
 }
+
+
+/* Safe embedded videos in writing and preview pages. */
+body.nta-admin .nta27-blog-editor .nta27-rich-editor iframe,
+body.nta-admin .nta26-article-preview-page .preview-content iframe{
+  display:block!important;width:min(100%,760px)!important;max-width:100%!important;
+  aspect-ratio:16/9!important;height:auto!important;min-height:220px!important;
+  margin:16px auto!important;border:0!important;border-radius:8px!important;
+  background:#0d1e2e!important;
+}
+body.nta-admin #blogVideoForm:not([hidden]){display:flex!important}
+body.nta-admin #blogVideoForm input[type="url"]{
+  display:block!important;min-width:min(310px,75vw)!important;width:100%!important;
+  min-height:35px!important;margin:0!important;padding:8px 11px!important;
+  border:1px solid #d7e1ea!important;border-radius:6px!important;color:#244158!important;
+  font-size:11px!important;
+}
+body.nta-admin #blogVideoMessage{font-size:10px!important;color:#946333!important}
+@media(max-width:620px){
+ body.nta-admin .nta27-blog-editor .nta27-rich-editor iframe,
+ body.nta-admin .nta26-article-preview-page .preview-content iframe{min-height:170px!important}
+}
