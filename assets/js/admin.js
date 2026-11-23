@@ -570,7 +570,8 @@
       await loadTaxonomy();
       // Blog list responses include the category's name rather than its ID.
       // Refresh posts too, so a category rename updates the displayed post count.
-      await loadPosts();
+      // A post-list refresh failure must not claim that the category save failed.
+      try{await loadPosts()}catch(error){console.warn('Blog list refresh after category save:',error)}
       resetCategoryEditor();
       categoryFeedback(id?'Category updated successfully.':'Category created successfully.');
     }catch(error){
