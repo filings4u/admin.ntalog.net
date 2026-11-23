@@ -1,81 +1,173 @@
 (() => {
   "use strict";
-  const cfg = window.NTA_CONFIG;
-  if (!cfg || !window.supabase) return;
-  const sb = window.NTAAdminClient; if (!sb) return;
-  const $ = s => document.querySelector(s);
-  const esc = x => String(x ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let rows=[];
-  const message = (s,where='#factorListMessage') => {const el=$(where);if(el)el.textContent=s;};
+  const cfg=window.NTA_CONFIG;
+  const sb=window.NTAAdminClient;
+  if(!cfg||!sb)return;
+  const $=(selector)=>document.querySelector(selector);
+  const esc=(value)=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const table='nta_factoring_companies';
+  const fields=[
+    'id','company_name','dba_name','contact_name','contact_title','contact_email','phone',
+    'website','status','address','city','state','postal_code','country','payment_terms',
+    'factoring_program','advance_rate_percent','factoring_fee_percent',
+    'minimum_invoice_amount','minimum_monthly_volume','funding_speed','funding_method',
+    'service_regions','industry_focus','accepts_new_authorities','contract_term',
+    'onboarding_requirements','notes','created_at','updated_at'
+  ];
+  const numbers=new Set(['advance_rate_percent','factoring_fee_percent','minimum_invoice_amount','minimum_monthly_volume']);
+  const bools=new Set(['accepts_new_authorities']);
+  const editable=fields.filter(key=>!['id','created_at','updated_at'].includes(key));
+  let records=[];
+  const message=(value,where='#factorListMessage',error=false)=>{
+    const element=$(where);
+    if(element){element.textContent=value||'';element.dataset.kind=error?'error':'ok';}
+  };
   async function authorized(){
-    const {data:{session}}=await sb.auth.getSession();
-    if(!session) throw Error('Sign in to NTA Management before accessing factoring companies.');
-    const res=await fetch(cfg.adminFunctionUrl,{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.publishableKey,'Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({action:'me'})});
-    if(!res.ok)throw Error('Administrator access is required.');
-    return true;
+    const {data,error}=await sb.auth.getSession();
+    const session=data?.session;
+    if(error||!session)throw Error('Sign in to the management portal first.');
+    const response=await fetch(cfg.adminFunctionUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json',apikey:cfg.publishableKey,Authorization:'Bearer '+session.access_token},
+      body:JSON.stringify({action:'me'})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||result.error||!result.admin?.active)throw Error(result.error||'Administrator access is required.');
+    return session;
+  }
+  function formatPercent(value){
+    const n=Number(value);
+    return value===null||value===undefined||value===''?'—':Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:2})+'%':'—';
+  }
+  function rowMarkup(record){
+    const url=record.website&&/^https?:\/\//i.test(record.website)?'<a href="'+esc(record.website)+'" rel="noopener noreferrer" target="_blank">Website</a>':'';
+    const program=record.factoring_program?record.factoring_program.replace(/_/g,' ').replace(/\b\w/g,s=>s.toUpperCase()):'—';
+    return '<tr>'+
+      '<td><button type="button" class="nta27-factor-record" data-edit-factor="'+esc(record.id)+'">'+esc(record.company_name)+'</button>'+(record.dba_name?'<small class="nta27-factor-sub">'+esc(record.dba_name)+'</small>':'')+'</td>'+
+      '<td>'+esc(record.contact_name||'—')+'</td>'+
+      '<td>'+esc(record.contact_email||'—')+'</td>'+
+      '<td>'+esc(program)+'</td>'+
+      '<td>'+esc(formatPercent(record.advance_rate_percent))+'</td>'+
+      '<td>'+esc(record.funding_speed||'—')+'</td>'+
+      '<td><span class="status-pill">'+esc(record.status||'prospect')+'</span></td>'+
+      '<td><button type="button" class="btn btn-primary" data-edit-factor="'+esc(record.id)+'">Manage</button></td></tr>';
   }
   async function load(){
-    try {
+    try{
       await authorized();
-      let query=sb.from('nta_factoring_companies').select('id,company_name,contact_name,contact_email,phone,website,address,payment_terms,status,notes,created_at').order('company_name',{ascending:true}).limit(500);
-      const q=$('#factorSearch').value.trim(),status=$('#factorStatus').value;
-      if(q)query=query.or(`company_name.ilike.%${q.replace(/[,()%]/g,'')}%,contact_name.ilike.%${q.replace(/[,()%]/g,'')}%,contact_email.ilike.%${q.replace(/[,()%]/g,'')}%`);
+      message('Loading factoring companies…');
+      const q=($('#factorSearch')?.value||'').trim().slice(0,120);
+      const status=$('#factorStatus')?.value||'';
+      let query=sb.from(table).select(fields.join(',')).order('company_name',{ascending:true}).limit(500);
+      if(q){
+        const safe=q.replace(/[,()%]/g,'');
+        query=query.or('company_name.ilike.%'+safe+'%,dba_name.ilike.%'+safe+'%,contact_name.ilike.%'+safe+'%,contact_email.ilike.%'+safe+'%');
+      }
       if(status)query=query.eq('status',status);
       const {data,error}=await query;
       if(error)throw error;
-      rows=data||[];
-      $('#factorRows').innerHTML=rows.map(r=>`<tr><td><strong>${esc(r.company_name)}</strong></td><td>${esc(r.contact_name||'—')}</td><td>${esc(r.contact_email||'—')}</td><td>${esc(r.phone||'—')}</td><td><span class="status-pill">${esc(r.status)}</span></td><td><button type="button" class="btn btn-primary" data-edit-factor="${esc(r.id)}">Edit</button></td></tr>`).join('')||'<tr><td colspan="6">No factoring companies found.</td></tr>';
-      message(`${rows.length} factoring companies displayed.`);
-    }catch(e){message(e.message);$('#factorRows').innerHTML='<tr><td colspan="6">Could not load factoring company records.</td></tr>';}
+      records=Array.isArray(data)?data:[];
+      $('#factorRows').innerHTML=records.map(rowMarkup).join('')||'<tr><td colspan="8">No factoring companies found. Use Add Factoring Company to create a provider.</td></tr>';
+      message(records.length+' factoring '+(records.length===1?'company':'companies')+' displayed.');
+    }catch(error){
+      console.error('Factoring list:',error);
+      $('#factorRows').innerHTML='<tr><td colspan="8">Could not load factoring companies. Check your connection or administrator permissions.</td></tr>';
+      message(error?.message||'Could not load factoring companies.','#factorListMessage',true);
+    }
   }
-  function edit(r={},opts={}){
-    const form=$('#factorForm');form.reset();
-    for(const [key,value] of Object.entries(r||{})){const el=form.elements.namedItem(key);if(el&&typeof value==='string')el.value=value;}
-    $('#factorTitle').textContent=r?.id?'Edit Factoring Company':'Add Factoring Company';
+  function fillForm(record={}){
+    const form=$('#factorForm');
+    form.reset();
+    for(const key of editable){
+      const input=form.elements.namedItem(key);
+      if(!input)continue;
+      const value=record[key];
+      if(value===null||value===undefined)input.value='';
+      else if(bools.has(key))input.value=value===true?'true':value===false?'false':'';
+      else input.value=String(value);
+    }
+    form.elements.namedItem('id').value=record.id||'';
+    $('#factorTitle').textContent=record.id?'Edit Factoring Company':'Create Factoring Company';
     $('#factorEditor').hidden=false;
     message('','#factorMessage');
-    window.NTAAdminNavigate?.('factoring-editor','#/factoring/'+encodeURIComponent(r.id||'new'),opts);
+  }
+  function edit(record={},opts={}){
+    fillForm(record);
+    window.NTAAdminNavigate?.('factoring-editor','#/factoring/'+encodeURIComponent(record.id||'new'),opts);
   }
   async function openList({skipHistory=false}={}){
     $('#factorEditor').hidden=true;
     window.NTAAdminNavigate?.('factoring','#/page/factoring',{skipHistory});
     await load();
   }
+  async function editById(id,{skipHistory=false}={}){
+    if(id==='new'){edit({status:'prospect'},{skipHistory});return}
+    let record=records.find(row=>row.id===id);
+    if(!record){
+      await authorized();
+      const {data,error}=await sb.from(table).select(fields.join(',')).eq('id',id).single();
+      if(error)throw error;
+      record=data;
+    }
+    if(!record)throw Error('Factoring company not found.');
+    edit(record,{skipHistory});
+  }
   window.NTAFactoringOpen=openList;
-  window.NTAFactoringEdit=async(id,{skipHistory=false}={})=>{
-    await openList({skipHistory:true});
-    if(id==='new'){edit({status:'prospect'},{skipHistory});return;}
-    const record=rows.find(r=>r.id===id);
-    if(record)edit(record,{skipHistory});
-    else message('Factoring company not found. Refresh the directory.');
-  };
-  document.addEventListener('click', e=>{
-    const shortcut=e.target.closest('[data-crm-shortcut]');
-    if(shortcut){const select=$('#crmType');select.value=shortcut.dataset.crmShortcut;document.querySelector('[data-admin-panel="crm"]')?.click();}
-    const panel=e.target.closest('[data-admin-panel="factoring"]');
-    if(panel)setTimeout(load,0);
-    const item=e.target.closest('[data-edit-factor]');
-    if(item) {const row=rows.find(r=>r.id===item.dataset.editFactor);if(row)edit(row);}
+  window.NTAFactoringEdit=editById;
+  document.addEventListener('click',event=>{
+    if(event.target.closest('[data-admin-panel="factoring"]'))void load();
+    const record=event.target.closest('[data-edit-factor]');
+    if(record)void editById(record.dataset.editFactor).catch(error=>message(error.message,'#factorListMessage',true));
   });
   $('#factorNew')?.addEventListener('click',()=>edit({status:'prospect'}));
-  $('#factorCancel')?.addEventListener('click',()=>{void openList();});
-  $('#factoringBackToList')?.addEventListener('click',()=>{void openList();});
-  $('#factorRefresh')?.addEventListener('click',load);
-  $('#factorStatus')?.addEventListener('change',load);
-  $('#factorSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
-  $('#factorForm')?.addEventListener('submit',async e=>{
-    e.preventDefault();const form=e.currentTarget;const submit=form.querySelector('[type="submit"]');
+  $('#factorCancel')?.addEventListener('click',()=>{void openList()});
+  $('#factoringBackToList')?.addEventListener('click',()=>{void openList()});
+  $('#factorRefresh')?.addEventListener('click',()=>{void load()});
+  $('#factorStatus')?.addEventListener('change',()=>{void load()});
+  $('#factorSearch')?.addEventListener('keydown',event=>{
+    if(event.key==='Enter'){event.preventDefault();void load()}
+  });
+  $('#factorForm')?.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const form=event.currentTarget;
+    if(!form.reportValidity())return;
+    const submit=form.querySelector('[type="submit"]');
+    if(submit.disabled)return;
+    submit.disabled=true;
+    message('Saving factoring company…','#factorMessage');
     try{
-      await authorized();submit.disabled=true;message('Saving…','#factorMessage');
-      const vals=Object.fromEntries(new FormData(form).entries());
-      const id=vals.id;delete vals.id;
-      for(const [k,v] of Object.entries(vals))vals[k]=String(v).trim()||null;
-      if(!vals.company_name)throw Error('Company name is required.');
-      vals.status=vals.status||'prospect';
-      vals.updated_at=new Date().toISOString();
-      const {error}=id?await sb.from('nta_factoring_companies').update(vals).eq('id',id):await sb.from('nta_factoring_companies').insert(vals);
+      await authorized();
+      const values=Object.fromEntries(new FormData(form).entries());
+      const id=values.id;
+      delete values.id;
+      const payload={};
+      for(const key of editable){
+        const raw=values[key];
+        if(raw===undefined)continue;
+        const value=String(raw).trim();
+        if(numbers.has(key)){
+          if(!value){payload[key]=null;continue}
+          const number=Number(value);
+          if(!Number.isFinite(number)||number<0||(key.endsWith('_percent')&&number>100))throw Error('Enter a valid amount or percentage for '+key.replace(/_/g,' ')+'.');
+          payload[key]=number;
+        }else if(bools.has(key)){
+          payload[key]=value===''?null:value==='true';
+        }else payload[key]=value||null;
+      }
+      if(!payload.company_name)throw Error('Company name is required.');
+      if(payload.website&&!/^https?:\/\//i.test(payload.website))throw Error('Website must start with https:// or http://.');
+      payload.status=payload.status||'prospect';
+      payload.updated_at=new Date().toISOString();
+      const query=sb.from(table);
+      const {error}=id
+        ?await query.update(payload).eq('id',id)
+        :await query.insert(payload);
       if(error)throw error;
-      await openList();message('Factoring company saved.');
-    }catch(err){message(err.message,'#factorMessage')}finally{submit.disabled=false}
+      await openList();
+      message(id?'Factoring company updated.':'Factoring company created.');
+    }catch(error){
+      console.error('Factoring save:',error);
+      message(error?.message||'Unable to save factoring company.','#factorMessage',true);
+    }finally{submit.disabled=false}
   });
 })();
