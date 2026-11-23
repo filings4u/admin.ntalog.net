@@ -40,7 +40,7 @@
   const parse=()=>{let bits;try{bits=decodeURIComponent(location.hash.replace(/^#\/?/,'' )).split('/').filter(Boolean)}catch{return {page:'shipper-crm'}};const [prefix,a,b]=bits;if(prefix==='record'&&types[a]&&isUuid(b))return {page:types[a],kind:'record',type:a,id:b};if(prefix==='account'&&['shipper','carrier'].includes(a)&&(b==='new'||isUuid(b)))return {page:a+'-crm',kind:'account-edit',type:a,id:b};if(prefix==='task'&&(a==='new'||isUuid(a)))return {page:'tasks',kind:'task-edit',id:a};if(prefix==='page'&&routes[a])return {page:a};return {page:'shipper-crm'}};
   const pageLink=page=>'#/page/'+page;
   const sourceAction=page=>page?.source?'<a class="nta29-secondary" href="'+esc(page.source)+'" target="_blank" rel="noopener noreferrer">Open public form</a>':'';
-  const commonHeader=(title,sub,actions='')=>'<div class="nta29-page-heading"><div><h1>'+esc(title)+'</h1>'+(sub?'<p>'+esc(sub)+'</p>':'')+'</div><div class="nta29-page-actions">'+actions+'</div></div>';
+  const commonHeader=(title,sub,actions='')=>'<div class="nta29-page-heading"><div>'+(title?'<h1>'+esc(title)+'</h1>':'')+(sub?'<p>'+esc(sub)+'</p>':'')+'</div><div class="nta29-page-actions">'+actions+'</div></div>';
   const escapeStatusOptions=(chosen='')=>statuses.map(s=>'<option value="'+esc(s)+'"'+(chosen===s?' selected':'')+'>'+esc(s?showStatus(s):'All statuses')+'</option>').join('');
   const statusTag=s=>'<span class="nta29-pill">'+esc(showStatus(s))+'</span>';
   const colText=(row,keys)=>{for(const key of keys)if(row[key]!==undefined&&row[key]!==null&&row[key]!=='')return String(row[key]);return '—'};
@@ -76,7 +76,7 @@
     }else{
       const res=await authApi('crm_list',{entity_type:page.type,q,status,limit:100});rows=res.rows||[];total=res.count??rows.length;
     }
-    panel.innerHTML=commonHeader(page.title,page.kind==='account'?'Manage your '+page.type+' relationships and business records.':'Manage submissions received from the NTA Logistics website.',sourceAction(page)+(page.kind==='account'?'<a href="#/account/'+page.type+'/new" class="nta29-primary">Add account</a>':''))+pageControls(page)+
+    panel.innerHTML=commonHeader('',page.kind==='account'?'Manage your '+page.type+' relationships and business records.':'Manage submissions received from the NTA Logistics website.',sourceAction(page)+(page.kind==='account'?'<a href="#/account/'+page.type+'/new" class="nta29-primary">Add account</a>':''))+pageControls(page)+
       '<section class="nta29-card"><div class="nta29-table-heading"><strong>'+esc(page.title)+'</strong><span>'+total+' records</span></div>'+recordTable(page,rows)+'</section>';
   };
   const detailsPage=async(type,id)=>{
@@ -111,7 +111,7 @@
     renderLoading();const result=await authApi('tasks',{open_only:false});const rows=result.tasks||[];state.taskRows=rows;
     const visible=state.taskFilter==='open'?rows.filter(r=>!['completed','cancelled'].includes(r.status)):rows;
     const cells=visible.map(t=>'<tr><td><a class="nta29-record-link" href="#/task/'+encodeURIComponent(t.id)+'">'+esc(t.title||'Untitled task')+'</a>'+(t.description?'<small>'+esc(t.description.slice(0,130))+'</small>':'')+'</td><td>'+esc(showStatus(t.priority))+'</td><td>'+statusTag(t.status)+'</td><td>'+esc(t.entity_type)+'</td><td>'+esc(showDate(t.due_at))+'</td></tr>').join('');
-    panel.innerHTML=commonHeader('My tasks','Directly connected to the Supabase nta_crm_tasks table.','<a href="#/task/new" class="nta29-primary">New task</a>')+
+    panel.innerHTML=commonHeader('','Manage tasks stored in Supabase.','<a href="#/task/new" class="nta29-primary">New task</a>')+
       '<section class="nta29-card"><div class="nta29-table-heading"><strong>Task manager</strong><div class="nta29-actions"><label for="taskListFilter">Show</label><select id="taskListFilter"><option value="open"'+(state.taskFilter==='open'?' selected':'')+'>Open tasks</option><option value="all"'+(state.taskFilter!=='open'?' selected':'')+'>All tasks</option></select><button type="button" data-command="refresh" class="nta29-secondary">Refresh</button></div></div><div class="nta29-table-wrap"><table class="nta29-table">'+th(['Task','Priority','Status','Record type','Due'])+'<tbody>'+(cells||emptyRow(5))+'</tbody></table></div></section>';
   };
   const recordChoices=async()=>{
@@ -191,7 +191,13 @@
       const initials=(me.admin.display_name||'AD').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
       $('#accountAvatar').textContent=initials||'AD';
       showPortal();
-      if(!location.hash)location.replace('#/page/shipper-crm');
+      const oldHash=location.hash.replace(/^#\/?/,'');
+      if(oldHash.startsWith('crm/')){
+        const parts=oldHash.split('/');
+        if(types[parts[1]]&&isUuid(parts[2]))location.replace('#/record/'+parts[1]+'/'+parts[2]);
+        else if(types[parts[1]])location.replace(pageLink(types[parts[1]]));
+        else location.replace(pageLink('shipper-crm'));
+      }else if(!location.hash||oldHash==='page/crm'||oldHash==='page/dashboard')location.replace(pageLink('shipper-crm'));
       await navigate();
     }catch(e){showLogin(e.message)}
   };
