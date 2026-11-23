@@ -32,9 +32,10 @@ const syncRail=()=>{
  const active=$('.admin-panel.active');
  if(!rail||!active)return;
  const page=active.dataset.panel;
+ const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[page]||page;
  const accountType=accounts?.value;
- $$('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===page));
- $$('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',page==='accounts'&&button.dataset.accountsType===accountType));
+ $('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
+ $('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&button.dataset.accountsType===accountType));
 };
 const observer=new MutationObserver(syncRail);
 panelNodes.forEach(panel=>observer.observe(panel,{attributes:true,attributeFilter:['class']}));
@@ -65,7 +66,7 @@ const showInboxRecords=()=>{
  const tableRows=$$('tr',source);
  const records=tableRows.filter(r=>r.cells.length>=5&&r.cells[0].colSpan===1).map(r=>{
    const c=r.cells;
-   return {type:classify(c[0].textContent||''),category:c[0].textContent.trim(),company:c[1].textContent.trim(),request:c[2].textContent.trim(),status:c[3].textContent.trim(),date:c[4].textContent.trim()};
+   return {type:r.dataset.recordType||classify(c[0].textContent||''),id:r.dataset.recordId||'',category:c[0].textContent.trim(),company:c[1].textContent.trim(),request:c[2].textContent.trim(),status:c[3].textContent.trim(),date:c[4].textContent.trim()};
  }).filter(r=>r.type);
  const pending=tableRows.length===1&&tableRows[0].cells[0]?.colSpan>1&&/loading/i.test(tableRows[0].textContent);
  const counts={all:records.length,quote:0,shipper:0,carrier:0,inquiry:0};
@@ -104,12 +105,16 @@ const showInboxRecords=()=>{
   const date=node('span','ops-inbox-feed-date',r.date||'—');
   button.append(left,status,date);
   button.addEventListener('click',()=>{
-   if(crm)crm.value=r.type;
-   const search=$('#crmSearch'),state=$('#crmStatus');
-   if(search)search.value='';
-   if(state)state.value='';
-   $('.admin-nav [data-admin-panel="crm"]')?.click();
-   markType();
+    if(r.id&&window.NTAOpenCrmRecord){
+      window.NTAOpenCrmRecord(r.type,r.id).catch(error=>console.error('Unable to open request:',error));
+      return;
+    }
+    if(crm)crm.value=r.type;
+    const search=$('#crmSearch'),state=$('#crmStatus');
+    if(search)search.value='';
+    if(state)state.value='';
+    $('.admin-nav [data-admin-panel="crm"]')?.click();
+    markType();
   });
   inbox.append(button);
  }
