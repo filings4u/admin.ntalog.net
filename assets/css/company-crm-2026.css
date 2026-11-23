@@ -1,0 +1,299 @@
+/* NTA Logistics: Dedicated full-company CRM workspace.
+   Scoped to company-editor only. Existing Operations and Publishing pages are unchanged. */
+body.nta-admin .nta29-company-page{
+ --crm-border:#dce5ed;--crm-text:#1b384f;--crm-muted:#7c91a4;--crm-gold:#e8b848;
+ padding:0!important;min-width:0!important;
+}
+body.nta-admin .nta29-company-page [hidden]{display:none!important}
+body.nta-admin .nta29-company-page .nta29-company-top{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ flex-wrap:wrap!important;gap:18px!important;padding:17px 21px!important;margin:0 0 15px!important;
+ background:#fff!important;border:1px solid var(--crm-border)!important;border-radius:10px!important;
+}
+body.nta-admin .nta29-company-page .nta29-back{
+ display:block!important;padding:0!important;margin:0 0 9px!important;
+ background:none!important;border:0!important;text-align:left!important;
+ color:#55748d!important;font-size:10.5px!important;font-weight:750!important;cursor:pointer!important;
+}
+body.nta-admin .nta29-company-page .nta29-kicker{
+ display:block!important;margin:0 0 4px!important;
+ color:#a47a27!important;font-size:9px!important;font-weight:860!important;letter-spacing:.12em!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-top h2{
+ margin:0!important;font-size:22px!important;font-weight:860!important;line-height:1.2!important;
+ letter-spacing:-.025em!important;color:#1a354b!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-top p{
+ margin:5px 0 0!important;color:#879aab!important;font-size:11px!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-actions{
+ display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-actions button,
+body.nta-admin .nta29-company-page .nta29-form-footer button{
+ min-height:37px!important;padding:8px 15px!important;margin:0!important;border-radius:7px!important;
+ font-size:11px!important;font-weight:800!important;box-shadow:none!important;
+}
+body.nta-admin .nta29-company-page .btn-gold{
+ background:var(--crm-gold)!important;border:1px solid var(--crm-gold)!important;color:#192f44!important;
+}
+body.nta-admin .nta29-company-page .btn-ghost{
+ background:#fff!important;border:1px solid #d8e2eb!important;color:#36566e!important;
+}
+body.nta-admin .nta29-company-page .btn-primary{
+ background:#1d405e!important;border:1px solid #1d405e!important;color:#fff!important;
+}
+body.nta-admin .nta29-company-page button:disabled{opacity:.55!important;cursor:not-allowed!important}
+body.nta-admin .nta29-company-page .nta29-company-badge{
+ display:inline-flex!important;align-items:center!important;min-height:27px!important;
+ padding:5px 10px!important;background:#eef4f8!important;border-radius:6px!important;
+ font-size:10px!important;color:#4f718c!important;font-weight:760!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-summary{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:12px!important;margin:0 0 15px!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-summary>div{
+ display:flex!important;flex-direction:column!important;justify-content:space-between!important;
+ min-height:82px!important;padding:15px 17px!important;background:#fff!important;
+ border:1px solid var(--crm-border)!important;border-radius:9px!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-summary span{
+ color:#8195a8!important;font-weight:720!important;font-size:10px!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-summary strong{
+ display:block!important;margin-top:8px!important;font-size:16px!important;font-weight:850!important;
+ line-height:1.35!important;color:#213e55!important;overflow-wrap:anywhere!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-workspace{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 280px!important;
+ align-items:start!important;gap:15px!important;min-width:0!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-main{
+ min-width:0!important;overflow:hidden!important;border-radius:11px!important;
+ background:#fff!important;border:1px solid var(--crm-border)!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-tabs{
+ display:flex!important;align-items:center!important;gap:0!important;flex-wrap:wrap!important;
+ padding:0 13px!important;border-bottom:1px solid #e3ebf1!important;background:#f9fbfc!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-tabs button{
+ display:inline-flex!important;align-items:center!important;
+ min-height:49px!important;margin:0!important;padding:12px 13px!important;
+ border:0!important;border-bottom:2px solid transparent!important;
+ border-radius:0!important;background:transparent!important;
+ color:#697f95!important;font-size:11px!important;font-weight:750!important;cursor:pointer!important;
+ white-space:nowrap!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-tabs button.active{
+ border-bottom-color:#dba83c!important;color:#1b405c!important;font-weight:850!important;
+}
+body.nta-admin .nta29-company-page .nta29-tab-panel:not(.active){display:none!important}
+body.nta-admin .nta29-company-page .nta29-tab-panel.active{display:block!important}
+body.nta-admin .nta29-company-page .nta29-form-section{
+ padding:21px 24px 24px!important;margin:0!important;
+ border:0!important;border-bottom:1px solid #e6edf2!important;background:#fff!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-section header{
+ display:block!important;margin:0 0 16px!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-section h3{
+ margin:0!important;color:#264159!important;font-size:13px!important;
+ line-height:1.4!important;font-weight:850!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-section header p{
+ margin:4px 0 0!important;color:#8a9dae!important;
+ font-size:10.5px!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:15px 17px!important;align-items:start!important;
+}
+body.nta-admin .nta29-company-page .nta29-field{
+ display:flex!important;flex-direction:column!important;gap:6px!important;
+ min-width:0!important;margin:0!important;color:#465f74!important;
+ font-size:10.5px!important;font-weight:760!important;line-height:1.4!important;
+}
+body.nta-admin .nta29-company-page .nta29-field.nta29-full{grid-column:1/-1!important}
+body.nta-admin .nta29-company-page .nta29-field>span{
+ display:block!important;color:#4b6378!important;font-size:10.5px!important;font-weight:760!important;
+}
+body.nta-admin .nta29-company-page .nta29-field :is(input,select,textarea){
+ display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;
+ min-width:0!important;min-height:38px!important;margin:0!important;
+ padding:9px 10px!important;border:1px solid #d8e2eb!important;border-radius:7px!important;
+ background:#fbfcfd!important;color:#29465d!important;
+ font-family:inherit!important;font-size:11.5px!important;font-weight:550!important;
+ box-shadow:none!important;line-height:1.45!important;
+}
+body.nta-admin .nta29-company-page .nta29-field textarea{
+ height:auto!important;min-height:82px!important;resize:vertical!important;
+}
+body.nta-admin .nta29-company-page .nta29-field input:focus-visible,
+body.nta-admin .nta29-company-page .nta29-field textarea:focus-visible,
+body.nta-admin .nta29-company-page .nta29-field select:focus-visible{
+ outline:2px solid #acc9dd!important;outline-offset:1px!important;
+}
+body.nta-admin .nta29-company-page .nta29-field.nta29-check{
+ display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px!important;
+ min-height:38px!important;
+}
+body.nta-admin .nta29-company-page .nta29-field.nta29-check input{
+ width:17px!important;min-height:17px!important;height:17px!important;
+ margin:0!important;flex:none!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-footer{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ flex-wrap:wrap!important;gap:12px!important;padding:16px 24px!important;background:#fafbfd!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-footer span{
+ font-size:10.5px!important;color:#899aaa!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-footer>div{display:flex!important;gap:8px!important}
+body.nta-admin .nta29-company-page .nta29-company-feedback:not(:empty){
+ display:block!important;padding:12px 22px!important;margin:0!important;border-top:1px solid #e7edf2!important;
+ font-size:11px!important;color:#3c765f!important;background:#f7fbf9!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-feedback[data-kind="error"]:not(:empty){
+ background:#fff7f4!important;color:#9b4f3d!important;
+}
+body.nta-admin .nta29-company-page .nta29-company-aside{
+ display:flex!important;flex-direction:column!important;gap:14px!important;min-width:0!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card{
+ display:flex!important;flex-direction:column!important;gap:0!important;
+ padding:18px!important;background:#fff!important;border:1px solid var(--crm-border)!important;
+ border-radius:10px!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card h3{
+ margin:0 0 15px!important;color:#233f56!important;font-size:12px!important;font-weight:850!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card>div:not(.nta29-quote-list){
+ display:flex!important;flex-direction:column!important;gap:4px!important;
+ margin:0 0 11px!important;min-width:0!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card span{
+ color:#8b9dac!important;font-size:9.5px!important;font-weight:720!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card strong{
+ color:#2b475e!important;font-size:11px!important;font-weight:790!important;
+ overflow-wrap:anywhere!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card button{
+ display:block!important;width:100%!important;text-align:left!important;
+ min-height:35px!important;margin:0 0 7px!important;padding:8px 11px!important;
+ border:1px solid #dce6ee!important;border-radius:6px!important;
+ color:#365b78!important;background:#f9fbfc!important;
+ font-size:10.5px!important;font-weight:780!important;cursor:pointer!important;
+}
+body.nta-admin .nta29-company-page .nta29-side-card p{
+ margin:7px 0 0!important;color:#8b9faf!important;font-size:10px!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-tab-panel .nta29-section-header{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ flex-wrap:wrap!important;gap:12px!important;padding:20px 23px!important;
+ border-bottom:1px solid #e8eef3!important;
+}
+body.nta-admin .nta29-company-page .nta29-section-header h3{
+ margin:0!important;color:#263f56!important;font-size:13px!important;font-weight:840!important;
+}
+body.nta-admin .nta29-company-page .nta29-section-header p{
+ margin:4px 0 0!important;color:#899cad!important;font-size:10.5px!important;
+}
+body.nta-admin .nta29-company-page .nta29-section-header button{
+ min-height:34px!important;padding:8px 12px!important;font-size:10.5px!important;
+ border-radius:6px!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-list{
+ padding:0 22px!important;min-height:90px!important;
+ font-size:11px!important;color:#7c90a2!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:15px!important;padding:16px 0!important;border-bottom:1px solid #edf1f4!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row:last-child{border-bottom:0!important}
+body.nta-admin .nta29-company-page .nta29-record-row>div{min-width:0!important}
+body.nta-admin .nta29-company-page .nta29-record-row strong{
+ display:block!important;font-size:11.5px!important;color:#2a4359!important;font-weight:820!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row small{
+ display:block!important;margin-top:4px!important;color:#8e9fac!important;
+ font-size:10px!important;font-weight:640!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row p{
+ margin:7px 0 0!important;color:#516b80!important;font-size:10.5px!important;
+ line-height:1.55!important;overflow-wrap:anywhere!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row>div:last-child{
+ display:flex!important;align-items:center!important;gap:8px!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-row button{
+ min-height:30px!important;padding:7px 10px!important;font-size:10px!important;
+ border-radius:6px!important;
+}
+body.nta-admin .nta29-company-page .nta29-tag{
+ display:inline-flex!important;padding:5px 8px!important;min-height:23px!important;
+ border-radius:6px!important;background:#edf3f7!important;color:#3d6681!important;
+ font-size:9.5px!important;font-weight:750!important;white-space:nowrap!important;
+}
+body.nta-admin .nta29-company-page .nta29-record-empty{
+ padding:23px 0!important;color:#8a9bad!important;font-size:11px!important;line-height:1.5!important;
+}
+body.nta-admin .nta29-company-page .nta29-inline-form:not([hidden]){
+ display:block!important;margin:16px 23px!important;padding:18px!important;
+ border:1px solid #dfe7ed!important;border-radius:9px!important;background:#f9fbfc!important;
+}
+body.nta-admin .nta29-company-page .nta29-inline-form>h4{
+ margin:0 0 17px!important;font-size:12px!important;font-weight:850!important;color:#28465e!important;
+}
+body.nta-admin .nta29-company-page .nta29-inline-form>button{
+ min-height:35px!important;padding:8px 13px!important;margin-top:12px!important;
+ font-size:10.5px!important;border-radius:6px!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-actions{
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:9px!important;margin-top:17px!important;
+}
+body.nta-admin .nta29-company-page .nta29-form-actions button{
+ min-height:35px!important;padding:8px 13px!important;border-radius:6px!important;
+ font-size:10.5px!important;font-weight:790!important;
+}
+body.nta-admin .nta29-company-page .nta29-inline-form>p{
+ font-size:10.5px!important;color:#58788d!important;margin:9px 0 0!important;
+}
+body.nta-admin .nta29-company-page .nta29-inline-form>p[data-kind="error"]{
+ color:#a34739!important;
+}
+body.nta-admin .nta29-company-page .nta29-quote-row{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ gap:5px!important;width:100%!important;margin:0 0 8px!important;padding:11px!important;
+ border:1px solid #dbe5ee!important;border-radius:7px!important;
+ background:#f9fbfc!important;cursor:pointer!important;
+}
+body.nta-admin .nta29-company-page .nta29-quote-row strong{
+ font-size:11px!important;color:#254d6b!important;
+}
+body.nta-admin .nta29-company-page .nta29-quote-row small{
+ font-size:10px!important;color:#899eae!important;
+}
+@media(max-width:1130px){
+ body.nta-admin .nta29-company-page .nta29-company-workspace{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ body.nta-admin .nta29-company-page .nta29-company-aside{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ body.nta-admin .nta29-company-page .nta29-company-aside .nta29-side-card:last-child{grid-column:1/-1!important}
+}
+@media(max-width:680px){
+ body.nta-admin .nta29-company-page .nta29-company-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ body.nta-admin .nta29-company-page .nta29-form-grid{grid-template-columns:minmax(0,1fr)!important}
+ body.nta-admin .nta29-company-page .nta29-form-section{padding:17px 14px!important}
+ body.nta-admin .nta29-company-page .nta29-company-top{padding:14px!important}
+ body.nta-admin .nta29-company-page .nta29-company-actions{width:100%!}
+ body.nta-admin .nta29-company-page .nta29-company-tabs{overflow:auto!important;flex-wrap:nowrap!important}
+ body.nta-admin .nta29-company-page .nta29-company-aside{display:flex!important}
+ body.nta-admin .nta29-company-page .nta29-form-footer{padding:14px!important}
+ body.nta-admin .nta29-company-page .nta29-record-list{padding:0 15px!important}
+}
