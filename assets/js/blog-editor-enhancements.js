@@ -12,7 +12,10 @@
   const safeProperties=new Set(['color','background-color','text-align','font-family','font-size','font-weight','font-style','text-decoration','margin-left','margin-right','list-style-type','white-space','vertical-align']);
   const safeUrl=value=>{
     const url=String(value||'').trim();
-    if(/^(https?:|mailto:)/i.test(url))return url;
+    if(/^(https?:|mailto:)/i.test(url)){
+      try{const parsed=new URL(url);if(['http:','https:','mailto:'].includes(parsed.protocol))return url;}catch{}
+      return '';
+    }
     if((url.startsWith('/')&&!url.startsWith('//'))||url.startsWith('#'))return url;
     return '';
   };
@@ -178,6 +181,9 @@
     }
     if(action==='source')return;
   });
+  const blockFormat=$('#blogBlockFormat');
+  blockFormat?.addEventListener('mousedown',capture);
+  blockFormat?.addEventListener('change',()=>{editor.focus();restore();},true);
   toolbar.querySelectorAll('select[data-blog-format]').forEach(control=>{
     control.addEventListener('mousedown',capture);
     control.addEventListener('change',()=>{
@@ -256,6 +262,7 @@
   }
   $('#blogFindToggle').addEventListener('click',()=>{findForm.hidden=!findForm.hidden;if(!findForm.hidden)findBox.focus();});
   $('#blogFindClose').addEventListener('click',()=>{findForm.hidden=true;editor.focus();});
+  findForm.addEventListener('submit',event=>{event.preventDefault();findNext();});
   $('#blogFindNext').addEventListener('click',()=>findNext());
   findBox.addEventListener('input',()=>{matchCursor=0;label('blogFindMessage','');});
   $('#blogReplaceOne').addEventListener('click',()=>{
