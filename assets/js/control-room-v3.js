@@ -113,6 +113,10 @@ const create=$('#commandNewRecord');
 create?.addEventListener('click',()=>{
   // Respect the active company directory. Never default a carrier to shipper.
   const activePage=document.querySelector('.admin-panel.active')?.dataset.panel;
+  if(activePage==='tasks'||activePage==='task-editor'){
+    if(window.NTATasks?.open)Promise.resolve(window.NTATasks.open()).catch(error=>console.error('Unable to open new task:',error));
+    return;
+  }
   const hashMatch=location.hash.match(/^#\/accounts\/(shipper|carrier)(?:\/|$)/);
   const currentType=document.querySelector('#accountsType')?.value;
   const type=(activePage==='accounts'||activePage==='account-editor')
