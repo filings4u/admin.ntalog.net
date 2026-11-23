@@ -8,7 +8,7 @@
   const table='nta_factoring_companies';
   const fields=[
     'id','company_name','dba_name','contact_name','contact_title','contact_email','phone',
-    'website','status','address','city','state','postal_code','country','payment_terms',
+    'website','address','city','state','postal_code','country','payment_terms',
     'factoring_program','advance_rate_percent','factoring_fee_percent',
     'minimum_invoice_amount','minimum_monthly_volume','funding_speed','funding_method',
     'service_regions','industry_focus','accepts_new_authorities','contract_term',
@@ -41,7 +41,6 @@
   }
   function rowMarkup(record){
     const program=record.factoring_program?record.factoring_program.replace(/_/g,' ').replace(/\b\w/g,s=>s.toUpperCase()):'—';
-    const status=['prospect','contacted','active','inactive'].includes(record.status)?record.status:'prospect';
     return '<tr>'+
       '<td><button type="button" class="nta27-factor-record" data-edit-factor="'+esc(record.id)+'">'+esc(record.company_name)+'</button>'+(record.dba_name?'<small class="nta27-factor-sub">'+esc(record.dba_name)+'</small>':'')+'</td>'+
       '<td>'+esc(record.contact_name||'—')+'</td>'+
@@ -49,32 +48,29 @@
       '<td>'+esc(program)+'</td>'+
       '<td>'+esc(formatPercent(record.advance_rate_percent))+'</td>'+
       '<td>'+esc(record.funding_speed||'—')+'</td>'+
-      '<td><span class="status-pill '+esc(status)+'">'+esc(status)+'</span></td>'+
       '<td><button type="button" class="btn btn-primary" data-edit-factor="'+esc(record.id)+'">Manage</button></td></tr>';
   }
   function emptyRow({filtered=false,error=false}={}){
     const heading=error?'Unable to load factoring companies':filtered?'No matching factoring companies':'No factoring companies yet';
     const detail=error?'Check your connection and administrator permissions, then try again.'
-      :filtered?'Try a different search or relationship status.'
+      :filtered?'Try a different company name, contact or email.'
       :'Add your first factoring company to manage provider contacts, advance rates and funding terms.';
-    return '<tr><td colspan="8" class="nta28-factor-empty-cell"><div class="nta28-factor-empty'+(error?' is-error':'')+'"><strong>'+esc(heading)+'</strong><p>'+esc(detail)+'</p></div></td></tr>';
+    return '<tr><td colspan="7" class="nta28-factor-empty-cell"><div class="nta28-factor-empty'+(error?' is-error':'')+'"><strong>'+esc(heading)+'</strong><p>'+esc(detail)+'</p></div></td></tr>';
   }
   async function load(){
     try{
       await authorized();
       message('Loading factoring companies…');
       const q=($('#factorSearch')?.value||'').trim().slice(0,120);
-      const status=$('#factorStatus')?.value||'';
       let query=sb.from(table).select(fields.join(',')).order('company_name',{ascending:true}).limit(500);
       if(q){
         const safe=q.replace(/[,()%]/g,'');
         query=query.or('company_name.ilike.%'+safe+'%,dba_name.ilike.%'+safe+'%,contact_name.ilike.%'+safe+'%,contact_email.ilike.%'+safe+'%');
       }
-      if(status)query=query.eq('status',status);
       const {data,error}=await query;
       if(error)throw error;
       records=Array.isArray(data)?data:[];
-      $('#factorRows').innerHTML=records.length?records.map(rowMarkup).join(''):emptyRow({filtered:!!q||!!status});
+      $('#factorRows').innerHTML=records.length?records.map(rowMarkup).join(''):emptyRow({filtered:!!q});
       message(records.length+' '+(records.length===1?'company':'companies'));
     }catch(error){
       console.error('Factoring list:',error);
@@ -94,7 +90,7 @@
       else input.value=String(value);
     }
     form.elements.namedItem('id').value=record.id||'';
-    $('#factorTitle').textContent=record.id?'Edit Factoring Company':'Create Factoring Company';
+    $('#factorTitle').textContent=record.id?'Edit Factoring Company':'Add Factoring Company';
     $('#factorEditor').hidden=false;
     message('','#factorMessage');
   }
@@ -108,7 +104,7 @@
     await load();
   }
   async function editById(id,{skipHistory=false}={}){
-    if(id==='new'){edit({status:'prospect'},{skipHistory});return}
+    if(id==='new'){edit({},{skipHistory});return}
     let record=records.find(row=>row.id===id);
     if(!record){
       await authorized();
@@ -126,11 +122,10 @@
     const record=event.target.closest('[data-edit-factor]');
     if(record)void editById(record.dataset.editFactor).catch(error=>message(error.message,'#factorListMessage',true));
   });
-  $('#factorNew')?.addEventListener('click',()=>edit({status:'prospect'}));
+  $('#factorNew')?.addEventListener('click',()=>edit({}));
   $('#factorCancel')?.addEventListener('click',()=>{void openList()});
   $('#factoringBackToList')?.addEventListener('click',()=>{void openList()});
   $('#factorRefresh')?.addEventListener('click',()=>{void load()});
-  $('#factorStatus')?.addEventListener('change',()=>{void load()});
   $('#factorSearch')?.addEventListener('keydown',event=>{
     if(event.key==='Enter'){event.preventDefault();void load()}
   });
@@ -162,8 +157,16 @@
         }else payload[key]=value||null;
       }
       if(!payload.company_name)throw Error('Company name is required.');
-      if(payload.website&&!/^https?:\/\//i.test(payload.website))throw Error('Website must start with https:// or http://.');
-      payload.status=payload.status||'prospect';
+      // Accept company.com in addition to a full URL, without forcing users to type a scheme.
+      if(payload.website){
+        const address=/^https?:\/\//i.test(payload.website)?payload.website:'https://'+payload.website;
+        let parsed;
+        try{parsed=new URL(address)}catch{throw Error('Enter a valid company website.')}
+        if(!['http:','https:'].includes(parsed.protocol)||!parsed.hostname.includes('.')||/\s/.test(address))throw Error('Enter a valid company website.');
+        payload.website=parsed.href;
+      }
+      // Retain the legacy database column for compatibility; never save sales pipeline statuses.
+      payload.status='company';
       payload.updated_at=new Date().toISOString();
       const query=sb.from(table);
       const {error}=id
