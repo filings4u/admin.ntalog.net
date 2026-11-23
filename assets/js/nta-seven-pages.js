@@ -168,23 +168,30 @@
   document.addEventListener('click',event=>{if(!event.target.closest('.nta29-account'))closeAccount()});
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeAccount()});
   $('#signOutBtn').addEventListener('click',async()=>{const btn=$('#signOutBtn');btn.disabled=true;try{const {error}=await client.auth.signOut();if(error)throw error;state.session=null;state.admin=null;closeAccount();showLogin()}catch(e){flash(e.message,'error')}finally{btn.disabled=false}});
-  $('#sidebarToggle').addEventListener('click',()=>{app.classList.toggle('sidebar-collapsed')});
+  $('#sidebarToggle').addEventListener('click',()=>{
+    if(window.matchMedia('(max-width:700px)').matches)app.classList.toggle('sidebar-open');
+    else app.classList.toggle('sidebar-collapsed');
+  });
+  document.querySelectorAll('.nta29-nav a[data-page]').forEach(link=>link.addEventListener('click',()=>{
+    app.classList.remove('sidebar-open');
+  }));
   $('#adminPasswordToggle').addEventListener('click',()=>{const el=$('#adminPassword');el.type=el.type==='password'?'text':'password'});
   $('#signinForm').addEventListener('submit',async event=>{event.preventDefault();const form=$('#signinForm'),btn=form.querySelector('button[type="submit"]');btn.disabled=true;$('#authStatus').textContent='Signing in…';try{const {data,error}=await client.auth.signInWithPassword({email:$('#adminEmail').value.trim(),password:$('#adminPassword').value});if(error)throw error;await start(data.session)}catch(e){showLogin(e.message)}finally{btn.disabled=false}});
   const start=async(session)=>{
     if(!session){showLogin();return}
     try{
       const me=await authApi('me');
-      if(!me.admin?.active||!['admin','crm','editor'].includes(me.admin.role))throw Error('Administrator access is required.');
+      if(!me.admin?.active||!['admin','crm'].includes(me.admin.role))throw Error('Administrator access is required.');
       state.session=session;state.admin=me.admin;
       $('#accountName').textContent=me.admin.display_name||me.user?.email?.split('@')[0]||'Administrator';
+      $('#accountDropdownName').textContent=$('#accountName').textContent;
       $('#accountEmail').textContent=me.user?.email||'';
       $('#accountRole').textContent=me.admin.role||'';
       $('#accountStatus').textContent='Active';
       const initials=(me.admin.display_name||'AD').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
       $('#accountAvatar').textContent=initials||'AD';
       showPortal();
-      if(!location.hash||!parse().page)location.replace('#/page/shipper-crm');
+      if(!location.hash)location.replace('#/page/shipper-crm');
       await navigate();
     }catch(e){showLogin(e.message)}
   };
