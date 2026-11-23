@@ -67,6 +67,7 @@ async function load(){
   await verify();
   $('#accountsType').value=type;
   $('#accountsHeading').textContent=cap(type)+' CRM';
+  $('#accountsNew').textContent=type==='carrier'?'Add Carrier':'Add Shipper';
   let req=sb.from('nta_crm_accounts').select('*').eq('account_type',type).order('company_name',{ascending:true}).limit(500);
   const search=$('#accountsSearch').value.trim().replace(/[,()%]/g,''),status=$('#accountsStatus').value;
   if(search)req=req.or('company_name.ilike.%'+search+'%,contact_name.ilike.%'+search+'%,contact_email.ilike.%'+search+'%');
@@ -153,6 +154,9 @@ async function saveAccount(event){
   if(key in data){const val=data[key];data[key]=val===null?null:Number(val);if(data[key]!==null&&(!Number.isInteger(data[key])||data[key]<0)){msg('Shipment volume must be a positive whole number.','#accountsEditMessage',true);return}}
  }
  for(const key of ['last_contacted_at','next_follow_up_at'])if(data[key])data[key]=new Date(data[key]).toISOString();
+ // The active route is authoritative for a company editor, avoiding stale directory state.
+ const routeType=location.hash.match(/^#\/accounts\/(shipper|carrier)\/(?:new|[0-9a-f-]+)$/i)?.[1];
+ if(routeType&&routeType!==type){msg('Account type mismatch. Reopen this company from the correct CRM.','#accountsEditMessage',true);return}
  data.account_type=type;data.status=data.status||'prospect';data.updated_at=new Date().toISOString();
  try{
   await verify();button.disabled=true;top.disabled=true;msg('Saving company…');
@@ -204,7 +208,14 @@ document.addEventListener('click',event=>{
  const task=event.target.closest('[data-company-task]');if(task){const row=tasks.find(x=>x.id===task.dataset.companyTask);if(row){tab('tasks');formTask(row)}return}
  const quote=event.target.closest('[data-company-quote]');if(quote){const hash='#/crm/quote/'+encodeURIComponent(quote.dataset.companyQuote);history.pushState({ntaPanel:'crm-detail'},'',hash);window.dispatchEvent(new PopStateEvent('popstate'));return}
 });
-$('#accountsNew')?.addEventListener('click',()=>{void edit({})});
+$('#accountsNew')?.addEventListener('click',()=>{
+ const active=document.querySelector('.admin-panel.active')?.dataset.panel;
+ const routeType=location.hash.match(/^#\/accounts\/(shipper|carrier)(?:\/|$)/)?.[1];
+ const selected=active==='accounts'?(routeType||$('#accountsType').value):type;
+ type=selected==='carrier'?'carrier':'shipper';
+ $('#accountsType').value=type;
+ void edit({});
+});
 ['accountsCancel','accountsCancelBottom','accountsBackToList'].forEach(id=>$('#'+id)?.addEventListener('click',back));
 $('#accountsType')?.addEventListener('change',()=>{void open($('#accountsType').value)});
 $('#accountsStatus')?.addEventListener('change',()=>{void load()});
