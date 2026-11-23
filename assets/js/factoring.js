@@ -28,14 +28,27 @@
       message(`${rows.length} factoring companies displayed.`);
     }catch(e){message(e.message);$('#factorRows').innerHTML='<tr><td colspan="6">Could not load factoring company records.</td></tr>';}
   }
-  function edit(r){
+  function edit(r={},opts={}){
     const form=$('#factorForm');form.reset();
     for(const [key,value] of Object.entries(r||{})){const el=form.elements.namedItem(key);if(el&&typeof value==='string')el.value=value;}
     $('#factorTitle').textContent=r?.id?'Edit Factoring Company':'Add Factoring Company';
     $('#factorEditor').hidden=false;
     message('','#factorMessage');
-    $('#factorEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
+    window.NTAAdminNavigate?.('factoring-editor','#/factoring/'+encodeURIComponent(r.id||'new'),opts);
   }
+  async function openList({skipHistory=false}={}){
+    $('#factorEditor').hidden=true;
+    window.NTAAdminNavigate?.('factoring','#/page/factoring',{skipHistory});
+    await load();
+  }
+  window.NTAFactoringOpen=openList;
+  window.NTAFactoringEdit=async(id,{skipHistory=false}={})=>{
+    await openList({skipHistory:true});
+    if(id==='new'){edit({status:'prospect'},{skipHistory});return;}
+    const record=rows.find(r=>r.id===id);
+    if(record)edit(record,{skipHistory});
+    else message('Factoring company not found. Refresh the directory.');
+  };
   document.addEventListener('click', e=>{
     const shortcut=e.target.closest('[data-crm-shortcut]');
     if(shortcut){const select=$('#crmType');select.value=shortcut.dataset.crmShortcut;document.querySelector('[data-admin-panel="crm"]')?.click();}
@@ -45,7 +58,7 @@
     if(item) {const row=rows.find(r=>r.id===item.dataset.editFactor);if(row)edit(row);}
   });
   $('#factorNew')?.addEventListener('click',()=>edit({status:'prospect'}));
-  $('#factorCancel')?.addEventListener('click',()=>{$('#factorEditor').hidden=true});
+  $('#factorCancel')?.addEventListener('click',()=>{void openList();});
   $('#factorRefresh')?.addEventListener('click',load);
   $('#factorStatus')?.addEventListener('change',load);
   $('#factorSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
@@ -61,8 +74,7 @@
       vals.updated_at=new Date().toISOString();
       const {error}=id?await sb.from('nta_factoring_companies').update(vals).eq('id',id):await sb.from('nta_factoring_companies').insert(vals);
       if(error)throw error;
-      $('#factorEditor').hidden=true;
-      await load();message('Factoring company saved.');
+      await openList();message('Factoring company saved.');
     }catch(err){message(err.message,'#factorMessage')}finally{submit.disabled=false}
   });
 })();
