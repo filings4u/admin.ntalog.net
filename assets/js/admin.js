@@ -220,6 +220,10 @@
       if(id&&window.NTAAccountsEdit){await window.NTAAccountsEdit(type,id,{skipHistory:true});return;}
       if(window.NTAAccountsOpen){await window.NTAAccountsOpen(type,{skipHistory:true});return;}
     }
+    if(section==='tasks'&&(type==='new'||type)){
+      if(window.NTATasks?.open){await window.NTATasks.open(type==='new'?null:type,{skipHistory:true});return;}
+      activate('tasks',{skipHistory:true});return;
+    }
     if(section==='factoring'){
       if(type&&window.NTAFactoringEdit){await window.NTAFactoringEdit(type,{skipHistory:true});return;}
       if(window.NTAFactoringOpen){await window.NTAFactoringOpen({skipHistory:true});return;}
@@ -234,7 +238,7 @@
       history.replaceState({ntaPanel:'blog'},'','#/page/blog');
       activate('blog',{skipHistory:true});return;
     }
-    const pages=['dashboard','crm','crm-detail','accounts','account-editor','factoring','factoring-editor','tasks','blog','editor','article-preview','media','profile','team'];
+    const pages=['dashboard','crm','crm-detail','accounts','account-editor','factoring','factoring-editor','tasks','task-editor','blog','editor','article-preview','media','profile','team'];
     if(section==='page'&&pages.includes(type)){activate(type,{skipHistory:true});return;}
     if(section==='overview'){activate('dashboard',{skipHistory:true});return;}
     activate('dashboard',{skipHistory:true});
@@ -284,16 +288,17 @@
   });
   function activate(name,{skipHistory=false,hash=null}={}){
     if(name==='categories'){name='blog';hash='#/page/blog';}
-    const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[name]||name;
+    const parent={'crm-detail':'crm','account-editor':'accounts','task-editor':'tasks','factoring-editor':'factoring','article-preview':'editor'}[name]||name;
     $$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===parent));
     $$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
     if(!skipHistory){const url=hash||'#/page/'+encodeURIComponent(name);if(location.hash!==url)history.pushState({ntaPanel:name},'',url);}
-    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',media:'Blog Image Library',profile:'My Account',team:'Team & Users'};
+    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management','task-editor':'Task Editor',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',media:'Blog Image Library',profile:'My Account',team:'Team & Users'};
     if($('#ntaPageLabel'))$('#ntaPageLabel').textContent=labels[name]||'Management';
     if(name==='crm')loadCrm().catch(console.error);
     if(name==='blog')renderPosts();
     if(name==='media')renderMedia();
     if(name==='team')loadTeam().catch(console.error);
+    if(name==='tasks')window.NTATasks?.onRoute('tasks');
     window.scrollTo({top:0,behavior:'instant'});
   }
   window.NTAAdminNavigate=(name,hash,opts={})=>activate(name,{...opts,hash});
@@ -397,10 +402,16 @@
 
   }
   $('[data-refresh-dashboard]')?.addEventListener('click',refreshDashboard);
-  async function loadTasks(){const j=await api('tasks');const rows=j.tasks||[];
-    $('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,4).map(t=>`<div class="dashboard-task"><span class="task-priority">${esc(t.priority||'normal')}</span><div><strong>${esc(t.title)}</strong><small>${t.due_at?'Due '+esc(dt(t.due_at)):'No due date'}</small></div></div>`).join('')||'<div class="dashboard-empty nta-task-empty"><span class="dashboard-empty-mark">✓</span><strong>All caught up</strong><small>There are no outstanding tasks right now.</small><button type="button" class="dashboard-empty-link" data-admin-go="tasks">Open task manager</button></div>';$('#dashboardTasks [data-admin-go]')?.addEventListener('click',()=>activate('tasks'));}
+  async function loadTasks(){
+    // Overview-only task preview. Dedicated My Tasks owns its own table and filters.
+    const j=await api('tasks',{open_only:true});
+    const rows=j.tasks||[],node=$('#dashboardTasks');
+    if(!node)return;
+    node.innerHTML=rows.slice(0,4).map(t=>`<div class="dashboard-task"><span class="task-priority">${esc(t.priority||'normal')}</span><div><strong>${esc(t.title)}</strong><small>${t.due_at?'Due '+esc(dt(t.due_at)):'No due date'}</small></div></div>`).join('')||'<div class="dashboard-empty nta-task-empty"><strong>All caught up</strong><small>There are no outstanding tasks right now.</small><button type="button" class="dashboard-empty-link" data-admin-go="tasks">Open task manager</button></div>';
+    node.querySelector('[data-admin-go]')?.addEventListener('click',()=>activate('tasks'));
+  }
   $('#dashboardPeriod')?.addEventListener('change',()=>loadRecentActivity().catch(console.warn));
-  $('#tasksRefresh')?.addEventListener('click',loadTasks);
+  // My Tasks refresh is handled by the standalone task management module.
   const crmCols={quote:[['Reference','reference_number'],['Company','company_name'],['Contact','contact_name'],['Route',r=>`${r.pickup_city||''}, ${r.pickup_state||''} → ${r.delivery_city||''}, ${r.delivery_state||''}`],['Equipment','equipment_type'],['Status','status'],['Submitted','created_at']],shipper:[['Reference','reference_number'],['Company','company_name'],['Contact','primary_contact_name'],['Email','primary_contact_email'],['Industry','industry'],['Status','status'],['Created','created_at']],carrier:[['Reference','reference_number'],['Company','legal_company_name'],['Contact','primary_contact_name'],['USDOT','dot_number'],['MC','mc_number'],['Status','status'],['Created','created_at']],inquiry:[['Reference','reference_number'],['Company','company_name'],['Name','name'],['Email','email'],['Topic','topic'],['Status','status'],['Created','created_at']]};
   async function loadCrm(){
     const selector=$('#crmType');
