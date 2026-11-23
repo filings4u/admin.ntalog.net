@@ -154,7 +154,64 @@
 <p id="accountsEditMessage" role="status" aria-live="polite" class="nta29-company-feedback"></p></div>
 <aside class="nta29-company-aside"><section class="nta29-side-card"><h3>Account snapshot</h3><div><span>Company</span><strong id="accountsSideCompany">New company</strong></div><div><span>Primary contact</span><strong id="accountsSideContact">—</strong></div><div><span>Email</span><strong id="accountsSideEmail">—</strong></div><div><span>Phone</span><strong id="accountsSidePhone">—</strong></div><div><span>Account type</span><strong id="accountsSideType">Shipper</strong></div></section>
 <section class="nta29-side-card"><h3>Quick actions</h3><button type="button" data-account-shortcut="contacts">Manage contacts</button><button type="button" data-account-shortcut="activity">Add activity note</button><button type="button" data-account-shortcut="tasks">Manage tasks</button><button type="button" id="accountViewQuotes">View quote requests</button><p id="accountActionHint">Save this company to link tasks, notes and contacts.</p></section>
-<section class="nta29-side-card"><h3>Company quotes</h3><div id="accountQuotesList" class="nta29-quote-list">Save the shipper to find quote requests.</div></section></aside></div></section><section class="admin-panel ops-admin-panel nta26-module-page" data-panel="tasks"><div class="ops-task-actions"><button id="tasksRefresh" class="btn btn-primary">Refresh</button><button type="button" data-admin-go="crm">Review intake </button></div><div class="command-data-panel"><div class="command-data-title"><strong>Task overview</strong></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Priority</th><th>Task</th><th>Record</th><th>Due</th><th>Status</th></tr></thead><tbody id="tasksBody"></tbody></table></div></div></section>
+<section class="nta29-side-card"><h3>Company quotes</h3><div id="accountQuotesList" class="nta29-quote-list">Save the shipper to find quote requests.</div></section></aside></div></section><section class="admin-panel ops-admin-panel nta26-module-page nta30-tasks" data-panel="tasks">
+  <div class="nta30-task-heading">
+    <div><span class="nta30-kicker">OPERATIONS / TASK MANAGEMENT</span><h2>Task Manager</h2><p>Manage operational work, customer follow-ups and internal assignments.</p></div>
+    <div class="nta30-task-heading-actions"><button type="button" class="btn btn-ghost" id="tasksRefresh">Refresh</button><button type="button" class="btn btn-gold" id="tasksCreate">+ New Task</button></div>
+  </div>
+  <div class="nta30-task-stats" aria-label="Task summary">
+    <div><span>All tasks</span><strong id="tasksCountAll">—</strong></div>
+    <div><span>Open</span><strong id="tasksCountOpen">—</strong></div>
+    <div><span>In progress</span><strong id="tasksCountProgress">—</strong></div>
+    <div><span>Overdue</span><strong id="tasksCountOverdue">—</strong></div>
+    <div><span>Completed</span><strong id="tasksCountCompleted">—</strong></div>
+  </div>
+  <section class="nta30-task-section" aria-label="Task list">
+    <div class="nta30-task-section-head"><div><h3>All Tasks</h3><p>Search and filter live tasks stored in Supabase.</p></div><span id="tasksResultCount">Loading tasks…</span></div>
+    <div class="nta30-task-filters">
+      <label class="nta30-sr" for="tasksSearch">Search tasks</label>
+      <input type="search" id="tasksSearch" placeholder="Search task, description or CRM record" autocomplete="off">
+      <label class="nta30-sr" for="tasksFilterStatus">Filter by status</label>
+      <select id="tasksFilterStatus"><option value="">All statuses</option><option value="open">Open</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>
+      <label class="nta30-sr" for="tasksFilterPriority">Filter by priority</label>
+      <select id="tasksFilterPriority"><option value="">All priorities</option><option value="urgent">Urgent</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option></select>
+      <label class="nta30-sr" for="tasksFilterDue">Filter by due date</label>
+      <select id="tasksFilterDue"><option value="">Any due date</option><option value="overdue">Overdue</option><option value="today">Due today</option><option value="week">Next 7 days</option><option value="no_date">No due date</option></select>
+      <button id="tasksResetFilters" type="button" class="btn btn-ghost">Clear</button>
+    </div>
+    <p id="tasksError" role="alert" class="nta30-task-error" hidden></p>
+    <div class="admin-table-wrap nta30-task-table-wrap"><table class="admin-table nta30-task-table">
+      <thead><tr><th>Task</th><th>Linked record</th><th>Priority</th><th>Due date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="tasksBody"><tr><td colspan="6" class="nta30-task-empty">Loading tasks…</td></tr></tbody>
+    </table></div>
+    <div class="nta30-task-foot"><span id="tasksFootnote">Live tasks and customer follow-ups</span></div>
+  </section>
+</section>
+<section class="admin-panel ops-admin-panel nta26-module-page nta30-task-editor" data-panel="task-editor">
+  <div class="nta30-task-heading nta30-editor-heading">
+    <div><button type="button" id="taskBack" class="nta30-task-back">Back to My Tasks</button><span class="nta30-kicker">OPERATIONS / TASK MANAGEMENT</span><h2 id="taskEditorHeading">New Task</h2><p>Create or update an operational task. Changes are saved to Supabase.</p></div>
+    <div class="nta30-task-heading-actions"><button type="button" id="taskCancel" class="btn btn-ghost">Cancel</button><button type="submit" form="taskEditorForm" class="btn btn-gold" id="taskSaveTop">Save Task</button></div>
+  </div>
+  <div class="nta30-editor-layout">
+    <form id="taskEditorForm" class="nta30-editor-card">
+      <section class="nta30-editor-section"><h3>Task details</h3><div class="nta30-editor-fields">
+        <label class="nta30-wide"><span>Task title *</span><input name="title" maxlength="300" type="text" placeholder="e.g. Follow up with carrier about appointment" required></label>
+        <label><span>Status</span><select name="status"><option value="open">Open</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
+        <label><span>Priority</span><select name="priority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option><option value="urgent">Urgent</option></select></label>
+        <label><span>Due date and time</span><input type="datetime-local" name="due_at"></label>
+        <label><span>Assigned to</span><select name="assigned_to" id="taskAssignedTo"><option value="">Unassigned</option></select></label>
+        <label class="nta30-wide"><span>Description / instructions</span><textarea name="description" rows="5" maxlength="4000" placeholder="Add task details, next steps or notes"></textarea></label>
+      </div></section>
+      <section class="nta30-editor-section"><h3>Associated record</h3><p class="nta30-section-desc">Link this task to an existing customer, application or request, or leave it as a standalone task.</p><div class="nta30-editor-fields">
+        <label><span>Record category</span><select name="entity_type" id="taskEntityType"><option value="general">Standalone task (no CRM link)</option><option value="shipper">Shipper CRM / applications</option><option value="carrier">Carrier CRM / applications</option><option value="quote">Quote request</option><option value="inquiry">Inquiry</option></select></label>
+        <label><span>Related record</span><select name="entity_id" id="taskEntityId" disabled><option value="">No linked record</option></select></label>
+      </div><p class="nta30-link-help" id="taskSourceHelp">Standalone tasks are not attached to a specific company.</p></section>
+      <div class="nta30-editor-footer"><p id="taskEditorMessage" role="status" aria-live="polite"></p><div><button type="button" class="btn btn-ghost" id="taskCancelBottom">Cancel</button><button type="submit" class="btn btn-gold" id="taskSaveBottom">Save Task</button></div></div>
+    </form>
+    <aside class="nta30-task-sidebar"><section class="nta30-side-card"><h3>Task management</h3><p>Track deadlines, assign follow-ups and keep work connected to customer records.</p><div><span>Task status</span><strong id="taskSideStatus">Open</strong></div><div><span>Record</span><strong id="taskSideRecord">Standalone</strong></div><div><span>Created</span><strong id="taskSideCreated">New task</strong></div></section>
+    <section class="nta30-side-card"><h3>Available actions</h3><button type="button" id="taskMarkComplete" class="btn btn-ghost" hidden>Mark completed</button><button type="button" id="taskReopen" class="btn btn-ghost" hidden>Reopen task</button><p>Save changes to update the task for your team.</p></section></aside>
+  </div>
+</section>
 <section class="admin-panel ops-admin-panel nta26-module-page nta27-blog-library" data-panel="blog">
   <div class="nta27-library-heading"><div><span class="nta27-kicker">PUBLISHING / CONTENT LIBRARY</span><h2>Blog Posts</h2><p>Create, edit and manage articles published on the NTA Logistics website.</p></div>
     <button type="button" data-new-post class="btn btn-gold nta27-create-post"><span aria-hidden="true">+</span> Create Blog Post</button></div>
