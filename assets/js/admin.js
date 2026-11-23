@@ -452,7 +452,8 @@
   function renderPosts(){
     if(!$('#postsBody'))return;
     const list=state.posts||[],query=$('#postSearch').value.toLowerCase().trim(),status=$('#postStatus').value,category=$('#postCategoryFilter')?.value||'';
-    const visible=list.filter(p=>(!query||(p.title||'').toLowerCase().includes(query)||(p.slug||'').toLowerCase().includes(query))&&(!status||p.status===status)&&(!category||p.category_id===category));
+    const selectedCategory=(state.categories||[]).find(c=>c.id===category);
+    const visible=list.filter(p=>(!query||(p.title||'').toLowerCase().includes(query)||(p.slug||'').toLowerCase().includes(query))&&(!status||p.status===status)&&(!category||p.category_id===category||(selectedCategory&&p.nta_blog_categories?.name===selectedCategory.name)));
     const counts={all:list.length,published:list.filter(p=>p.status==='published').length,draft:list.filter(p=>p.status==='draft').length,scheduled:list.filter(p=>p.status==='scheduled').length};
     for(const [key,n] of Object.entries(counts)){const target=$('#blogCount'+key[0].toUpperCase()+key.slice(1));if(target)target.textContent=String(n);}
     if($('#blogResultCount'))$('#blogResultCount').textContent=visible.length+' of '+list.length+' posts';
@@ -495,7 +496,7 @@
   function resetEditor(){state.post={id:crypto.randomUUID(),title:'',slug:'',excerpt:'',content_html:'',content_text:'',status:'draft',category_id:null,tags:[],author_name:'NTA Logistics',featured_image_path:'',featured_image_alt:'',seo_title:'',seo_description:'',canonical_url:'',scheduled_at:null,published_at:null};fillEditor();state.dirty=false;activate('editor',{hash:'#/posts/new'});}
   $$('[data-new-post]').forEach(b=>b.addEventListener('click',resetEditor));
   async function editPost(id,{skipHistory=false}={}){const j=await api('blog_get',{id});state.post={...j.post,tags:(j.tags||[]).map(t=>t.name)};fillEditor();state.dirty=false;activate('editor',{skipHistory,hash:'#/posts/edit/'+encodeURIComponent(id)});}
-  function fillEditor(){const p=state.post;$('#editorHeading').textContent='Blog Editor';if($('#blogEditingContext'))$('#blogEditingContext').textContent=p.title?'Editing: '+p.title:'Create a new article for the NTA Logistics blog.';$('#postTitle').value=p.title||'';$('#postExcerpt').value=p.excerpt||'';$('#richEditor').innerHTML=p.content_html||'';$('#postStatusEditor').value=p.status||'draft';$('#postScheduledAt').value=p.scheduled_at?new Date(p.scheduled_at).toISOString().slice(0,16):'';$('#postAuthor').value=p.author_name||'NTA Logistics';$('#postCategory').value=p.category_id||'';$('#postTags').value=(p.tags||[]).join(', ');$('#postSlug').value=p.slug||'';$('#featuredImagePath').value=p.featured_image_path||'';$('#featuredImageAlt').value=p.featured_image_alt||'';$('#seoTitle').value=p.seo_title||'';$('#seoDescription').value=p.seo_description||'';$('#canonicalUrl').value=p.canonical_url||'';updateFeaturedPreview();$('#saveState').textContent='Loaded';}
+  function fillEditor(){const p=state.post;$('#editorHeading').textContent='Blog Editor';if($('#blogEditingContext'))$('#blogEditingContext').textContent=p.title?'Editing: '+p.title:'Create a new article for the NTA Logistics blog.';$('#postTitle').value=p.title||'';$('#postExcerpt').value=p.excerpt||'';$('#richEditor').innerHTML=window.NTABlogEditor?.sanitizeHTML?.(p.content_html||'')??(p.content_html||'');window.NTABlogEditor?.refresh?.();$('#postStatusEditor').value=p.status||'draft';$('#postScheduledAt').value=p.scheduled_at?new Date(p.scheduled_at).toISOString().slice(0,16):'';$('#postAuthor').value=p.author_name||'NTA Logistics';$('#postCategory').value=p.category_id||'';$('#postTags').value=(p.tags||[]).join(', ');$('#postSlug').value=p.slug||'';$('#featuredImagePath').value=p.featured_image_path||'';$('#featuredImageAlt').value=p.featured_image_alt||'';$('#seoTitle').value=p.seo_title||'';$('#seoDescription').value=p.seo_description||'';$('#canonicalUrl').value=p.canonical_url||'';updateFeaturedPreview();$('#saveState').textContent='Loaded';}
   const editorInputs=['#postTitle','#postExcerpt','#richEditor','#postStatusEditor','#postScheduledAt','#postAuthor','#postCategory','#postTags','#postSlug','#featuredImageAlt','#seoTitle','#seoDescription','#canonicalUrl'];editorInputs.forEach(sel=>$(sel)?.addEventListener('input',()=>{state.dirty=true;$('#saveState').textContent='Unsaved changes';if(sel==='#postTitle'&&!$('#postSlug').value)$('#postSlug').value=slugify($('#postTitle').value);}));
   let selectedLinkRange=null;
   $$('.editor-toolbar [data-command]').forEach(button=>button.addEventListener('click',()=>{
@@ -559,7 +560,7 @@
   $('#saveDraft').onclick=()=>savePost('draft').catch(editorError);
   $('#publishPost').onclick=()=>savePost($('#postStatusEditor').value==='scheduled'?'scheduled':'published').catch(editorError);
   $('#archivePost').onclick=()=>{
-    if(!state.post?.id){editorError(new Error('Save the article before archiving it.'));return;}
+    if(!state.post?.id||!(state.posts||[]).some(p=>p.id===state.post.id)){editorError(new Error('Save the blog post before archiving it.'));return;}
     $('#archiveConfirmation').hidden=false;
   };
   $('#cancelArchivePost').onclick=()=>{$('#archiveConfirmation').hidden=true;};
