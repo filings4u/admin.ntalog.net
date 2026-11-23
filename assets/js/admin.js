@@ -443,10 +443,59 @@
   async function editPost(id,{skipHistory=false}={}){const j=await api('blog_get',{id});state.post={...j.post,tags:(j.tags||[]).map(t=>t.name)};fillEditor();state.dirty=false;activate('editor',{skipHistory,hash:'#/posts/edit/'+encodeURIComponent(id)});}
   function fillEditor(){const p=state.post;$('#editorHeading').textContent=p.title?'Edit Blog Post':'New Blog Post';$('#postTitle').value=p.title||'';$('#postExcerpt').value=p.excerpt||'';$('#richEditor').innerHTML=p.content_html||'';$('#postStatusEditor').value=p.status||'draft';$('#postScheduledAt').value=p.scheduled_at?new Date(p.scheduled_at).toISOString().slice(0,16):'';$('#postAuthor').value=p.author_name||'NTA Logistics';$('#postCategory').value=p.category_id||'';$('#postTags').value=(p.tags||[]).join(', ');$('#postSlug').value=p.slug||'';$('#featuredImagePath').value=p.featured_image_path||'';$('#featuredImageAlt').value=p.featured_image_alt||'';$('#seoTitle').value=p.seo_title||'';$('#seoDescription').value=p.seo_description||'';$('#canonicalUrl').value=p.canonical_url||'';updateFeaturedPreview();$('#saveState').textContent='Loaded';}
   const editorInputs=['#postTitle','#postExcerpt','#richEditor','#postStatusEditor','#postScheduledAt','#postAuthor','#postCategory','#postTags','#postSlug','#featuredImageAlt','#seoTitle','#seoDescription','#canonicalUrl'];editorInputs.forEach(sel=>$(sel)?.addEventListener('input',()=>{state.dirty=true;$('#saveState').textContent='Unsaved changes';if(sel==='#postTitle'&&!$('#postSlug').value)$('#postSlug').value=slugify($('#postTitle').value);}));
-  $$('.editor-toolbar [data-command]').forEach(b=>b.addEventListener('click',()=>{let val=null;if(b.dataset.command==='createLink')val=prompt('Paste the link URL');document.execCommand(b.dataset.command,false,val);$('#richEditor').focus();state.dirty=true;}));$$('.editor-toolbar [data-format]').forEach(s=>s.addEventListener('change',()=>{document.execCommand(s.dataset.format,false,s.value);$('#richEditor').focus();state.dirty=true;}));
+  let selectedLinkRange=null;
+  $('.editor-toolbar [data-command]').forEach(button=>button.addEventListener('click',()=>{
+    if(button.dataset.command==='createLink'){
+      const selection=window.getSelection();
+      selectedLinkRange=selection?.rangeCount?selection.getRangeAt(0).cloneRange():null;
+      $('#editorLinkForm').hidden=false;
+      $('#editorLinkUrl').focus();
+      return;
+    }
+    document.execCommand(button.dataset.command,false,null);
+    $('#richEditor').focus();
+    state.dirty=true;
+  }));
+  $('#editorLinkCancel').addEventListener('click',()=>{$('#editorLinkForm').hidden=true;$('#editorLinkMessage').textContent='';});
+  $('#editorLinkForm').addEventListener('submit',event=>{
+    event.preventDefault();
+    const raw=$('#editorLinkUrl').value.trim();
+    let url;
+    try{url=new URL(raw);if(!['https:','http:'].includes(url.protocol))throw Error('Invalid link protocol');}
+    catch{$('#editorLinkMessage').textContent='Enter a valid http or https URL.';return;}
+    const editor=$('#richEditor');
+    editor.focus();
+    const selection=window.getSelection();
+    if(selectedLinkRange&&editor.contains(selectedLinkRange.commonAncestorContainer)){
+      selection.removeAllRanges();selection.addRange(selectedLinkRange);
+    }
+    if(selection?.rangeCount&&selection.getRangeAt(0).toString().length){
+      document.execCommand('createLink',false,url.href);
+    }else{
+      const link=document.createElement('a');link.href=url.href;link.textContent=url.href;
+      const range=selection?.rangeCount?selection.getRangeAt(0):null;
+      if(range&&editor.contains(range.commonAncestorContainer)){range.insertNode(link);range.setStartAfter(link);range.collapse(true);selection.removeAllRanges();selection.addRange(range);}
+      else editor.append(link);
+    }
+    state.dirty=true;$('#saveState').textContent='Unsaved changes';
+    $('#editorLinkUrl').value='';$('#editorLinkMessage').textContent='';
+    $('#editorLinkForm').hidden=true;selectedLinkRange=null;
+  });$$('.editor-toolbar [data-format]').forEach(s=>s.addEventListener('change',()=>{document.execCommand(s.dataset.format,false,s.value);$('#richEditor').focus();state.dirty=true;}));
   function collectPost(statusOverride){const status=statusOverride||$('#postStatusEditor').value;return {id:state.post?.id,title:$('#postTitle').value.trim(),slug:$('#postSlug').value.trim()||slugify($('#postTitle').value),excerpt:$('#postExcerpt').value.trim(),content_html:$('#richEditor').innerHTML,content_text:$('#richEditor').innerText,category_id:$('#postCategory').value||null,tags:$('#postTags').value.split(',').map(x=>x.trim()).filter(Boolean),featured_image_path:$('#featuredImagePath').value,featured_image_alt:$('#featuredImageAlt').value,author_name:$('#postAuthor').value,status,scheduled_at:$('#postScheduledAt').value?new Date($('#postScheduledAt').value).toISOString():null,published_at:state.post?.published_at||null,seo_title:$('#seoTitle').value,seo_description:$('#seoDescription').value,canonical_url:$('#canonicalUrl').value};}
   async function savePost(status){const p=collectPost(status);if(!p.title)throw new Error('Add a post title first.');if(p.status==='scheduled'&&!p.scheduled_at)throw new Error('Choose a schedule date and time.');const j=await api('blog_save',{post:p});state.post={...j.post,tags:p.tags};state.dirty=false;$('#saveState').textContent='Saved '+new Date().toLocaleTimeString();$('#saveState').classList.add('saved');await loadPosts();return j;}
-  $('#saveDraft').onclick=()=>savePost('draft').catch(e=>alert(e.message));$('#publishPost').onclick=()=>savePost($('#postStatusEditor').value==='scheduled'?'scheduled':'published').catch(e=>alert(e.message));$('#archivePost').onclick=async()=>{if(!state.post?.id||!confirm('Archive this post?'))return;await api('blog_archive',{id:state.post.id});await loadPosts();activate('blog');};
+  const editorError=error=>{const status=$('#saveState');status.textContent=error?.message||'Could not complete the action';status.classList.remove('saved');status.setAttribute('role','alert');};
+  $('#saveDraft').onclick=()=>savePost('draft').catch(editorError);
+  $('#publishPost').onclick=()=>savePost($('#postStatusEditor').value==='scheduled'?'scheduled':'published').catch(editorError);
+  $('#archivePost').onclick=()=>{
+    if(!state.post?.id){editorError(new Error('Save the article before archiving it.'));return;}
+    $('#archiveConfirmation').hidden=false;
+  };
+  $('#cancelArchivePost').onclick=()=>{$('#archiveConfirmation').hidden=true;};
+  $('#confirmArchivePost').onclick=async()=>{
+    if(!state.post?.id)return;
+    try{await api('blog_archive',{id:state.post.id});$('#archiveConfirmation').hidden=true;await loadPosts();activate('blog');}
+    catch(error){editorError(error);}
+  };
   state.autosave=setInterval(()=>{if(state.dirty&&$('#postTitle').value.trim()&&$('.admin-panel[data-panel="editor"]').classList.contains('active'))savePost('draft').catch(()=>{});},30000);
   $('#previewPost').onclick=()=>{
   $('#previewTitle').textContent=$('#postTitle').value||'Untitled';
@@ -461,7 +510,20 @@ $('#closePreview').onclick=()=>activate('editor',{hash:'#/posts/edit'});
   function renderMedia(){if(!$('#mediaGrid'))return;$('#mediaGrid').innerHTML=state.media.map(m=>`<div class="media-card" data-media-path="${esc(m.storage_path)}"><img src="${mediaUrl(m.storage_path)}" alt="${esc(m.alt_text||'')}"><div><strong>${esc(m.file_name)}</strong><br><small>${esc(m.alt_text||'No alt text')}</small><br><button class="btn btn-ghost choose-media" style="width:100%;margin-top:8px">Use as Featured</button><button class="btn btn-primary insert-media" style="width:100%;margin-top:6px">Insert in Article</button></div></div>`).join('')||'<p>No media uploaded.</p>';$$('.choose-media').forEach(b=>b.addEventListener('click',()=>{const card=b.closest('[data-media-path]');const m=state.media.find(x=>x.storage_path===card.dataset.mediaPath);$('#featuredImagePath').value=m.storage_path;$('#featuredImageAlt').value=m.alt_text||'';updateFeaturedPreview();state.dirty=true;activate('editor');}));$$('.insert-media').forEach(b=>b.addEventListener('click',()=>{const card=b.closest('[data-media-path]');const m=state.media.find(x=>x.storage_path===card.dataset.mediaPath);activate('editor');const ed=$('#richEditor');ed.focus();document.execCommand('insertImage',false,mediaUrl(m.storage_path));const imgs=[...ed.querySelectorAll('img')];const img=imgs[imgs.length-1];if(img){img.alt=m.alt_text||'';img.loading='lazy';}state.dirty=true;$('#saveState').textContent='Unsaved changes';}));}
   function updateFeaturedPreview(){const p=$('#featuredImagePath').value;$('#featuredPreview').src=p?mediaUrl(p):'';}
   $('#chooseFeatured').onclick=()=>activate('media');
-  $('#uploadMedia').onclick=async()=>{const file=$('#mediaFile').files[0];if(!file)return alert('Choose an image first.');const signed=await api('media_upload_url',{file_name:file.name,mime_type:file.type,file_size:file.size});const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});if(error)throw error;await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:$('#mediaAlt').value});$('#mediaFile').value='';$('#mediaAlt').value='';await loadMedia();};
+  $('#uploadMedia').onclick=async()=>{
+    const file=$('#mediaFile').files[0],status=$('#mediaStatus');
+    if(!file){status.textContent='Choose an image to upload.';return;}
+    const button=$('#uploadMedia');button.disabled=true;status.textContent='Uploading image…';
+    try{
+      const signed=await api('media_upload_url',{file_name:file.name,mime_type:file.type,file_size:file.size});
+      const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});
+      if(error)throw error;
+      await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:$('#mediaAlt').value});
+      $('#mediaFile').value='';$('#mediaAlt').value='';
+      await loadMedia();status.textContent='Image uploaded.';
+    }catch(error){status.textContent=error?.message||'Unable to upload image.';}
+    finally{button.disabled=false;}
+  };
   async function loadTeam(){const j=await api('team');$('#teamBody').innerHTML=(j.team||[]).map(u=>`<tr><td>${esc(u.display_name||'—')}</td><td>${esc(u.email)}</td><td>${esc(u.role)}</td><td>${u.active?'Yes':'No'}</td><td>${dt(u.created_at)}</td></tr>`).join('')||'<tr><td colspan="5">No team members.</td></tr>';}
   window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.returnValue='';}});
 
