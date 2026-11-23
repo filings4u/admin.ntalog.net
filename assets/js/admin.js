@@ -461,7 +461,7 @@
   syncSidebarToggle();
   window.addEventListener('resize',syncSidebarToggle);
   $$('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
-  $('.admin-nav button[data-admin-panel], .admin-nav button[data-accounts-type], .admin-nav button[data-crm-shortcut]').forEach(b=>b.addEventListener('click',()=>{
+  $$('.admin-nav button[data-admin-panel], .admin-nav button[data-accounts-type], .admin-nav button[data-crm-shortcut]').forEach(b=>b.addEventListener('click',()=>{
     if(window.matchMedia('(max-width:760px)').matches)$('#adminApp').classList.remove('sidebar-open');
     syncSidebarToggle();
     $$('.admin-nav button').forEach(n=>n.classList.remove('active'));
