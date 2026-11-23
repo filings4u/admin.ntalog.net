@@ -102,8 +102,7 @@ const showInboxRecords=()=>{
   left.append(badge,detail);
   const status=node('span','ops-inbox-feed-state',r.status);
   const date=node('span','ops-inbox-feed-date',r.date||'—');
-  const arrow=node('span','ops-inbox-feed-chevron','↗');arrow.setAttribute('aria-hidden','true');
-  button.append(left,status,date,arrow);
+  button.append(left,status,date);
   button.addEventListener('click',()=>{
    if(crm)crm.value=r.type;
    const search=$('#crmSearch'),state=$('#crmStatus');
