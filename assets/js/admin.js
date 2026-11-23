@@ -180,7 +180,40 @@
     }
     showApp();
     await loadAdminWorkspace();
+    await restoreWorkspaceRoute();
   }
+  /* Hash URLs identify full management pages. Browser Back/Forward restores
+     the same page and, for CRM records, re-fetches the selected record. */
+  async function restoreWorkspaceRoute(){
+    if(!state.session)return;
+    let parts=[];
+    try{parts=location.hash.replace(/^#\/?/,'').split('/').filter(Boolean).map(decodeURIComponent);}catch{return;}
+    const [section,type,id]=parts;
+    if(section==='crm'&&['quote','shipper','carrier','inquiry'].includes(type)){
+      state.crmType=type;$('#crmType').value=type;
+      if(id){await openCrm(id,type,{skipHistory:true});return;}
+      activate('crm',{skipHistory:true});return;
+    }
+    if(section==='accounts'&&['shipper','carrier'].includes(type)){
+      if(id&&window.NTAAccountsEdit){await window.NTAAccountsEdit(type,id,{skipHistory:true});return;}
+      if(window.NTAAccountsOpen){await window.NTAAccountsOpen(type,{skipHistory:true});return;}
+    }
+    if(section==='factoring'){
+      if(type&&window.NTAFactoringEdit){await window.NTAFactoringEdit(type,{skipHistory:true});return;}
+      if(window.NTAFactoringOpen){await window.NTAFactoringOpen({skipHistory:true});return;}
+    }
+    if(section==='posts'&&type==='preview'){activate('article-preview',{skipHistory:true});return;}
+    if(section==='posts'&&type==='edit'){
+      if(id&&state.post?.id!==id){await editPost(id,{skipHistory:true});return;}
+      activate('editor',{skipHistory:true});return;
+    }
+    if(section==='posts'&&type==='new'){activate('editor',{skipHistory:true});return;}
+    const pages=['dashboard','crm','crm-detail','accounts','account-editor','factoring','factoring-editor','tasks','blog','editor','article-preview','media','categories','profile','team'];
+    if(section==='page'&&pages.includes(type)){activate(type,{skipHistory:true});return;}
+    if(section==='overview'){activate('dashboard',{skipHistory:true});return;}
+    activate('dashboard',{skipHistory:true});
+  }
+  window.addEventListener('popstate',()=>{if(state.session)restoreWorkspaceRoute().catch(error=>console.error('Navigation failed:',error));});
   $('#signinForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const form=e.currentTarget, fields=new FormData(form);
@@ -405,9 +438,9 @@
   async function loadTaxonomy(){const j=await api('blog_taxonomy');state.categories=j.categories||[];state.tags=j.tags||[];$('#postCategory').innerHTML='<option value="">No category</option>'+state.categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');renderCategories();}
   function renderCategories(){if(!$('#categoryList'))return;$('#categoryList').innerHTML=state.categories.map(c=>`<div class="timeline-item"><strong>${esc(c.name)}</strong><br><small>/${esc(c.slug)}</small><p>${esc(c.description||'')}</p></div>`).join('')||'<p>No categories.</p>';}
   $('#saveCategory').addEventListener('click',async()=>{await api('category_save',{name:$('#categoryName').value,slug:$('#categorySlug').value,description:$('#categoryDescription').value});$('#categoryName').value=$('#categorySlug').value=$('#categoryDescription').value='';await loadTaxonomy();});
-  function resetEditor(){state.post={id:crypto.randomUUID(),title:'',slug:'',excerpt:'',content_html:'',content_text:'',status:'draft',category_id:null,tags:[],author_name:'NTA Logistics',featured_image_path:'',featured_image_alt:'',seo_title:'',seo_description:'',canonical_url:'',scheduled_at:null,published_at:null};fillEditor();state.dirty=false;activate('editor');}
+  function resetEditor(){state.post={id:crypto.randomUUID(),title:'',slug:'',excerpt:'',content_html:'',content_text:'',status:'draft',category_id:null,tags:[],author_name:'NTA Logistics',featured_image_path:'',featured_image_alt:'',seo_title:'',seo_description:'',canonical_url:'',scheduled_at:null,published_at:null};fillEditor();state.dirty=false;activate('editor',{hash:'#/posts/new'});}
   $$('[data-new-post]').forEach(b=>b.addEventListener('click',resetEditor));
-  async function editPost(id){const j=await api('blog_get',{id});state.post={...j.post,tags:(j.tags||[]).map(t=>t.name)};fillEditor();state.dirty=false;activate('editor');}
+  async function editPost(id,{skipHistory=false}={}){const j=await api('blog_get',{id});state.post={...j.post,tags:(j.tags||[]).map(t=>t.name)};fillEditor();state.dirty=false;activate('editor',{skipHistory,hash:'#/posts/edit/'+encodeURIComponent(id)});}
   function fillEditor(){const p=state.post;$('#editorHeading').textContent=p.title?'Edit Blog Post':'New Blog Post';$('#postTitle').value=p.title||'';$('#postExcerpt').value=p.excerpt||'';$('#richEditor').innerHTML=p.content_html||'';$('#postStatusEditor').value=p.status||'draft';$('#postScheduledAt').value=p.scheduled_at?new Date(p.scheduled_at).toISOString().slice(0,16):'';$('#postAuthor').value=p.author_name||'NTA Logistics';$('#postCategory').value=p.category_id||'';$('#postTags').value=(p.tags||[]).join(', ');$('#postSlug').value=p.slug||'';$('#featuredImagePath').value=p.featured_image_path||'';$('#featuredImageAlt').value=p.featured_image_alt||'';$('#seoTitle').value=p.seo_title||'';$('#seoDescription').value=p.seo_description||'';$('#canonicalUrl').value=p.canonical_url||'';updateFeaturedPreview();$('#saveState').textContent='Loaded';}
   const editorInputs=['#postTitle','#postExcerpt','#richEditor','#postStatusEditor','#postScheduledAt','#postAuthor','#postCategory','#postTags','#postSlug','#featuredImageAlt','#seoTitle','#seoDescription','#canonicalUrl'];editorInputs.forEach(sel=>$(sel)?.addEventListener('input',()=>{state.dirty=true;$('#saveState').textContent='Unsaved changes';if(sel==='#postTitle'&&!$('#postSlug').value)$('#postSlug').value=slugify($('#postTitle').value);}));
   $$('.editor-toolbar [data-command]').forEach(b=>b.addEventListener('click',()=>{let val=null;if(b.dataset.command==='createLink')val=prompt('Paste the link URL');document.execCommand(b.dataset.command,false,val);$('#richEditor').focus();state.dirty=true;}));$$('.editor-toolbar [data-format]').forEach(s=>s.addEventListener('change',()=>{document.execCommand(s.dataset.format,false,s.value);$('#richEditor').focus();state.dirty=true;}));
