@@ -61,6 +61,8 @@ body.nta-admin .account-menu-heading{padding:13px 12px!important}
 body.nta-admin .account-dropdown :is(button,a){color:#2c4058!important}
 body.nta-admin .admin-main{max-width:none!important;min-width:0!important;margin:0!important;padding:35px clamp(24px,3.25vw,54px) 70px!important}
 body.nta-admin .admin-panel{display:none!important;max-width:1450px!important;margin:0 auto!important}
+/* Inactive pages must never be exposed by later module-specific display rules. */
+body.nta-admin .admin-panel:not(.active){display:none!important}
 body.nta-admin .admin-panel.active{display:block!important}
 body.nta-admin .nta26-dashboard{color:var(--nta26-ink)!important}
 body.nta-admin .nta26-overview-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;margin:0 0 28px}
