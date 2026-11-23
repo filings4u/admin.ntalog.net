@@ -1,0 +1,64 @@
+/* Dedicated Operations task manager. Never make inactive portal panels visible. */
+body.nta-admin .nta30-tasks,body.nta-admin .nta30-task-editor{--tborder:#dce5ee;--ttext:#183750;--tmuted:#7e93a7;min-width:0!important}
+body.nta-admin .nta30-tasks [hidden],body.nta-admin .nta30-task-editor [hidden]{display:none!important}
+body.nta-admin .nta30-task-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;flex-wrap:wrap!important;margin-bottom:17px!important;background:#fff!important;border:1px solid var(--tborder)!important;border-radius:11px!important;padding:20px 23px!important}
+body.nta-admin .nta30-kicker{display:block!important;font-size:9px!important;letter-spacing:.13em!important;font-weight:850!important;color:#b48732!important;margin:0 0 7px!important}
+body.nta-admin .nta30-task-heading h2{font-size:21px!important;line-height:1.3!important;color:var(--ttext)!important;font-weight:850!important;margin:0!important}
+body.nta-admin .nta30-task-heading p{font-size:11px!important;color:var(--tmuted)!important;margin:5px 0 0!important}
+body.nta-admin .nta30-task-heading-actions{display:flex!important;gap:9px!important;align-items:center!important;flex-wrap:wrap!important}
+body.nta-admin .nta30-task-heading-actions button,body.nta-admin .nta30-task-filters button,body.nta-admin .nta30-editor-footer button{margin:0!important;padding:9px 15px!important;min-height:37px!important;border-radius:7px!important;font-size:10.5px!important;font-weight:790!important;white-space:nowrap!important}
+body.nta-admin .nta30-tasks .btn-gold,body.nta-admin .nta30-task-editor .btn-gold{background:#e9b947!important;color:#102e47!important;border:1px solid #e9b947!important}
+body.nta-admin .nta30-tasks .btn-ghost,body.nta-admin .nta30-task-editor .btn-ghost{background:#fff!important;color:#2c506d!important;border:1px solid #d7e2ec!important}
+body.nta-admin .nta30-task-stats{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;margin:0 0 17px!important}
+body.nta-admin .nta30-task-stats>div{display:flex!important;flex-direction:column!important;justify-content:space-between!important;padding:15px 18px!important;min-height:96px!important;border:1px solid var(--tborder)!important;border-radius:10px!important;background:#fff!important}
+body.nta-admin .nta30-task-stats span{font-size:10.5px!important;color:#6c8196!important;font-weight:730!important}
+body.nta-admin .nta30-task-stats strong{font-size:25px!important;font-weight:870!important;color:#1a3a54!important;margin-top:10px!important;line-height:1.1!important}
+body.nta-admin .nta30-task-section{background:#fff!important;border:1px solid var(--tborder)!important;border-radius:11px!important;overflow:hidden!important}
+body.nta-admin .nta30-task-section-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:19px 21px 15px!important;flex-wrap:wrap!important}
+body.nta-admin .nta30-task-section-head h3{margin:0!important;color:#203f57!important;font-size:13px!important;font-weight:850!important}
+body.nta-admin .nta30-task-section-head p{margin:5px 0 0!important;color:#8b9eae!important;font-size:10.5px!important}
+body.nta-admin #tasksResultCount{font-size:10px!important;font-weight:770!important;color:#58768b!important}
+body.nta-admin .nta30-task-filters{display:grid!important;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(120px,1fr)) auto!important;gap:9px!important;padding:0 21px 17px!important;align-items:center!important}
+body.nta-admin .nta30-task-filters :is(input,select){min-width:0!important;max-width:100%!important;width:100%!important;height:38px!important;margin:0!important;padding:8px 11px!important;border:1px solid #d8e3ec!important;border-radius:7px!important;background:#f8fafc!important;color:#2d4a63!important;font-size:11px!important;box-shadow:none!important}
+body.nta-admin .nta30-task-filters button{min-height:38px!important}
+body.nta-admin .nta30-sr{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+body.nta-admin .nta30-task-error:not([hidden]){margin:0 21px 15px!important;padding:12px!important;background:#fff4f2!important;border:1px solid #efd4cc!important;border-radius:7px!important;color:#963a2b!important;font-size:11px!important}
+body.nta-admin .nta30-task-table-wrap{overflow-x:auto!important}
+body.nta-admin .nta30-task-table{width:100%!important;border-collapse:collapse!important}
+body.nta-admin .nta30-task-table th{font-size:9px!important;font-weight:840!important;color:#8499ac!important;letter-spacing:.06em!important;background:#f5f8fa!important;padding:13px 17px!important;white-space:nowrap!important;text-align:left!important}
+body.nta-admin .nta30-task-table td{padding:14px 17px!important;font-size:11px!important;color:#38566d!important;border-top:1px solid #e7edf3!important;vertical-align:middle!important}
+body.nta-admin .nta30-task-table td strong{color:#1c3d56!important;font-weight:790!important;font-size:11.5px!important}
+body.nta-admin .nta30-task-table td small{display:block!important;color:#8298aa!important;font-size:10px!important;margin-top:4px!important;line-height:1.45!important}
+body.nta-admin .nta30-task-table button{margin:0!important;padding:7px 11px!important;min-height:30px!important;background:#eef3f7!important;border:1px solid #dfe8ef!important;border-radius:6px!important;color:#20435f!important;font-weight:780!important;font-size:10px!important;white-space:nowrap!important}
+body.nta-admin .nta30-task-pill{display:inline-block!important;border-radius:6px!important;padding:6px 9px!important;font-size:9.5px!important;font-weight:810!important;background:#edf3f8!important;color:#315877!important;white-space:nowrap!important}
+body.nta-admin .nta30-task-pill.urgent{background:#fff0ed!important;color:#a74332!important}
+body.nta-admin .nta30-task-pill.high{background:#fff3dc!important;color:#916213!important}
+body.nta-admin .nta30-task-pill.completed{background:#e8f6ed!important;color:#286547!important}
+body.nta-admin .nta30-task-pill.in_progress{background:#e9f1fc!important;color:#28629b!important}
+body.nta-admin .nta30-task-empty{text-align:center!important;padding:42px 16px!important;color:#8799aa!important;font-size:11px!important}
+body.nta-admin .nta30-task-foot{padding:13px 20px!important;font-size:10px!important;color:#90a1b1!important;border-top:1px solid #e7edf2!important}
+body.nta-admin .nta30-editor-layout{display:grid!important;grid-template-columns:minmax(0,1fr) 275px!important;align-items:start!important;gap:15px!important}
+body.nta-admin .nta30-editor-card,body.nta-admin .nta30-side-card{border:1px solid var(--tborder)!important;background:#fff!important;border-radius:11px!important;min-width:0!important;overflow:hidden!important}
+body.nta-admin .nta30-editor-section{padding:22px 24px!important;border-bottom:1px solid #e5edf3!important}
+body.nta-admin .nta30-editor-section h3,body.nta-admin .nta30-side-card h3{margin:0 0 16px!important;color:#203f57!important;font-size:13px!important;font-weight:840!important}
+body.nta-admin .nta30-section-desc{font-size:11px!important;color:#8397a8!important;margin:-7px 0 18px!important}
+body.nta-admin .nta30-editor-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px 17px!important}
+body.nta-admin .nta30-editor-fields label{display:flex!important;flex-direction:column!important;gap:7px!important;font-weight:740!important;font-size:10.5px!important;color:#455e72!important;min-width:0!important}
+body.nta-admin .nta30-editor-fields label.nta30-wide{grid-column:1/-1!important}
+body.nta-admin .nta30-editor-fields :is(input,select,textarea){width:100%!important;min-width:0!important;min-height:40px!important;background:#fafcfd!important;border:1px solid #d5e0ea!important;border-radius:7px!important;padding:9px 11px!important;margin:0!important;font-size:11.5px!important;color:#29485e!important;box-shadow:none!important;box-sizing:border-box!important}
+body.nta-admin .nta30-editor-fields textarea{min-height:105px!important;resize:vertical!important}
+body.nta-admin .nta30-link-help{font-size:10px!important;color:#8297a8!important;margin:13px 0 0!important}
+body.nta-admin .nta30-editor-footer{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:14px!important;padding:17px 24px!important;flex-wrap:wrap!important}
+body.nta-admin .nta30-editor-footer div{display:flex!important;gap:9px!important}
+body.nta-admin #taskEditorMessage{font-size:11px!important;color:#38674f!important;margin:0!important}
+body.nta-admin #taskEditorMessage[data-error="true"]{color:#9d4332!important}
+body.nta-admin .nta30-task-sidebar{display:flex!important;flex-direction:column!important;gap:14px!important}
+body.nta-admin .nta30-side-card{padding:19px!important}
+body.nta-admin .nta30-side-card p{color:#8295a5!important;font-size:11px!important;line-height:1.55!important}
+body.nta-admin .nta30-side-card>div{display:flex!important;flex-direction:column!important;gap:4px!important;margin:14px 0!important}
+body.nta-admin .nta30-side-card span{font-size:10px!important;color:#91a2b1!important}
+body.nta-admin .nta30-side-card strong{font-size:11px!important;color:#24445c!important}
+body.nta-admin .nta30-side-card button{width:100%!important;text-align:center!important;margin:0 0 9px!important;padding:9px!important;font-size:10.5px!important}
+body.nta-admin .nta30-task-back{display:block!important;margin:0 0 10px!important;padding:0!important;background:none!important;border:0!important;font-size:10px!important;color:#527592!important;font-weight:800!important;cursor:pointer!important}
+@media(max-width:1150px){body.nta-admin .nta30-task-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.nta-admin .nta30-task-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.nta-admin .nta30-editor-layout{grid-template-columns:1fr!important}}
+@media(max-width:650px){body.nta-admin .nta30-task-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.nta-admin .nta30-task-filters{grid-template-columns:1fr!important;padding:0 14px 14px!important}body.nta-admin .nta30-task-heading{padding:15px!important}body.nta-admin .nta30-editor-fields{grid-template-columns:1fr!important}body.nta-admin .nta30-editor-section{padding:17px!important}body.nta-admin .nta30-task-section-head{padding:15px!important}}
