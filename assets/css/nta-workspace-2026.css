@@ -101,7 +101,7 @@ body.nta-admin .nta26-tab-list button span[data-ops-count]{display:grid;place-it
 body.nta-admin .nta26-tab-list button.active span[data-ops-count]{background:#ffffff24;color:#fff}
 body.nta-admin .nta26-feed-head{display:grid;grid-template-columns:minmax(0,1fr) 105px 78px;padding:12px 25px;background:#f8fafb;border-top:1px solid #edf1f4;border-bottom:1px solid #edf1f4;color:#91a0ae;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 body.nta-admin #opsInboxList{min-height:258px!important;max-height:460px;overflow-y:auto!important;background:#fff!important}
-body.nta-admin #opsInboxList .ops-inbox-feed-row{display:grid!important;grid-template-columns:minmax(0,1fr) 105px 78px 12px!important;align-items:center!important;gap:5px!important;width:100%!important;min-height:78px!important;margin:0!important;padding:14px 23px!important;background:#fff!important;border:0!important;border-bottom:1px solid #ecf0f4!important;border-radius:0!important;box-shadow:none!important;text-align:left!important;color:var(--nta26-ink)!important}
+body.nta-admin #opsInboxList .ops-inbox-feed-row{display:grid!important;grid-template-columns:minmax(0,1fr) 105px 78px!important;align-items:center!important;gap:5px!important;width:100%!important;min-height:78px!important;margin:0!important;padding:14px 23px!important;background:#fff!important;border:0!important;border-bottom:1px solid #ecf0f4!important;border-radius:0!important;box-shadow:none!important;text-align:left!important;color:var(--nta26-ink)!important}
 body.nta-admin #opsInboxList .ops-inbox-feed-row:hover{background:#fafbfc!important}
 body.nta-admin #opsInboxList .ops-inbox-feed-primary{display:flex!important;align-items:center!important;min-width:0!important;gap:12px!important}
 body.nta-admin #opsInboxList .ops-inbox-feed-icon{display:grid!important;place-items:center!important;width:37px!important;height:37px!important;min-width:37px!important;border-radius:10px!important;background:#eef3f8!important;color:#385c79!important;font-size:10px!important;font-weight:900!important}
@@ -231,7 +231,7 @@ body.nta-admin .ops-auth .ops-auth-card{border-radius:15px!important}
  body.nta-admin .nta26-tab-list{padding:0 12px 12px}
  body.nta-admin .nta26-feed-head{grid-template-columns:minmax(0,1fr) 65px;gap:7px;padding:10px 16px}
  body.nta-admin .nta26-feed-head span:last-child{display:none}
- body.nta-admin #opsInboxList .ops-inbox-feed-row{grid-template-columns:minmax(0,1fr) 65px 11px!important;padding:12px 14px!important}
+ body.nta-admin #opsInboxList .ops-inbox-feed-row{grid-template-columns:minmax(0,1fr) 65px!important;padding:12px 14px!important}
  body.nta-admin #opsInboxList .ops-inbox-feed-date{display:none!important}
  body.nta-admin #opsInboxList .ops-inbox-feed-icon{width:30px!important;height:30px!important;min-width:30px!important}
  body.nta-admin .nta26-card-foot{padding:12px 16px}
