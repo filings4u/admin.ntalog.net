@@ -1464,3 +1464,115 @@ body.nta-admin #crmRecordFeedback:not([hidden]){
   body.nta-admin .nta27-statusbar{padding:11px!important}
   body.nta-admin .nta27-action-form .nta27-form-inline{grid-template-columns:1fr!important}
 }
+
+/* Factoring company manager: focused provider onboarding, not a generic account form. */
+body.nta-admin .nta27-factor-page .nta26-detail-toolbar{
+  max-width:1200px!important;margin-bottom:12px!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factoring-editor.admin-card{
+  max-width:1200px!important;padding:0!important;margin:0!important;
+  background:#fff!important;border:1px solid #dbe4ec!important;
+  border-radius:12px!important;box-shadow:none!important;overflow:hidden!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-heading{
+  padding:22px 27px 19px!important;border-bottom:1px solid #e3eaf0!important;
+  background:#fff!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-eyebrow{
+  display:block!important;font-size:9px!important;letter-spacing:.11em!important;
+  font-weight:850!important;color:#9e7624!important;margin-bottom:7px!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-heading h2{
+  margin:0!important;color:#1e344a!important;font-size:22px!important;
+  font-weight:850!important;letter-spacing:-.025em!important;line-height:1.25!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-heading p{
+  margin:7px 0 0!important;font-size:11.5px!important;line-height:1.5!important;color:#8194a7!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group{
+  min-width:0!important;margin:0!important;padding:20px 27px 23px!important;
+  border:0!important;border-bottom:1px solid #e7edf2!important;border-radius:0!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group legend{
+  width:100%!important;display:block!important;margin:0!important;padding:0!important;
+  color:#233b52!important;font-size:13px!important;font-weight:850!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-hint{
+  margin:4px 0 16px!important;color:#899aaa!important;font-size:10.5px!important;line-height:1.5!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group .form-grid{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:15px 18px!important;align-items:start!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group .field{
+  min-width:0!important;margin:0!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group .field.full{grid-column:1/-1!important}
+body.nta-admin .nta27-factor-page .nta27-factor-group .field label{
+  display:flex!important;flex-direction:column!important;gap:6px!important;
+  margin:0!important;color:#4a6177!important;
+  font-size:10.5px!important;font-weight:750!important;line-height:1.35!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group :is(input,select,textarea){
+  display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;
+  height:38px!important;min-height:38px!important;margin:0!important;
+  padding:9px 11px!important;border:1px solid #d7e1ea!important;
+  background:#fbfcfe!important;border-radius:7px!important;
+  color:#293f55!important;font-size:11.5px!important;font-weight:550!important;
+  font-family:inherit!important;box-shadow:none!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group textarea{
+  height:auto!important;min-height:80px!important;resize:vertical!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-group :is(input,select,textarea):focus-visible{
+  outline:2px solid #a5c2d9!important;outline-offset:1px!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-footer{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;flex-wrap:wrap!important;
+  padding:16px 27px!important;background:#f9fbfd!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-footer>span{
+  font-size:10px!important;color:#8698aa!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-footer .editor-actions{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  flex-wrap:wrap!important;margin:0!important;
+}
+body.nta-admin .nta27-factor-page .nta27-factor-footer .editor-actions button{
+  margin:0!important;min-height:38px!important;border-radius:7px!important;
+  font-size:11px!important;padding:10px 17px!important;font-weight:780!important;
+}
+body.nta-admin .nta27-factor-page #factorMessage:not(:empty){
+  display:block!important;margin:0!important;padding:12px 26px!important;
+  border-top:1px solid #e3eaf0!important;background:#f2f7fa!important;
+  font-size:11px!important;color:#37576f!important;
+}
+body.nta-admin .nta27-factor-page #factorMessage[data-kind="error"]:not(:empty){
+  background:#fff1ee!important;color:#9b4234!important;border-top-color:#f0d7d0!important;
+}
+body.nta-admin #factorRows .nta27-factor-record{
+  padding:0!important;border:0!important;background:transparent!important;
+  color:#245272!important;text-align:left!important;font-weight:800!important;
+  font-family:inherit!important;font-size:11.5px!important;cursor:pointer!important;
+}
+body.nta-admin #factorRows .nta27-factor-record:hover{text-decoration:underline!important}
+body.nta-admin #factorRows .nta27-factor-sub{
+  display:block!important;margin-top:4px!important;color:#8598a9!important;
+  font-size:10px!important;
+}
+@media(max-width:1150px){
+  body.nta-admin .nta27-factor-page .nta27-factor-group .form-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:650px){
+  body.nta-admin .nta27-factor-page .nta27-factor-group .form-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  body.nta-admin .nta27-factor-page .nta27-factor-group,
+  body.nta-admin .nta27-factor-page .nta27-factor-heading,
+  body.nta-admin .nta27-factor-page .nta27-factor-footer{
+    padding-left:16px!important;padding-right:16px!important;
+  }
+}
