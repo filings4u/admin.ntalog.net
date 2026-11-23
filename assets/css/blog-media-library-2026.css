@@ -6,7 +6,7 @@ body.nta-admin .nta28-media-library{
   --ml-muted:#8296a8;
   --ml-gold:#e9b745;
   width:100%!important;min-width:0!important;
-  display:block!important;
+  /* Do not override .admin-panel display: none when inactive. */
 }
 body.nta-admin .nta28-media-library [hidden]{display:none!important}
 body.nta-admin .nta28-media-library .nta28-media-page-heading{
