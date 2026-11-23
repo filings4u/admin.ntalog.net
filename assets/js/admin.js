@@ -208,7 +208,11 @@
       activate('editor',{skipHistory:true});return;
     }
     if(section==='posts'&&type==='new'){activate('editor',{skipHistory:true});return;}
-    const pages=['dashboard','crm','crm-detail','accounts','account-editor','factoring','factoring-editor','tasks','blog','editor','article-preview','media','categories','profile','team'];
+    if(section==='page'&&type==='categories'){
+      history.replaceState({ntaPanel:'blog'},'','#/page/blog');
+      activate('blog',{skipHistory:true});return;
+    }
+    const pages=['dashboard','crm','crm-detail','accounts','account-editor','factoring','factoring-editor','tasks','blog','editor','article-preview','media','profile','team'];
     if(section==='page'&&pages.includes(type)){activate(type,{skipHistory:true});return;}
     if(section==='overview'){activate('dashboard',{skipHistory:true});return;}
     activate('dashboard',{skipHistory:true});
@@ -257,16 +261,16 @@
     } finally {button.disabled=false;}
   });
   function activate(name,{skipHistory=false,hash=null}={}){
+    if(name==='categories'){name='blog';hash='#/page/blog';}
     const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[name]||name;
     $$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===parent));
     $$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
     if(!skipHistory){const url=hash||'#/page/'+encodeURIComponent(name);if(location.hash!==url)history.pushState({ntaPanel:name},'',url);}
-    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',categories:'Categories',media:'Media Library',profile:'My Account',team:'Team & Users'};
+    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',media:'Media Library',profile:'My Account',team:'Team & Users'};
     if($('#ntaPageLabel'))$('#ntaPageLabel').textContent=labels[name]||'Management';
     if(name==='crm')loadCrm().catch(console.error);
     if(name==='blog')renderPosts();
     if(name==='media')renderMedia();
-    if(name==='categories')renderCategories();
     if(name==='team')loadTeam().catch(console.error);
     window.scrollTo({top:0,behavior:'instant'});
   }
@@ -448,7 +452,7 @@
   }}
   $('#crmBackToList').addEventListener('click',()=>activate('crm',{hash:'#/crm/'+encodeURIComponent(state.crmType)}));
   window.NTAOpenCrmRecord=(type,id)=>openCrm(id,type);
-    async function loadPosts(){const j=await api('blog_list');state.posts=j.posts||[];renderPosts();}
+    async function loadPosts(){const j=await api('blog_list');state.posts=j.posts||[];renderPosts();renderCategories();}
   function renderPosts(){
     if(!$('#postsBody'))return;
     const list=state.posts||[],query=$('#postSearch').value.toLowerCase().trim(),status=$('#postStatus').value,category=$('#postCategoryFilter')?.value||'';
@@ -487,12 +491,89 @@
     };
     work().catch(error=>{if($('#blogListNotice'))$('#blogListNotice').textContent=error.message||'Unable to open this post.';}).finally(()=>{button.disabled=false});
   });
-  async function loadTaxonomy(){const j=await api('blog_taxonomy');state.categories=j.categories||[];state.tags=j.tags||[];$('#postCategory').innerHTML='<option value="">No category</option>'+state.categories.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  async function loadTaxonomy(){const j=await api('blog_taxonomy');state.categories=j.categories||[];state.tags=j.tags||[];const selectedEditorCategory=$('#postCategory').value;$('#postCategory').innerHTML='<option value="">No category</option>'+state.categories.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');if(state.categories.some(c=>c.id===selectedEditorCategory))$('#postCategory').value=selectedEditorCategory;
     const filter=$('#postCategoryFilter');
     if(filter){const choice=filter.value;filter.innerHTML='<option value="">All categories</option>'+state.categories.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');filter.value=choice; }
     renderCategories();renderPosts();}
-  function renderCategories(){if(!$('#categoryList'))return;$('#categoryList').innerHTML=state.categories.map(c=>`<div class="timeline-item"><strong>${esc(c.name)}</strong><br><small>/${esc(c.slug)}</small><p>${esc(c.description||'')}</p></div>`).join('')||'<p>No categories.</p>';}
-  $('#saveCategory').addEventListener('click',async()=>{await api('category_save',{name:$('#categoryName').value,slug:$('#categorySlug').value,description:$('#categoryDescription').value});$('#categoryName').value=$('#categorySlug').value=$('#categoryDescription').value='';await loadTaxonomy();});
+  let categorySlugManuallyEdited=false;
+  const categoryFeedback=(message,error=false)=>{
+    const el=$('#categoryFormMessage');
+    if(!el)return;
+    el.hidden=!message;el.textContent=message||'';el.dataset.kind=error?'error':'success';
+  };
+  function resetCategoryEditor(){
+    $('#categoryId').value='';
+    $('#categoryName').value='';
+    $('#categorySlug').value='';
+    $('#categoryDescription').value='';
+    $('#categoryFormTitle').textContent='Add New Category';
+    $('#saveCategory').textContent='Add Category';
+    $('#cancelCategoryEdit').hidden=true;
+    categorySlugManuallyEdited=false;
+  }
+  function renderCategories(){
+    const list=$('#categoryList');
+    if(!list)return;
+    const categories=state.categories||[];
+    $('#blogCategoryCount').textContent=categories.length+' '+(categories.length===1?'category':'categories');
+    list.innerHTML=categories.map(c=>{
+      const count=(state.posts||[]).filter(p=>p.category_id===c.id||p.nta_blog_categories?.name===c.name).length;
+      return `<div class="nta28-category-row">
+        <div class="nta28-category-row-main"><strong>${esc(c.name)}</strong><small>/${esc(c.slug)}</small>
+          ${c.description?'<p>'+esc(c.description)+'</p>':''}</div>
+        <div class="nta28-category-row-actions"><span>${count} ${count===1?'post':'posts'}</span>
+          <button type="button" class="btn btn-ghost" data-category-edit="${esc(c.id)}" aria-label="Edit ${esc(c.name)}">Edit</button>
+        </div>
+      </div>`;
+    }).join('')||'<div class="nta28-category-empty">No categories yet. Add one using the form.</div>';
+  }
+  $('#categoryList').addEventListener('click',event=>{
+    const button=event.target.closest('[data-category-edit]');
+    if(!button)return;
+    const category=state.categories.find(c=>c.id===button.dataset.categoryEdit);
+    if(!category)return;
+    $('#categoryId').value=category.id;
+    $('#categoryName').value=category.name||'';
+    $('#categorySlug').value=category.slug||'';
+    $('#categoryDescription').value=category.description||'';
+    $('#categoryFormTitle').textContent='Edit Category';
+    $('#saveCategory').textContent='Save Changes';
+    $('#cancelCategoryEdit').hidden=false;
+    categorySlugManuallyEdited=true;
+    categoryFeedback('');
+    $('#categoryName').focus();
+  });
+  $('#categoryName').addEventListener('input',()=>{
+    if(!$('#categoryId').value&&!categorySlugManuallyEdited)$('#categorySlug').value=slugify($('#categoryName').value);
+  });
+  $('#categorySlug').addEventListener('input',()=>{
+    categorySlugManuallyEdited=!!$('#categorySlug').value.trim();
+  });
+  $('#cancelCategoryEdit').addEventListener('click',()=>{
+    resetCategoryEditor();categoryFeedback('');
+  });
+  $('#categoryForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const id=$('#categoryId').value.trim();
+    const name=$('#categoryName').value.trim();
+    const slug=slugify($('#categorySlug').value.trim()||name);
+    const description=$('#categoryDescription').value.trim();
+    if(!name||!slug){categoryFeedback('Enter a valid category name.',true);return;}
+    const duplicate=(state.categories||[]).find(c=>c.slug===slug&&c.id!==id);
+    if(duplicate){categoryFeedback('A category with this URL slug already exists. Select Edit to update it.',true);return;}
+    const button=$('#saveCategory');
+    button.disabled=true;categoryFeedback('Saving category…');
+    try{
+      const payload={name,slug,description};
+      if(id)payload.id=id;
+      await api('category_save',payload);
+      await loadTaxonomy();
+      resetCategoryEditor();
+      categoryFeedback(id?'Category updated successfully.':'Category created successfully.');
+    }catch(error){
+      categoryFeedback(error?.message||'Could not save category.',true);
+    }finally{button.disabled=false}
+  });
   function resetEditor(){state.post={id:crypto.randomUUID(),title:'',slug:'',excerpt:'',content_html:'',content_text:'',status:'draft',category_id:null,tags:[],author_name:'NTA Logistics',featured_image_path:'',featured_image_alt:'',seo_title:'',seo_description:'',canonical_url:'',scheduled_at:null,published_at:null};fillEditor();state.dirty=false;activate('editor',{hash:'#/posts/new'});}
   $$('[data-new-post]').forEach(b=>b.addEventListener('click',resetEditor));
   async function editPost(id,{skipHistory=false}={}){const j=await api('blog_get',{id});state.post={...j.post,tags:(j.tags||[]).map(t=>t.name)};fillEditor();state.dirty=false;activate('editor',{skipHistory,hash:'#/posts/edit/'+encodeURIComponent(id)});}
