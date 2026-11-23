@@ -68,7 +68,7 @@ const openNavGroupFor=(name)=>{
 const syncOpenGroup=()=>{
  const page=document.querySelector('.admin-panel.active')?.dataset.panel;
  const target=['crm','crm-detail','tasks','accounts','account-editor','factoring','factoring-editor'].includes(page)?'operations':
-  ['blog','editor','article-preview','media','categories'].includes(page)?'publishing':null;
+  ['blog','editor','article-preview','media'].includes(page)?'publishing':null;
  if(target)openNavGroupFor(target);
  else if(page==='dashboard')closeGroups();
 };
