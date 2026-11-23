@@ -55,7 +55,7 @@
       ['Time window',prefix+'_time_window'],
       ['Contact',prefix+'_contact_name'],
       ['Contact phone',prefix+'_contact_phone'],
-      ['Handling',prefix+'_loading_method']
+      [prefix==='pickup'?'Loading method':'Unloading method',prefix==='pickup'?['pickup_loading_method','pickup_handling_method']:['delivery_unloading_method','delivery_handling_method']]
     ];
     const list=fieldBuilder(record,used)(entries);
     return section(prefix==='pickup'?'Pickup location':'Delivery location',list?table(list):emptySection('No location information provided.'));
@@ -73,8 +73,7 @@
       ['Email',['contact_email','primary_contact_email','email']],
       ['Phone',['contact_phone','primary_contact_phone','phone']],
       ['Preferred contact',['preferred_contact','preferred_contact_method']],
-      ['Website',['website','website_url']],
-      ['Company',['company_name','legal_company_name','business_name']]
+      ['Website',['website','website_url']]
     ];
     const rows=fieldBuilder(record,used)(specs);
     return section(type==='inquiry'?'Inquirer':'Contact',rows?table(rows):emptySection('No contact details available.'));
@@ -124,8 +123,8 @@
   };
   const otherContent = (r,used,type) => {
     const sets={
-      shipper:[['Business name',['company_name','business_name']],['Industry','industry'],['Business address','address'],['City','city'],['State','state'],['Postal code','postal_code'],['Preferred lanes','preferred_lanes'],['Monthly volume','monthly_volume'],['Freight type','freight_type'],['Equipment needs','equipment_types'],['Shipping frequency','shipping_frequency'],['Website','website']],
-      carrier:[['Legal company',['legal_company_name','company_name']],['USDOT number','dot_number'],['MC number','mc_number'],['Equipment types','equipment_types'],['Service area','service_area'],['Preferred lanes','preferred_lanes'],['Business address','address'],['City','city'],['State','state'],['Postal code','postal_code'],['Fleet size','fleet_size'],['Insurance','insurance']],
+      shipper:[['Industry','industry'],['Business address','address'],['City','city'],['State','state'],['Postal code','postal_code'],['Preferred lanes','preferred_lanes'],['Monthly volume','monthly_volume'],['Freight type','freight_type'],['Equipment needs','equipment_types'],['Shipping frequency','shipping_frequency'],['Website','website']],
+      carrier:[['USDOT number','dot_number'],['MC number','mc_number'],['Equipment types','equipment_types'],['Service area','service_area'],['Preferred lanes','preferred_lanes'],['Business address','address'],['City','city'],['State','state'],['Postal code','postal_code'],['Fleet size','fleet_size'],['Insurance','insurance']],
       inquiry:[['Subject',['topic','subject']],['Message',['message','description']],['Company','company_name'],['Source','source_page']]
     };
     const rows=fieldBuilder(r,used)(sets[type]||[]);
@@ -144,7 +143,7 @@
   };
   function render(type,record,response){
     if(!record||typeof record!=='object')throw new Error('This CRM record is unavailable.');
-    const used=new Set(['status','reference_number','id','created_at','updated_at','source_page']);
+    const used=new Set(['status','reference_number','id','created_at','updated_at','source_page','company_name','legal_company_name','business_name']);
     const main=(type==='quote'?quoteContent(record,used):otherContent(record,used,type));
     const contactPanel=contact(record,used,type);
     const more=metadata(record,used);
