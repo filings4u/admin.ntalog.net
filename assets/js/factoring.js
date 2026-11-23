@@ -40,8 +40,8 @@
     return value===null||value===undefined||value===''?'—':Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:2})+'%':'—';
   }
   function rowMarkup(record){
-    const url=record.website&&/^https?:\/\//i.test(record.website)?'<a href="'+esc(record.website)+'" rel="noopener noreferrer" target="_blank">Website</a>':'';
     const program=record.factoring_program?record.factoring_program.replace(/_/g,' ').replace(/\b\w/g,s=>s.toUpperCase()):'—';
+    const status=['prospect','contacted','active','inactive'].includes(record.status)?record.status:'prospect';
     return '<tr>'+
       '<td><button type="button" class="nta27-factor-record" data-edit-factor="'+esc(record.id)+'">'+esc(record.company_name)+'</button>'+(record.dba_name?'<small class="nta27-factor-sub">'+esc(record.dba_name)+'</small>':'')+'</td>'+
       '<td>'+esc(record.contact_name||'—')+'</td>'+
@@ -49,8 +49,15 @@
       '<td>'+esc(program)+'</td>'+
       '<td>'+esc(formatPercent(record.advance_rate_percent))+'</td>'+
       '<td>'+esc(record.funding_speed||'—')+'</td>'+
-      '<td><span class="status-pill">'+esc(record.status||'prospect')+'</span></td>'+
+      '<td><span class="status-pill '+esc(status)+'">'+esc(status)+'</span></td>'+
       '<td><button type="button" class="btn btn-primary" data-edit-factor="'+esc(record.id)+'">Manage</button></td></tr>';
+  }
+  function emptyRow({filtered=false,error=false}={}){
+    const heading=error?'Unable to load factoring companies':filtered?'No matching factoring companies':'No factoring companies yet';
+    const detail=error?'Check your connection and administrator permissions, then try again.'
+      :filtered?'Try a different search or relationship status.'
+      :'Add your first factoring company to manage provider contacts, advance rates and funding terms.';
+    return '<tr><td colspan="8" class="nta28-factor-empty-cell"><div class="nta28-factor-empty'+(error?' is-error':'')+'"><strong>'+esc(heading)+'</strong><p>'+esc(detail)+'</p></div></td></tr>';
   }
   async function load(){
     try{
@@ -67,12 +74,12 @@
       const {data,error}=await query;
       if(error)throw error;
       records=Array.isArray(data)?data:[];
-      $('#factorRows').innerHTML=records.map(rowMarkup).join('')||'<tr><td colspan="8">No factoring companies found. Use Add Factoring Company to create a provider.</td></tr>';
-      message(records.length+' factoring '+(records.length===1?'company':'companies')+' displayed.');
+      $('#factorRows').innerHTML=records.length?records.map(rowMarkup).join(''):emptyRow({filtered:!!q||!!status});
+      message(records.length+' '+(records.length===1?'company':'companies'));
     }catch(error){
       console.error('Factoring list:',error);
-      $('#factorRows').innerHTML='<tr><td colspan="8">Could not load factoring companies. Check your connection or administrator permissions.</td></tr>';
-      message(error?.message||'Could not load factoring companies.','#factorListMessage',true);
+      $('#factorRows').innerHTML=emptyRow({error:true});
+      message(error?.message||'Unable to load companies.','#factorListMessage',true);
     }
   }
   function fillForm(record={}){
