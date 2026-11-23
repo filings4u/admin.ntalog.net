@@ -904,7 +904,7 @@ $('#closePreview').onclick=()=>activate('editor',{hash:'#/posts/edit'});
           if(!signed?.path||!signed?.token||!signed?.bucket)throw Error('Unable to prepare a secure upload.');
           const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});
           if(error)throw error;
-          await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:item.alt.trim()});
+          await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:String(item.alt||'').trim()});
           uploaded.push(item);
           if(item.preview)URL.revokeObjectURL(item.preview);
         }catch(error){failed.push({item,message:error?.message||'Upload failed'})}
