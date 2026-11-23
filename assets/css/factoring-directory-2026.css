@@ -1,0 +1,264 @@
+/* NTA Logistics | Factoring Companies directory
+   Scoped to this listing. Does not affect factoring editor or other modules. */
+body.nta-admin .nta28-factoring-list{
+  --factor-border:#dce5ee;
+  --factor-text:#203a53;
+  --factor-subtle:#8295a8;
+  min-width:0!important;
+  width:100%!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-sr-only{
+  position:absolute!important;
+  width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;border:0!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1fr) 165px max-content max-content!important;
+  align-items:center!important;
+  column-gap:10px!important;row-gap:10px!important;
+  min-height:70px!important;
+  padding:14px 17px!important;
+  margin:0 0 16px!important;
+  background:#fff!important;
+  border:1px solid var(--factor-border)!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-search,
+body.nta-admin .nta28-factoring-list .nta28-factor-select{
+  min-width:0!important;width:100%!important;margin:0!important;
+  position:relative!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-search::before{
+  content:''!important;
+  display:block!important;position:absolute!important;left:14px!important;top:50%!important;
+  width:12px!important;height:12px!important;transform:translateY(-65%)!important;
+  border:1.7px solid #859ab0!important;border-radius:50%!important;
+  pointer-events:none!important;z-index:1!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-search::after{
+  content:''!important;
+  display:block!important;position:absolute!important;left:25px!important;top:53%!important;
+  width:6px!important;height:1.7px!important;
+  transform:rotate(48deg)!important;transform-origin:left center!important;
+  border-radius:2px!important;background:#859ab0!important;
+  pointer-events:none!important;z-index:1!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters :is(#factorSearch,#factorStatus){
+  display:block!important;
+  box-sizing:border-box!important;
+  height:40px!important;min-height:40px!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  margin:0!important;border:1px solid #d6e1eb!important;border-radius:7px!important;
+  background:#f8fafc!important;color:#28435b!important;
+  font-family:inherit!important;font-size:11.5px!important;font-weight:540!important;
+  box-shadow:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorSearch{
+  padding:9px 13px 9px 37px!important;
+  flex:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorStatus{
+  padding:9px 32px 9px 12px!important;
+  flex:none!important;cursor:pointer!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters :is(#factorSearch,#factorStatus):focus-visible{
+  outline:2px solid #96b6d1!important;
+  outline-offset:1px!important;
+  border-color:#93b4cd!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters :is(#factorRefresh,#factorNew){
+  display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;
+  order:0!important;
+  align-self:stretch!important;
+  height:40px!important;min-height:40px!important;
+  width:auto!important;min-width:84px!important;
+  margin:0!important;
+  padding:9px 15px!important;
+  border-radius:7px!important;
+  font-family:inherit!important;
+  font-size:11px!important;font-weight:790!important;
+  line-height:1.2!important;letter-spacing:0!important;
+  white-space:nowrap!important;
+  flex:none!important;
+  box-shadow:none!important;
+  cursor:pointer!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorRefresh{
+  color:#fff!important;background:#1c3b59!important;border:1px solid #1c3b59!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{
+  color:#182e43!important;background:#e9b746!important;border:1px solid #e9b746!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorRefresh:hover{background:#294b6b!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew:hover{background:#f1c358!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-directory{
+  display:block!important;min-width:0!important;overflow:hidden!important;
+  margin:0!important;
+  border:1px solid var(--factor-border)!important;border-radius:10px!important;
+  background:#fff!important;box-shadow:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-title{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  flex-wrap:wrap!important;gap:12px!important;
+  min-height:52px!important;
+  padding:14px 19px!important;
+  margin:0!important;background:#fff!important;
+  border:0!important;border-bottom:1px solid #e4eaf0!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-title strong{
+  color:var(--factor-text)!important;
+  font-size:12.5px!important;font-weight:820!important;line-height:1.4!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-title .nta28-factor-count{
+  display:inline-block!important;
+  min-width:0!important;margin:0!important;padding:0!important;
+  color:#8093a7!important;font-size:10.5px!important;font-weight:680!important;
+  line-height:1.5!important;letter-spacing:0!important;text-transform:none!important;
+  white-space:normal!important;
+  background:none!important;border:0!important;box-shadow:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-title .nta28-factor-count[data-kind="error"]{
+  color:#a54030!important;
+}
+body.nta-admin .nta28-factoring-list .admin-table-wrap{
+  min-width:0!important;width:100%!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  border:0!important;box-shadow:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table{
+  width:100%!important;min-width:930px!important;
+  border:0!important;border-collapse:collapse!important;
+  table-layout:fixed!important;background:#fff!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table th{
+  padding:12px 15px!important;
+  background:#f7f9fb!important;
+  color:#7890a6!important;
+  font-size:9px!important;letter-spacing:.055em!important;
+  font-weight:850!important;line-height:1.4!important;
+  text-transform:uppercase!important;text-align:left!important;
+  border-bottom:1px solid #e4ebf1!important;
+  white-space:nowrap!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table td{
+  padding:14px 15px!important;
+  border-bottom:1px solid #edf1f5!important;
+  background:transparent!important;
+  color:#3e566c!important;
+  font-size:11.5px!important;font-weight:530!important;
+  line-height:1.55!important;
+  vertical-align:middle!important;
+  overflow-wrap:anywhere!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table tbody tr:last-child td{
+  border-bottom:0!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table tbody tr:hover{
+  background:#fafcfd!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(1){width:19%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(2){width:12%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(3){width:18%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(4){width:12%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(5){width:9%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(6){width:12%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(7){width:9%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table :is(th,td):nth-child(8){width:9%!important}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .nta27-factor-record{
+  text-align:left!important;color:#234d6e!important;
+  font-size:11.5px!important;font-weight:820!important;
+  text-decoration:none!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .nta27-factor-record:hover{
+  text-decoration:underline!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table .nta27-factor-sub{
+  margin-top:3px!important;font-size:10px!important;color:#899aaa!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .status-pill{
+  display:inline-flex!important;align-items:center!important;
+  min-height:24px!important;padding:4px 8px!important;
+  border-radius:5px!important;background:#eef2f6!important;color:#60758b!important;
+  font-size:10px!important;font-weight:770!important;text-transform:capitalize!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .status-pill.active{
+  background:#e9f4ee!important;color:#367451!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .status-pill.contacted{
+  background:#eaf3fb!important;color:#346a98!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows .status-pill.inactive{
+  background:#f5edf0!important;color:#936579!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows button.btn{
+  width:auto!important;min-width:64px!important;
+  min-height:30px!important;padding:6px 11px!important;
+  border-radius:6px!important;border:1px solid #d5e1eb!important;
+  background:#f8fafc!important;color:#275271!important;
+  font-family:inherit!important;font-size:10.5px!important;font-weight:780!important;
+  line-height:1.4!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows button.btn:hover{
+  background:#e9f1f6!important;border-color:#c5d7e6!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-table #factorRows td.nta28-factor-empty-cell{
+  width:auto!important;
+  padding:0!important;
+  border-bottom:0!important;
+  background:#fff!important;
+  text-align:center!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-empty{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;min-height:130px!important;
+  width:100%!important;margin:0!important;padding:22px 16px!important;
+  text-align:center!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-empty strong{
+  color:#3b536a!important;font-size:12px!important;font-weight:790!important;line-height:1.5!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-empty p{
+  max-width:480px!important;margin:0!important;color:#8b9dac!important;
+  font-size:11px!important;line-height:1.5!important;
+}
+body.nta-admin .nta28-factoring-list .nta28-factor-empty.is-error strong{color:#9b4b40!important}
+@media(max-width:1100px){
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters{
+    grid-template-columns:minmax(170px,1fr) 165px 90px!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-search{grid-column:1 / -1!important}
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{
+    grid-column:3!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorRefresh{
+    grid-column:2!important;grid-row:2!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-select{grid-column:1!important;grid-row:2!important}
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{grid-row:3!important;justify-self:end!important}
+}
+@media(max-width:700px){
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    padding:12px!important;gap:9px!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-search{
+    grid-column:1 / -1!important;grid-row:1!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-select{
+    grid-column:1 / -1!important;grid-row:2!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorRefresh{
+    grid-column:1!important;grid-row:3!important;width:100%!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{
+    grid-column:2!important;grid-row:3!important;width:100%!important;
+    padding-left:8px!important;padding-right:8px!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-title{padding:13px 14px!important}
+  body.nta-admin .nta28-factoring-list .nta28-factor-table{min-width:880px!important}
+}
