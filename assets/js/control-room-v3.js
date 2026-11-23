@@ -67,9 +67,7 @@ const openNavGroupFor=(name)=>{
 };
 const syncOpenGroup=()=>{
  const page=document.querySelector('.admin-panel.active')?.dataset.panel;
- const target=page==='crm'||page==='crm-detail'||page==='tasks'?'operations':
-  ['accounts','account-editor'].includes(page)?'operations':
-  ['factoring','factoring-editor'].includes(page)?'network':
+ const target=['crm','crm-detail','tasks','accounts','account-editor','factoring','factoring-editor'].includes(page)?'operations':
   ['blog','editor','article-preview','media','categories'].includes(page)?'publishing':null;
  if(target)openNavGroupFor(target);
  else if(page==='dashboard')closeGroups();
@@ -146,11 +144,11 @@ const updatePageLabel=()=>{
  const active=document.querySelector('.admin-panel.active');
  const label=document.querySelector('#ntaPageLabel');
  if(!active||!label)return;
- const names={dashboard:'Overview',crm:({quote:'Quote requests',carrier:'Carrier applications',shipper:'Shipper applications',inquiry:'Inquiries'})[document.querySelector('#crmType')?.value]||'Requests','crm-detail':'Record Details',accounts:(document.querySelector('#accountsType')?.value==='carrier'?'Carrier CRM':'Shipper CRM'),'account-editor':'Account Management',factoring:'Factoring Partners','factoring-editor':'Factoring Management',tasks:'My Tasks',blog:'Articles',editor:'Content Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
+ const names={dashboard:'Overview',crm:({quote:'Quote requests',carrier:'Carrier applications',shipper:'Shipper applications',inquiry:'Inquiries'})[document.querySelector('#crmType')?.value]||'Requests','crm-detail':'Record Details',accounts:(document.querySelector('#accountsType')?.value==='carrier'?'Carrier CRM':'Shipper CRM'),'account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Content Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
  label.textContent=names[active.dataset.panel]||'Workspace';
  const subtitle=document.querySelector('#ntaPageSubtitle');
  if(subtitle){
-  const subtitles={dashboard:'Operations dashboard',crm:'Applications & inquiries',accounts:'Business relationships',factoring:'Partner network',tasks:'Operational follow-ups',blog:'Content management',editor:'Publishing workspace',categories:'Content organization',media:'Images & files',profile:'Account settings',team:'User management'};
+  const subtitles={dashboard:'Operations dashboard',crm:'Applications & inquiries',accounts:'Business relationships',factoring:'Factoring company directory',tasks:'Operational follow-ups',blog:'Content management',editor:'Publishing workspace',categories:'Content organization',media:'Images & files',profile:'Account settings',team:'User management'};
   subtitle.textContent=subtitles[active.dataset.panel]||'Management workspace';
  }
 };
