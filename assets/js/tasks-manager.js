@@ -6,7 +6,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const cap=v=>String(v||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 const fmt=v=>v?new Date(v).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'}):'Not set';
 const local=v=>{if(!v)return '';const d=new Date(v);return Number.isNaN(d.getTime())?'':new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)};
-const state={rows:[],current:null,records:[],staff:[],loading:false,nonce:0};
+const state={rows:[],current:null,records:[],staff:[],loading:false,listNonce:0,recordsNonce:0};
 async function api(action,payload={}){
  const {data,error}=await client.auth.getSession();if(error||!data?.session)throw Error('Please sign in again.');
  const res=await fetch(cfg.adminFunctionUrl,{method:'POST',
@@ -57,14 +57,14 @@ function render(){
 }
 async function load(){
  if(state.loading)return;
- state.loading=true;const ticket=++state.nonce;err('');
+ state.loading=true;const ticket=++state.listNonce;err('');
  $('#tasksResultCount').textContent='Loading tasks…';
  try{
   const response=await api('tasks',{open_only:false});
-  if(ticket!==state.nonce)return;
+  if(ticket!==state.listNonce)return;
   state.rows=response.tasks||[];render();
  }catch(e){
-  if(ticket!==state.nonce)return;
+  if(ticket!==state.listNonce)return;
   err('Unable to load tasks: '+e.message);
   $('#tasksResultCount').textContent='Unable to load';
   $('#tasksBody').innerHTML='<tr><td colspan="6" class="nta30-task-empty">Tasks could not be loaded. Select Refresh to retry.</td></tr>';
@@ -100,20 +100,20 @@ async function loadTeam(){
  }catch(e){$('#taskEditorMessage').textContent='Team members could not be loaded: '+e.message}
 }
 async function loadRecords(type,wanted=null){
- const select=$('#taskEntityId'),ticket=++state.nonce;
+ const select=$('#taskEntityId'),ticket=++state.recordsNonce;
  select.disabled=true;select.innerHTML='<option value="">'+(type==='general'?'No linked record':'Loading records…')+'</option>';
  $('#taskSourceHelp').textContent=type==='general'?'Standalone tasks are not attached to a company.':'Select an existing '+type+' record.';
  if(type==='general'){state.records=[];return}
  try{
   const result=await api('task_records',{entity_type:type});
-  if(ticket!==state.nonce)return;
+  if(ticket!==state.recordsNonce)return;
   state.records=result.records||[];
   select.innerHTML='<option value="">Select record…</option>'+state.records.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.label)+(r.reference?' · '+esc(r.reference):'')+'</option>').join('');
   select.disabled=false;
   if(wanted){select.value=wanted;if(select.value!==wanted){
    const o=document.createElement('option');o.value=wanted;o.textContent='Previously linked record ('+wanted.slice(0,8)+')';select.appendChild(o);select.value=wanted;
   }}
- }catch(e){if(ticket!==state.nonce)return;select.innerHTML='<option value="">Unable to load records</option>';showEditorMessage('Unable to load CRM records: '+e.message,true)}
+ }catch(e){if(ticket!==state.recordsNonce)return;select.innerHTML='<option value="">Unable to load records</option>';showEditorMessage('Unable to load CRM records: '+e.message,true)}
 }
 async function open(id=null,opts={}){
  state.current=id?state.rows.find(x=>x.id===id)||null:null;
