@@ -568,6 +568,9 @@
       if(id)payload.id=id;
       await api('category_save',payload);
       await loadTaxonomy();
+      // Blog list responses include the category's name rather than its ID.
+      // Refresh posts too, so a category rename updates the displayed post count.
+      await loadPosts();
       resetCategoryEditor();
       categoryFeedback(id?'Category updated successfully.':'Category created successfully.');
     }catch(error){
