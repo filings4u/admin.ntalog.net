@@ -27,7 +27,7 @@
   };
   const renderRow = (label,value,key) => '<div class="nta27-data-row"><dt>'+escapeHtml(label)+'</dt><dd>'+escapeHtml(format(value,key||''))+'</dd></div>';
   const emptySection = message => '<p class="nta27-empty">'+escapeHtml(message)+'</p>';
-  const section = (title,body,extraClass) => '<section class="nta27-section '+(extraClass||'')+'"><div class="nta27-section-head"><h2>'+escapeHtml(title)+'</h2></div>'+body+'</section>';
+  const section = (title,body,extraClass,count) => '<section class="nta27-section '+(extraClass||'')+'"><div class="nta27-section-head"><h2>'+escapeHtml(title)+(typeof count==='number'?'<span class="nta27-section-count">'+count+'</span>':'')+'</h2></div>'+body+'</section>';
   const table = rows => '<dl class="nta27-data">'+rows+'</dl>';
   const first = (record,keys) => {
     for (const key of keys) if(!missing(record[key])) return {key,value:record[key]};
@@ -82,14 +82,14 @@
   const notesSection = entries => {
     const notes=Array.isArray(entries)?entries:[];
     const list=notes.length?'<div class="nta27-timeline">'+notes.map(n=>'<div class="nta27-timeline-entry"><p>'+escapeHtml(n.note||'')+'</p><time>'+escapeHtml(format(n.created_at,'created_at'))+'</time></div>').join('')+'</div>':emptySection('No internal notes yet.');
-    return section('Internal notes <span class="nta27-section-count">'+notes.length+'</span>',list+
-      '<div class="nta27-action-form"><label for="newNote">Add a note</label><textarea id="newNote" rows="2" placeholder="Document a call, update, or next step"></textarea><button type="button" class="btn btn-primary" id="addNote">Save note</button></div>','nta27-notes');
+    return section('Internal notes',list+
+      '<div class="nta27-action-form"><label for="newNote">Add a note</label><textarea id="newNote" rows="2" placeholder="Document a call, update, or next step"></textarea><button type="button" class="btn btn-primary" id="addNote">Save note</button></div>','nta27-notes',notes.length);
   };
   const tasksSection = entries => {
     const tasks=Array.isArray(entries)?entries:[];
     const list=tasks.length?'<div class="nta27-task-list">'+tasks.map(t=>'<div class="nta27-task"><strong>'+escapeHtml(t.title||'Task')+'</strong><small>'+escapeHtml(prettify(String(t.priority||'normal')))+' · '+escapeHtml(prettify(String(t.status||'open')))+(t.due_at?' · Due '+escapeHtml(format(t.due_at,'due_at')):'')+'</small>'+(t.description?'<p>'+escapeHtml(t.description)+'</p>':'')+'</div>').join('')+'</div>':emptySection('No tasks for this request.');
-    return section('Tasks <span class="nta27-section-count">'+tasks.length+'</span>',list+
-      '<div class="nta27-action-form"><label for="taskTitle">New task</label><input id="taskTitle" placeholder="Follow up with shipper"><div class="nta27-form-inline"><label for="taskDue">Due date<input id="taskDue" type="datetime-local"></label><label for="taskPriority">Priority<select id="taskPriority"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select></label></div><label for="taskDescription">Description</label><textarea id="taskDescription" rows="2" placeholder="Optional details"></textarea><button type="button" class="btn btn-gold" id="addTask">Create task</button></div>','nta27-tasks');
+    return section('Tasks',list+
+      '<div class="nta27-action-form"><label for="taskTitle">New task</label><input id="taskTitle" placeholder="Follow up with shipper"><div class="nta27-form-inline"><label for="taskDue">Due date<input id="taskDue" type="datetime-local"></label><label for="taskPriority">Priority<select id="taskPriority"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select></label></div><label for="taskDescription">Description</label><textarea id="taskDescription" rows="2" placeholder="Optional details"></textarea><button type="button" class="btn btn-gold" id="addTask">Create task</button></div>','nta27-tasks',tasks.length);
   };
   const metadata = (record,used) => {
     const metaKeys=['id','reference_number','source_page','created_at','updated_at'];
