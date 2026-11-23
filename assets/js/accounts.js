@@ -26,19 +26,31 @@ async function load(){
   msg(`${records.length} ${type} accounts.`);
  }catch(e){msg(e.message);$('#accountsRows').innerHTML='<tr><td colspan="6">Unable to load accounts.</td></tr>'}
 }
-function edit(a={}){
+function edit(a={},opts={}){
  const form=$('#accountsForm');form.reset();
  for(const [k,v] of Object.entries(a)){const el=form.elements.namedItem(k);if(el&&typeof v==='string')el.value=v;}
  $('#accountsEditorTitle').textContent=a.id?'Edit Account':'Add Account';
- $('#accountsEditor').hidden=false;msg('','#accountsEditMessage');
- $('#accountsEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
+ $('#accountsEditor').hidden=false;
+ msg('','#accountsEditMessage');
+ const type=$('#accountsType').value;
+ window.NTAAdminNavigate?.('account-editor','#/accounts/'+encodeURIComponent(type)+'/'+encodeURIComponent(a.id||'new'),opts);
 }
-function open(type){
+async function open(type,{skipHistory=false}={}){
+ if(!['shipper','carrier'].includes(type))type='shipper';
  $('#accountsType').value=type;
- document.querySelectorAll('[data-admin-panel]').forEach(b=>b.classList.remove('active'));
- document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel==='accounts'));
- $('#accountsEditor').hidden=true;load();
+ $('#accountsEditor').hidden=true;
+ if(window.NTAAdminNavigate)window.NTAAdminNavigate('accounts','#/accounts/'+type,{skipHistory});
+ else document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel==='accounts'));
+ await load();
 }
+window.NTAAccountsOpen=open;
+window.NTAAccountsEdit=async(type,id,{skipHistory=false}={})=>{
+ await open(type,{skipHistory:true});
+ if(id==='new'){edit({status:'prospect'},{skipHistory});return;}
+ const record=records.find(a=>a.id===id);
+ if(record)edit(record,{skipHistory});
+ else msg('Account not found. Refresh the directory.');
+};
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-accounts-type]');
  if(b)open(b.dataset.accountsType);
@@ -46,7 +58,7 @@ document.addEventListener('click',e=>{
  if(editBtn){const row=records.find(x=>x.id===editBtn.dataset.editAccount);if(row)edit(row);}
 });
 $('#accountsNew')?.addEventListener('click',()=>edit({status:'prospect'}));
-$('#accountsCancel')?.addEventListener('click',()=>{$('#accountsEditor').hidden=true});
+$('#accountsCancel')?.addEventListener('click',()=>{void open($('#accountsType').value);});
 $('#accountsType')?.addEventListener('change',load);
 $('#accountsStatus')?.addEventListener('change',load);
 $('#accountsSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
@@ -61,7 +73,7 @@ $('#accountsForm')?.addEventListener('submit',async e=>{
   values.account_type=$('#accountsType').value;values.status=values.status||'prospect';values.updated_at=new Date().toISOString();
   const {error}=id?await sb.from('nta_crm_accounts').update(values).eq('id',id).eq('account_type',values.account_type):await sb.from('nta_crm_accounts').insert(values);
   if(error)throw error;
-  $('#accountsEditor').hidden=true;await load();msg('Account saved.');
+  await open($('#accountsType').value);msg('Account saved.');
  }catch(err){msg(err.message,'#accountsEditMessage')}finally{button.disabled=false}
 });
 })();
