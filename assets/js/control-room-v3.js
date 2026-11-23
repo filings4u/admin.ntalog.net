@@ -67,9 +67,9 @@ const openNavGroupFor=(name)=>{
 };
 const syncOpenGroup=()=>{
  const page=document.querySelector('.admin-panel.active')?.dataset.panel;
- const target=page==='crm'||page==='tasks'?'operations':
-  page==='accounts'||page==='factoring'?'network':
-  ['blog','editor','media','categories'].includes(page)?'publishing':null;
+ const target=page==='crm'||page==='crm-detail'||page==='tasks'?'operations':
+  ['accounts','account-editor','factoring','factoring-editor'].includes(page)?'network':
+  ['blog','editor','article-preview','media','categories'].includes(page)?'publishing':null;
  if(target)openNavGroupFor(target);
  else if(page==='dashboard')closeGroups();
 };
@@ -119,7 +119,7 @@ const updatePageLabel=()=>{
  const active=document.querySelector('.admin-panel.active');
  const label=document.querySelector('#ntaPageLabel');
  if(!active||!label)return;
- const names={dashboard:'Overview',crm:'Intake Center',accounts:document.querySelector('#accountsHeading')?.textContent||'Accounts',factoring:'Factoring Partners',tasks:'My Tasks',blog:'Articles',editor:'Content Editor',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
+ const names={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:document.querySelector('#accountsHeading')?.textContent||'Accounts','account-editor':'Account Management',factoring:'Factoring Partners','factoring-editor':'Factoring Management',tasks:'My Tasks',blog:'Articles',editor:'Content Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
  label.textContent=names[active.dataset.panel]||'Workspace';
  const subtitle=document.querySelector('#ntaPageSubtitle');
  if(subtitle){
