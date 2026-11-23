@@ -59,6 +59,7 @@ document.addEventListener('click',e=>{
 });
 $('#accountsNew')?.addEventListener('click',()=>edit({status:'prospect'}));
 $('#accountsCancel')?.addEventListener('click',()=>{void open($('#accountsType').value);});
+$('#accountsBackToList')?.addEventListener('click',()=>{void open($('#accountsType').value);});
 $('#accountsType')?.addEventListener('change',load);
 $('#accountsStatus')?.addEventListener('change',load);
 $('#accountsSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
