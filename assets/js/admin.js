@@ -266,7 +266,7 @@
     $$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===parent));
     $$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
     if(!skipHistory){const url=hash||'#/page/'+encodeURIComponent(name);if(location.hash!==url)history.pushState({ntaPanel:name},'',url);}
-    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',media:'Media Library',profile:'My Account',team:'Team & Users'};
+    const labels={dashboard:'Overview',crm:'Intake Center','crm-detail':'Record Details',accounts:'Business Accounts','account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',media:'Blog Image Library',profile:'My Account',team:'Team & Users'};
     if($('#ntaPageLabel'))$('#ntaPageLabel').textContent=labels[name]||'Management';
     if(name==='crm')loadCrm().catch(console.error);
     if(name==='blog')renderPosts();
