@@ -20,7 +20,7 @@ async function api(action,details={}){
  const res=await fetch(cfg.adminFunctionUrl,{method:'POST',headers:{apikey:cfg.publishableKey,'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({action,...details})});
  const body=await res.json().catch(()=>({}));if(!res.ok||body.error)throw Error(body.error||'Request failed');return body;
 }
-const go=(page,hash,opts={})=>window.NTAAdminNavigate?.(page,hash,opts);
+const go=(page,hash,opts={})=>{window.NTAAdminNavigate?.(page,hash,opts);if(page==='account-editor'&&$('#ntaPageLabel'))$('#ntaPageLabel').textContent=cap(type)+' CRM';};
 const back=()=>{void open(type)};
 function dataOf(form){
  const data={};
