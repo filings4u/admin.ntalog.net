@@ -411,7 +411,19 @@
   $('#dashboardPeriod')?.addEventListener('change',()=>loadRecentActivity().catch(console.warn));
   $('#tasksRefresh')?.addEventListener('click',loadTasks);
   const crmCols={quote:[['Reference','reference_number'],['Company','company_name'],['Contact','contact_name'],['Route',r=>`${r.pickup_city||''}, ${r.pickup_state||''} → ${r.delivery_city||''}, ${r.delivery_state||''}`],['Equipment','equipment_type'],['Status','status'],['Submitted','created_at']],shipper:[['Reference','reference_number'],['Company','company_name'],['Contact','primary_contact_name'],['Email','primary_contact_email'],['Industry','industry'],['Status','status'],['Created','created_at']],carrier:[['Reference','reference_number'],['Company','legal_company_name'],['Contact','primary_contact_name'],['USDOT','dot_number'],['MC','mc_number'],['Status','status'],['Created','created_at']],inquiry:[['Reference','reference_number'],['Company','company_name'],['Name','name'],['Email','email'],['Topic','topic'],['Status','status'],['Created','created_at']]};
-  async function loadCrm(){state.crmType=$$('#crmType').value;const j=await api('crm_list',{entity_type:state.crmType,q:$('#crmSearch').value,status:$('#crmStatus').value,limit:100});state.crmRows=j.rows||[];$('#crmCount').textContent=`${j.count} records`;const cols=crmCols[state.crmType];$('#crmHead').innerHTML='<tr>'+cols.map(c=>`<th>${esc(c[0])}</th>`).join('')+'</tr>';$('#crmBody').innerHTML=state.crmRows.map(r=>'<tr role="link" tabindex="0" data-id="'+esc(r.id)+'">'+cols.map(([l,k])=>{let v=typeof k==='function'?k(r):r[k];if(k==='status')return `<td><span class="status-pill ${esc(v||'new')}">${esc(v||'new')}</span></td>`;if(k==='created_at')v=dt(v);return `<td>${esc(v||'—')}</td>`;}).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}">No records found.</td></tr>`;$$('#crmBody tr[data-id]').forEach(tr=>{
+  async function loadCrm(){
+    const selector=$('#crmType');
+    const requestedType=selector?.value;
+    const validTypes=['quote','shipper','carrier','inquiry'];
+    if(!validTypes.includes(requestedType)){
+      const error=new Error('Invalid CRM selection. Choose a valid intake category.');
+      console.error('CRM type validation blocked invalid request:',requestedType);
+      const status=$('#crmCount');
+      if(status)status.textContent=error.message;
+      return;
+    }
+    state.crmType=requestedType;
+    const j=await api('crm_list',{entity_type:requestedType,q:$('#crmSearch').value,status:$('#crmStatus').value,limit:100});state.crmRows=j.rows||[];$('#crmCount').textContent=`${j.count} records`;const cols=crmCols[state.crmType];$('#crmHead').innerHTML='<tr>'+cols.map(c=>`<th>${esc(c[0])}</th>`).join('')+'</tr>';$('#crmBody').innerHTML=state.crmRows.map(r=>'<tr role="link" tabindex="0" data-id="'+esc(r.id)+'">'+cols.map(([l,k])=>{let v=typeof k==='function'?k(r):r[k];if(k==='status')return `<td><span class="status-pill ${esc(v||'new')}">${esc(v||'new')}</span></td>`;if(k==='created_at')v=dt(v);return `<td>${esc(v||'—')}</td>`;}).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}">No records found.</td></tr>`;$$('#crmBody tr[data-id]').forEach(tr=>{
  tr.addEventListener('click',event=>{if(event.target.closest('button,select,input,textarea'))return;openCrm(tr.dataset.id).catch(console.error);});
  tr.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();openCrm(tr.dataset.id).catch(console.error);}});
 });}
