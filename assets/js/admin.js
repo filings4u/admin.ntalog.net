@@ -310,14 +310,6 @@
   async function loadDashboard(){
     const j=await api('dashboard');
     state.metrics=j.metrics||{};
-    const livePosts=document.querySelector('#dashboardPublishedPosts');if(livePosts)livePosts.textContent=String(Number(state.metrics.published_posts||0));
-    const quotes=Number(state.metrics.quotes||0), published=Number(state.metrics.published_posts||0);
-    const quoteTitle=$('#priorityQuoteTitle'),quoteDetail=$('#priorityQuoteDetail'),contentTitle=$('#priorityContentTitle'),contentDetail=$('#priorityContentDetail');
-    if(quoteTitle)quoteTitle.textContent=quotes===1?'1 quote request to review':quotes+' quote requests';
-    if(quoteDetail)quoteDetail.textContent=quotes?'Open CRM to inspect the requests':'No quote requests recorded';
-    if(contentTitle)contentTitle.textContent=published+' published '+(published===1?'article':'articles');
-    if(contentDetail)contentDetail.textContent=published?'Review current published content':'No published articles yet';
-    const priorityCount=$('#priorityQueueCount');if(priorityCount)priorityCount.textContent=String(quotes)+' QUOTES';
     // Five-card Concept 01 layout; use real API figures rather than mockup numbers.
     // Load volume and revenue require dedicated backend metrics and are intentionally
     // shown as unavailable until those values exist.
@@ -340,17 +332,8 @@
       return `<button type="button" class="metric-card metric-action nta-kpi nta-kpi-${i+1}" ${available?`data-dashboard-metric="${key}"`:'disabled'} aria-label="${available?'View':'Unavailable:'} ${esc(label)}"><span class="nta-kpi-header"><span class="nta-kpi-label">${esc(label)}</span><span class="nta-kpi-icon" aria-hidden="true">${cardIcons[icon]}</span></span><strong class="nta-kpi-value">${count}</strong><span class="nta-kpi-footer"><span>${esc(metricDescriptions[key]||'Business activity')}</span></span></button>`;
     }).join('');
     $$('#metricCards [data-dashboard-metric]').forEach(btn=>btn.addEventListener('click',()=>openDashboardMetric(btn.dataset.dashboardMetric)));
-    const breakdown=[['Quotes','quotes'],['Published Posts','published_posts'],['Inquiries','inquiries'],['Open Tasks','open_tasks'],['Shippers','shippers'],['Carriers','carriers']];
-    const total=breakdown.reduce((n,[,key])=>n+Number(state.metrics[key]||0),0);
-    $('#snapshotTotal').textContent=String(total);
-    const colors=['#0b5a9d','#edb522','#4193ad','#7f9ec3','#9b78b2','#6aafa0'];
-    let start=0;
-    const sectors=breakdown.map(([,key],i)=>{const pct=total?100*Number(state.metrics[key]||0)/total:0;const sector=`${colors[i]} ${start}% ${start+pct}%`;start+=pct;return sector;});
-    $('#snapshotDonut').style.background=total?`conic-gradient(${sectors.join(', ')})`:'conic-gradient(#dce5ef 0% 100%)';
-    $('#snapshotLegend').innerHTML=breakdown.map(([label,key],i)=>{const count=Number(state.metrics[key]||0);return `<div class="snapshot-row"><span class="snapshot-dot" style="background:${colors[i]}"></span><span>${esc(label)}</span><b>${count}</b><em>${total?Math.round(count/total*100):0}%</em></div>`}).join('');
     try{await loadRecentActivity()}catch(error){
       console.warn('NTA recent activity could not load:',error);
-      $('#recentActivity').textContent='Recent activity is temporarily unavailable.';
     }
   }
   async function loadRecentActivity(){
@@ -373,12 +356,6 @@
     const rows=$('#dashboardCrmRows');
     if(rows)rows.innerHTML=records.slice(0,5).map(r=>`<tr data-record-id="${esc(r.id)}" data-record-type="${esc(r.type)}"><td><span class="crm-type-icon" aria-hidden="true">${r.type==='carrier'?'▰':r.type==='shipper'?'♧':r.type==='inquiry'?'☏':'▤'}</span> ${esc(r.label)}</td><td>${esc(r.company)}</td><td>${esc(r.request)}</td><td><span class="status-pill ${esc(String(r.status).toLowerCase().replace(/[^a-z-]/g,''))}">${esc(r.status)}</span></td><td>${r.date?esc(new Date(r.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})):'—'}</td></tr>`).join('')||'<tr><td colspan="5">No CRM records yet.</td></tr>';
     events.sort((a,b)=>new Date(b.date)-new Date(a.date));
-    const firstQuote=events.find(e=>e.target==='quote');
-    const quoteDetail=$('#priorityQuoteDetail');
-    if(quoteDetail&&firstQuote)quoteDetail.textContent=firstQuote.description+' · '+new Date(firstQuote.date).toLocaleDateString(undefined,{month:'short',day:'numeric'});
-    const lastPost=events.find(e=>e.target==='blog');
-    const contentDetail=$('#priorityContentDetail');
-    if(contentDetail&&lastPost)contentDetail.textContent='Latest: '+lastPost.description;
 
     const trend=document.querySelector('#dashboardActivityTrend');
     if(trend){
@@ -398,22 +375,10 @@
 
     }
 
-    const relativeTime=d=>{const ms=Date.now()-new Date(d).getTime();if(!Number.isFinite(ms)||ms<0)return new Date(d).toLocaleDateString();const min=Math.floor(ms/60000);if(min<60)return min<=1?'Just now':min+' min ago';const h=Math.floor(min/60);if(h<24)return h+' hour'+(h===1?'':'s')+' ago';const days=Math.floor(h/24);return days===1?'Yesterday':days<7?days+' days ago':new Date(d).toLocaleDateString()};
-    $('#recentActivity').innerHTML=events.slice(0,5).map(e=>`<button type="button" class="recent-item recent-action" data-activity-target="${esc(e.target)}" data-activity-id="${esc(e.id)}"><span class="recent-item-icon" aria-hidden="true">${e.icon}</span><span class="recent-item-main"><strong>${esc(e.type)}</strong><small>${esc(e.description)}</small></span><time datetime="${esc(e.date)}">${esc(relativeTime(e.date))}</time></button>`).join('')||'<p class="dashboard-empty">No recent quote or publishing activity yet.</p>';
-    $$('#recentActivity [data-activity-target]').forEach(btn=>btn.addEventListener('click',()=>{
-      if(btn.dataset.activityTarget==='blog'){editPost(btn.dataset.activityId).catch(err=>console.warn('Unable to open post:',err));return;}
-      $('#crmType').value='quote';$('#crmSearch').value='';$('#crmStatus').value='';
-      activate('crm');
-      // CRM is already loading from activate(); the detail endpoint can be opened directly.
-      openCrm(btn.dataset.activityId).catch(err=>console.warn('Unable to open quote:',err));
-    }));
+
   }
   $('[data-refresh-dashboard]')?.addEventListener('click',refreshDashboard);
   async function loadTasks(){const j=await api('tasks');const rows=j.tasks||[];
-    const open=rows.filter(t=>!['done','completed','closed','cancelled'].includes(String(t.status||'').toLowerCase()));
-    const taskTitle=$('#priorityTaskTitle'),taskDetail=$('#priorityTaskDetail');
-    if(taskTitle)taskTitle.textContent=open.length?open.length+' open '+(open.length===1?'task':'tasks'):'All tasks complete';
-    if(taskDetail)taskDetail.textContent=open.length?(open[0].title||'Review operational follow-ups'):'No outstanding action items';
     $('#tasksBody').innerHTML=rows.map(t=>`<tr><td><span class="status-pill">${esc(t.priority)}</span></td><td><strong>${esc(t.title)}</strong><br><small>${esc(t.description||'')}</small></td><td>${esc(t.entity_type)}<br><small>${esc(t.entity_id)}</small></td><td>${dt(t.due_at)}</td><td><span class="status-pill ${esc(t.status)}">${esc(t.status)}</span></td></tr>`).join('')||'<tr><td colspan="5">No open tasks.</td></tr>';$('#dashboardTasks').innerHTML=rows.slice(0,4).map(t=>`<div class="dashboard-task"><span class="task-priority">${esc(t.priority||'normal')}</span><div><strong>${esc(t.title)}</strong><small>${t.due_at?'Due '+esc(dt(t.due_at)):'No due date'}</small></div></div>`).join('')||'<div class="dashboard-empty nta-task-empty"><span class="dashboard-empty-mark">✓</span><strong>All caught up</strong><small>There are no outstanding tasks right now.</small><button type="button" class="dashboard-empty-link" data-admin-go="tasks">Open task manager</button></div>';$('#dashboardTasks [data-admin-go]')?.addEventListener('click',()=>activate('tasks'));}
   $('#dashboardPeriod')?.addEventListener('change',()=>loadRecentActivity().catch(console.warn));
   $('#tasksRefresh')?.addEventListener('click',loadTasks);
