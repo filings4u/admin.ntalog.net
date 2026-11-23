@@ -202,7 +202,7 @@ document.addEventListener('click',event=>{
  const quick=event.target.closest('[data-account-shortcut]');if(quick){tab(quick.dataset.accountShortcut);return}
  const contact=event.target.closest('[data-company-contact]');if(contact){const row=contacts.find(x=>x.id===contact.dataset.companyContact);if(row){tab('contacts');formContact(row)}return}
  const task=event.target.closest('[data-company-task]');if(task){const row=tasks.find(x=>x.id===task.dataset.companyTask);if(row){tab('tasks');formTask(row)}return}
- const quote=event.target.closest('[data-company-quote]');if(quote){go('crm-detail','#/crm/quote/'+quote.dataset.companyQuote);return}
+ const quote=event.target.closest('[data-company-quote]');if(quote){const hash='#/crm/quote/'+encodeURIComponent(quote.dataset.companyQuote);history.pushState({ntaPanel:'crm-detail'},'',hash);window.dispatchEvent(new PopStateEvent('popstate'));return}
 });
 $('#accountsNew')?.addEventListener('click',()=>{void edit({})});
 ['accountsCancel','accountsCancelBottom','accountsBackToList'].forEach(id=>$('#'+id)?.addEventListener('click',back));
