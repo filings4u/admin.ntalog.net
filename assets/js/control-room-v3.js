@@ -144,7 +144,7 @@ const updatePageLabel=()=>{
  const active=document.querySelector('.admin-panel.active');
  const label=document.querySelector('#ntaPageLabel');
  if(!active||!label)return;
- const names={dashboard:'Overview',crm:({quote:'Quote requests',carrier:'Carrier applications',shipper:'Shipper applications',inquiry:'Inquiries'})[document.querySelector('#crmType')?.value]||'Requests','crm-detail':'Record Details',accounts:(document.querySelector('#accountsType')?.value==='carrier'?'Carrier CRM':'Shipper CRM'),'account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',categories:'Categories',media:'Asset Library',profile:'My Account',team:'Team & Users'};
+ const names={dashboard:'Overview',crm:({quote:'Quote requests',carrier:'Carrier applications',shipper:'Shipper applications',inquiry:'Inquiries'})[document.querySelector('#crmType')?.value]||'Requests','crm-detail':'Record Details',accounts:(document.querySelector('#accountsType')?.value==='carrier'?'Carrier CRM':'Shipper CRM'),'account-editor':'Account Management',factoring:'Factoring Companies','factoring-editor':'Factoring Company',tasks:'My Tasks',blog:'Articles',editor:'Blog Editor','article-preview':'Article Preview',categories:'Categories',media:'Blog Image Library',profile:'My Account',team:'Team & Users'};
  label.textContent=names[active.dataset.panel]||'Workspace';
  const subtitle=document.querySelector('#ntaPageSubtitle');
  if(subtitle){
