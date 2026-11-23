@@ -108,6 +108,10 @@
     $('#adminUserName').textContent=name;
     $('#adminUserEmail').textContent=email;
     $('#accountMenuName').textContent=name;
+    const role=state.admin?.role||'Administrator';
+    const status=state.admin?.active===false?'Inactive':state.admin?.active===true?'Active':'Pending verification';
+    $('#accountMenuRole').textContent=role;
+    $('#accountMenuStatus').textContent=status;
     $('#profileDisplayName').textContent=name;
     $('#profileEmail').textContent=email;
     $('#profileRole').textContent=state.admin?.role||'admin';
@@ -202,7 +206,23 @@
       if(submit){submit.disabled=false;submit.textContent='Sign In';}
     }
   });
-  $('#signOutBtn').addEventListener('click',async()=>{endIdleTracking();await sb.auth.signOut();state.session=null;state.admin=null;showAuth();});
+  $('#signOutBtn').addEventListener('click',async()=>{
+    const button=$('#signOutBtn');
+    button.disabled=true;
+    try {
+      const result=await sb.auth.signOut();
+      if(result?.error)throw result.error;
+      endIdleTracking();
+      state.session=null;state.admin=null;
+      $('#accountDropdown').hidden=true;
+      $('#accountMenuToggle').setAttribute('aria-expanded','false');
+      showAuth();
+    } catch(error) {
+      console.error('NTA sign-out error:',error);
+      const message=$('#adminLoadStatus');
+      if(message){message.hidden=false;message.textContent='Sign out could not be completed. Please try again.';}
+    } finally {button.disabled=false;}
+  });
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
   $$('[data-admin-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminPanel)));
   $('[data-goto-crm]')?.addEventListener('click',()=>activate('crm'));
@@ -441,7 +461,7 @@
   syncSidebarToggle();
   window.addEventListener('resize',syncSidebarToggle);
   $$('[data-admin-go]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminGo)));
-  $$('.admin-nav button').forEach(b=>b.addEventListener('click',()=>{
+  $('.admin-nav button[data-admin-panel], .admin-nav button[data-accounts-type], .admin-nav button[data-crm-shortcut]').forEach(b=>b.addEventListener('click',()=>{
     if(window.matchMedia('(max-width:760px)').matches)$('#adminApp').classList.remove('sidebar-open');
     syncSidebarToggle();
     $$('.admin-nav button').forEach(n=>n.classList.remove('active'));
