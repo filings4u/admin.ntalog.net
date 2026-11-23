@@ -34,14 +34,17 @@ const syncRail=()=>{
  const page=active.dataset.panel;
  const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[page]||page;
  const accountType=accounts?.value;
- $$('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
- $$('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&button.dataset.accountsType===accountType));
+ const operationsOpen=rail.querySelector('[data-nav-group="operations"].is-open')!==null;
+ $('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
+ $('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&!operationsOpen&&button.dataset.accountsType===accountType));
+ $('[data-operation-account]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&operationsOpen&&button.dataset.operationAccount===accountType));
+ $('[data-crm-shortcut]',rail).forEach(button=>button.classList.toggle('active',parent==='crm'&&button.dataset.crmShortcut===crm?.value));
 };
 const observer=new MutationObserver(syncRail);
 panelNodes.forEach(panel=>observer.observe(panel,{attributes:true,attributeFilter:['class']}));
 accounts?.addEventListener('change',syncRail);
 document.addEventListener('click',e=>{
- if(e.target.closest('[data-accounts-type]'))queueMicrotask(()=>{markAccount();syncRail()});
+ if(e.target.closest('[data-accounts-type],[data-operation-account],[data-crm-shortcut]'))queueMicrotask(()=>{markAccount();syncRail()});
 });
 syncRail();
 
