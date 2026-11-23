@@ -159,28 +159,31 @@
     idleLoggingOut=false;
     startIdleTracking(session);
     if(idleLoggingOut)return;
-    // Show the restored signed-in portal immediately, without flashing the login form.
-    state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'pending',active:null};
-    showApp();
+    // Keep the portal completely hidden until the saved route is restored.
+    // Never flash the Overview, placeholder metrics, or unrelated CRM pages.
     try{
       const me=await api('me');
       if(!me?.admin?.active)throw new Error('Administrator access is required.');
       state.admin=me.admin;
     }catch(error){
-      // Keep a restored Supabase session visible during temporary API failures.
-      // All management data requests remain protected by the API's own access checks.
-      console.warn('Unable to verify administrator access:',error);
-      // Auth is still valid. Keep the session and retry API verification without
-      // pretending permission checks succeeded or displaying a recurring sign-in error.
-      state.admin={display_name:session.user?.user_metadata?.display_name||session.user?.email?.split('@')[0]||'Administrator',role:'pending',active:null};
-      showApp();
-      const message=$('#adminLoadStatus');
-      if(message){message.hidden=false;message.textContent='Management data is temporarily unavailable. Your login is still active.';}
+      console.warn('Unable to verify NTA administrator access:',error);
+      showAuth();
+      statusBox('Unable to verify administrator access. Refresh to retry.','error');
       return;
     }
+    try{
+      await restoreWorkspaceRoute();
+    }catch(error){
+      // Do not replace a failed deep link with the unrelated Overview.
+      console.error('Unable to restore management page:',error);
+      const message=$('#adminLoadStatus');
+      if(message){message.hidden=false;message.textContent='This management page could not be loaded. Please retry.';}
+      // Route navigation has already selected its panel if possible.
+    }
     showApp();
-    await loadAdminWorkspace();
-    await restoreWorkspaceRoute();
+    // Fetch dashboard and publishing data without blocking the requested page.
+    // The active page never changes when these background requests finish.
+    loadAdminWorkspace().catch(error=>console.error('Management data refresh failed:',error));
   }
   /* Hash URLs identify full management pages. Browser Back/Forward restores
      the same page and, for CRM records, re-fetches the selected record. */
