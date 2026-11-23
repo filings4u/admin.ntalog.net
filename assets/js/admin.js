@@ -117,19 +117,24 @@
     $('#profileRole').textContent=state.admin?.role||'admin';
     $('#profileStatus').textContent=state.admin?.active===false?'Inactive':'Active';
   }
-  async function loadAdminWorkspace(){
-    // Dashboard or CMS failures must not revoke a valid login session.
+  async function loadAdminWorkspace({skipDashboard=false,skipTasks=false}={}){
+    // Only fetch modules not already loaded for the initial visible route.
     const modules=[
-      ['dashboard',loadDashboard],
-      ['tasks',loadTasks],
+      ...(!skipDashboard?[['dashboard',loadDashboard]]:[]),
+      ...(!skipTasks?[['tasks',loadTasks]]:[]),
       ['blog posts',loadPosts],
       ['categories',loadTaxonomy],
       ['media',loadMedia]
     ];
     const outcomes=await Promise.allSettled(modules.map(([,loader])=>loader()));
     const failures=outcomes.flatMap((result,index)=>result.status==='rejected'?[modules[index][0]]:[]);
-    const updated=$('#dashboardUpdated');if(updated)updated.textContent=outcomes[0].status==='fulfilled'?'Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Dashboard unavailable';
-    if(outcomes[0].status==='rejected')console.error('Dashboard load failed:',outcomes[0].reason);
+    const dashboardIndex=modules.findIndex(([name])=>name==='dashboard');
+    if(dashboardIndex>=0){
+      const dashboardResult=outcomes[dashboardIndex];
+      const updated=$('#dashboardUpdated');
+      if(updated)updated.textContent=dashboardResult.status==='fulfilled'?'Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Dashboard unavailable';
+      if(dashboardResult.status==='rejected')console.error('Dashboard load failed:',dashboardResult.reason);
+    }
     if(failures.length) {
       console.warn('NTA management: some data could not be loaded:',failures.join(', '));
       const message=$('#adminLoadStatus');
@@ -180,10 +185,24 @@
       if(message){message.hidden=false;message.textContent='This management page could not be loaded. Please retry.';}
       // Route navigation has already selected its panel if possible.
     }
+    // The Overview is only displayed once its live metrics and tasks are resolved.
+    // Other deep links never wait for the Overview or its placeholder shell.
+    let dashboardReady=false,tasksReady=false;
+    if(document.querySelector('.admin-panel.active')?.dataset.panel==='dashboard'){
+      const results=await Promise.allSettled([loadDashboard(),loadTasks()]);
+      dashboardReady=results[0].status==='fulfilled';
+      tasksReady=results[1].status==='fulfilled';
+      const updated=$('#dashboardUpdated');
+      if(updated)updated.textContent=dashboardReady?'Updated '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Dashboard unavailable';
+      if(!dashboardReady||!tasksReady){
+        const notice=$('#adminLoadStatus');
+        if(notice){notice.hidden=false;notice.textContent='Some live data could not be loaded. Use Refresh to retry.';}
+      }
+    }
     showApp();
-    // Fetch dashboard and publishing data without blocking the requested page.
-    // The active page never changes when these background requests finish.
-    loadAdminWorkspace().catch(error=>console.error('Management data refresh failed:',error));
+    // Refresh other modules after the correct page is visible, without changing routes.
+    loadAdminWorkspace({skipDashboard:dashboardReady,skipTasks:tasksReady})
+      .catch(error=>console.error('Management data refresh failed:',error));
   }
   /* Hash URLs identify full management pages. Browser Back/Forward restores
      the same page and, for CRM records, re-fetches the selected record. */
