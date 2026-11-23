@@ -229,17 +229,20 @@ body.nta-admin .nta28-factoring-list .nta28-factor-empty p{
 body.nta-admin .nta28-factoring-list .nta28-factor-empty.is-error strong{color:#9b4b40!important}
 @media(max-width:1100px){
   body.nta-admin .nta28-factoring-list .nta28-factor-filters{
-    grid-template-columns:minmax(170px,1fr) 165px 90px!important;
+    grid-template-columns:minmax(0,1fr) 95px max-content!important;
   }
-  body.nta-admin .nta28-factoring-list .nta28-factor-search{grid-column:1 / -1!important}
-  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{
-    grid-column:3!important;
+  body.nta-admin .nta28-factoring-list .nta28-factor-search{
+    grid-column:1 / -1!important;grid-row:1!important;
+  }
+  body.nta-admin .nta28-factoring-list .nta28-factor-select{
+    grid-column:1!important;grid-row:2!important;
   }
   body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorRefresh{
     grid-column:2!important;grid-row:2!important;
   }
-  body.nta-admin .nta28-factoring-list .nta28-factor-select{grid-column:1!important;grid-row:2!important}
-  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{grid-row:3!important;justify-self:end!important}
+  body.nta-admin .nta28-factoring-list .nta28-factor-filters #factorNew{
+    grid-column:3!important;grid-row:2!important;
+  }
 }
 @media(max-width:700px){
   body.nta-admin .nta28-factoring-list .nta28-factor-filters{
