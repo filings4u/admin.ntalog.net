@@ -176,8 +176,16 @@
       await openList();
       message(id?'Factoring company updated.':'Factoring company created.');
     }catch(error){
-      console.error('Factoring save:',error);
-      message(error?.message||'Unable to save factoring company.','#factorMessage',true);
+      const detail=typeof error==='string'?error:
+        [error?.message,error?.details].filter(Boolean).join(' — ')||
+        (error?.code?'Database error '+error.code:'Unable to save factoring company.');
+      console.error('Factoring save failed',{
+        code:error?.code||null,
+        message:error?.message||detail,
+        details:error?.details||null,
+        hint:error?.hint||null
+      });
+      message(detail,'#factorMessage',true);
     }finally{submit.disabled=false}
   });
 })();
