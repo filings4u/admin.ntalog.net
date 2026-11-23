@@ -675,25 +675,252 @@
   activate('article-preview',{hash:'#/posts/preview'});
 };
 $('#closePreview').onclick=()=>activate('editor',{hash:'#/posts/edit'});
-  async function loadMedia(){const j=await api('media_list');state.media=j.media||[];renderMedia();}
-  function mediaUrl(path){return `${cfg.blogFunctionUrl}?media=${encodeURIComponent(path)}`}
-  function renderMedia(){if(!$('#mediaGrid'))return;$('#mediaGrid').innerHTML=state.media.map(m=>`<div class="media-card" data-media-path="${esc(m.storage_path)}"><img src="${mediaUrl(m.storage_path)}" alt="${esc(m.alt_text||'')}"><div><strong>${esc(m.file_name)}</strong><br><small>${esc(m.alt_text||'No alt text')}</small><br><button class="btn btn-ghost choose-media" style="width:100%;margin-top:8px">Use as Featured</button><button class="btn btn-primary insert-media" style="width:100%;margin-top:6px">Insert in Article</button></div></div>`).join('')||'<p>No media uploaded.</p>';$$('.choose-media').forEach(b=>b.addEventListener('click',()=>{const card=b.closest('[data-media-path]');const m=state.media.find(x=>x.storage_path===card.dataset.mediaPath);$('#featuredImagePath').value=m.storage_path;$('#featuredImageAlt').value=m.alt_text||'';updateFeaturedPreview();state.dirty=true;activate('editor');}));$$('.insert-media').forEach(b=>b.addEventListener('click',()=>{const card=b.closest('[data-media-path]');const m=state.media.find(x=>x.storage_path===card.dataset.mediaPath);activate('editor');const ed=$('#richEditor');ed.focus();if(window.NTABlogEditor?.insertMedia){window.NTABlogEditor.insertMedia(mediaUrl(m.storage_path),m.alt_text||'');}else{document.execCommand('insertImage',false,mediaUrl(m.storage_path));const imgs=[...ed.querySelectorAll('img')];const img=imgs[imgs.length-1];if(img){img.alt=m.alt_text||'';img.loading='lazy';}state.dirty=true;$('#saveState').textContent='Unsaved changes';}state.dirty=true;$('#saveState').textContent='Unsaved changes';}));}
-  function updateFeaturedPreview(){const p=$('#featuredImagePath').value;$('#featuredPreview').src=p?mediaUrl(p):'';}
-  $('#chooseFeatured').onclick=()=>activate('media');
-  $('#uploadMedia').onclick=async()=>{
-    const file=$('#mediaFile').files[0],status=$('#mediaStatus');
-    if(!file){status.textContent='Choose an image to upload.';return;}
-    const button=$('#uploadMedia');button.disabled=true;status.textContent='Uploading image…';
-    try{
-      const signed=await api('media_upload_url',{file_name:file.name,mime_type:file.type,file_size:file.size});
-      const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});
-      if(error)throw error;
-      await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:$('#mediaAlt').value});
-      $('#mediaFile').value='';$('#mediaAlt').value='';
-      await loadMedia();status.textContent='Image uploaded.';
-    }catch(error){status.textContent=error?.message||'Unable to upload image.';}
-    finally{button.disabled=false;}
+  // Blog image management. Existing media_upload_url / media_attach API and
+  // Supabase signed-upload flow remain unchanged; restrict new uploads to JPG/PNG.
+  const MEDIA_LIMIT_BYTES=12*1024*1024;
+  const MEDIA_QUEUE_LIMIT=20;
+  let mediaQueue=[];
+  let mediaBusy=false;
+  let mediaVisible=[];
+  const mediaKind=m=>{
+    const mime=String(m.mime_type||'').toLowerCase();
+    const filename=String(m.file_name||'').toLowerCase();
+    if(mime==='image/png'||filename.endsWith('.png'))return 'png';
+    if(mime==='image/jpeg'||/\.(jpe?g)$/.test(filename))return 'jpeg';
+    return 'other';
   };
+  const prettySize=bytes=>{
+    const amount=Number(bytes)||0;
+    return amount>=1048576?(amount/1048576).toFixed(1)+' MB':Math.max(1,Math.ceil(amount/1024))+' KB';
+  };
+  function mediaStatus(message='',kind='info'){
+    const box=$('#mediaStatus');
+    if(!box)return;
+    box.textContent=message;box.hidden=!message;box.dataset.kind=kind;
+  }
+  function mediaUrl(path){return cfg.blogFunctionUrl+'?media='+encodeURIComponent(path)}
+  function renderMedia(){
+    const grid=$('#mediaGrid');
+    if(!grid)return;
+    const items=Array.isArray(state.media)?state.media:[];
+    $('#mediaCountTotal').textContent=String(items.length);
+    $('#mediaCountPng').textContent=String(items.filter(m=>mediaKind(m)==='png').length);
+    $('#mediaCountJpg').textContent=String(items.filter(m=>mediaKind(m)==='jpeg').length);
+    const search=($('#mediaSearch').value||'').trim().toLowerCase();
+    const type=$('#mediaTypeFilter').value;
+    const order=$('#mediaSort').value;
+    mediaVisible=items.filter(m=>(!type||mediaKind(m)===type)&&(!search||String(m.file_name||'').toLowerCase().includes(search)||String(m.alt_text||'').toLowerCase().includes(search)));
+    mediaVisible.sort((a,b)=>{
+      if(order==='name')return String(a.file_name||'').localeCompare(String(b.file_name||''));
+      const dateA=Date.parse(a.created_at||'')||0,dateB=Date.parse(b.created_at||'')||0;
+      return order==='oldest'?dateA-dateB:dateB-dateA;
+    });
+    $('#mediaResultCount').textContent=mediaVisible.length+' of '+items.length+' images';
+    if(!mediaVisible.length){
+      const empty=items.length?'No images match your filters':'No blog images uploaded yet';
+      const details=items.length?'Try a different search or image type.':'Upload PNG or JPG images above to build your blog image library.';
+      grid.innerHTML='<div class="nta28-media-empty"><span class="nta28-media-empty-icon" aria-hidden="true">▧</span><strong>'+esc(empty)+'</strong><p>'+esc(details)+'</p></div>';
+      return;
+    }
+    grid.innerHTML=mediaVisible.map((m,index)=>{
+      const kind=mediaKind(m);
+      const extension=kind==='jpeg'?'JPG':kind==='png'?'PNG':String(m.mime_type||'Image').split('/').pop().toUpperCase();
+      const url=mediaUrl(m.storage_path||'');
+      const meta=[extension,m.file_size?prettySize(m.file_size):''].filter(Boolean).join(' · ');
+      return '<article class="nta28-media-asset-card">'+
+        '<div class="nta28-media-thumb"><img src="'+esc(url)+'" loading="lazy" alt="'+esc(m.alt_text||m.file_name||'Uploaded blog image')+'"><span class="nta28-media-format">'+esc(extension)+'</span></div>'+
+        '<div class="nta28-media-asset-body"><strong title="'+esc(m.file_name||'')+'">'+esc(m.file_name||'Untitled image')+'</strong>'+
+        '<small>'+esc(meta)+'</small><p>'+esc(m.alt_text||'No alt text specified')+'</p>'+
+        '<div class="nta28-media-asset-actions">'+
+        '<button type="button" data-media-action="featured" data-media-index="'+index+'" class="btn btn-primary">Use as Featured</button>'+
+        '<button type="button" data-media-action="insert" data-media-index="'+index+'" class="btn btn-ghost">Insert in Post</button>'+
+        '<button type="button" data-media-action="copy" data-media-index="'+index+'" class="btn btn-ghost">Copy URL</button>'+
+        '</div></div></article>';
+    }).join('');
+  }
+  async function loadMedia(){
+    try{
+      const j=await api('media_list');
+      state.media=j.media||[];
+      renderMedia();
+    }catch(error){
+      const grid=$('#mediaGrid');
+      if(grid)grid.innerHTML='<div class="nta28-media-empty is-error"><strong>Images could not be loaded</strong><p>Check your connection and select Refresh to try again.</p></div>';
+      $('#mediaResultCount').textContent='Unable to load images';
+      throw error;
+    }
+  }
+  function updateFeaturedPreview(){
+    const path=$('#featuredImagePath').value;
+    $('#featuredPreview').src=path?mediaUrl(path):'';
+  }
+  function useMediaInBlog(item,mode){
+    if(!item)return;
+    if(!state.post)resetEditor();
+    else activate('editor');
+    if(mode==='featured'){
+      $('#featuredImagePath').value=item.storage_path;
+      $('#featuredImageAlt').value=item.alt_text||'';
+      updateFeaturedPreview();
+      window.NTABlogEditor?.refresh?.();
+    }else{
+      const editor=$('#richEditor');
+      editor.focus();
+      if(window.NTABlogEditor?.insertMedia){
+        window.NTABlogEditor.insertMedia(mediaUrl(item.storage_path),item.alt_text||'');
+      }else{
+        document.execCommand('insertImage',false,mediaUrl(item.storage_path));
+        const imgs=[...editor.querySelectorAll('img')],img=imgs[imgs.length-1];
+        if(img){img.alt=item.alt_text||'';img.loading='lazy';}
+      }
+    }
+    state.dirty=true;
+    $('#saveState').textContent='Unsaved changes';
+    $('#saveState').classList.remove('saved');
+  }
+  $('#mediaGrid').addEventListener('click',async event=>{
+    const button=event.target.closest('[data-media-action]');
+    if(!button)return;
+    const index=Number(button.dataset.mediaIndex);
+    if(!Number.isInteger(index)||index<0||index>=mediaVisible.length)return;
+    const item=mediaVisible[index];
+    if(button.dataset.mediaAction==='featured'){useMediaInBlog(item,'featured');return}
+    if(button.dataset.mediaAction==='insert'){useMediaInBlog(item,'insert');return}
+    if(button.dataset.mediaAction==='copy'){
+      try{
+        if(!navigator.clipboard?.writeText)throw Error('Clipboard is unavailable in this browser.');
+        await navigator.clipboard.writeText(mediaUrl(item.storage_path));
+        mediaStatus('Image URL copied to clipboard.','success');
+      }catch(error){mediaStatus(error?.message||'Unable to copy image URL.','error')}
+    }
+  });
+  $('#chooseFeatured').addEventListener('click',()=>activate('media'));
+  $('#mediaSearch').addEventListener('input',renderMedia);
+  $('#mediaTypeFilter').addEventListener('change',renderMedia);
+  $('#mediaSort').addEventListener('change',renderMedia);
+  $('#mediaRefresh').addEventListener('click',()=>{
+    mediaStatus('Refreshing image library…');
+    loadMedia().then(()=>mediaStatus('Image library refreshed.','success')).catch(error=>mediaStatus(error?.message||'Unable to refresh images.','error'));
+  });
+  $('#mediaJumpToUpload').addEventListener('click',()=>{
+    $('#mediaUploadSection').scrollIntoView({behavior:'smooth',block:'start'});
+    $('#mediaBrowse').focus();
+  });
+  function clearMediaQueue(){
+    mediaQueue.forEach(item=>{if(item.preview)URL.revokeObjectURL(item.preview)});
+    mediaQueue=[];
+  }
+  function renderMediaQueue(){
+    const section=$('#mediaQueueSection'),grid=$('#mediaQueue');
+    section.hidden=mediaQueue.length===0;
+    $('#mediaQueueCount').textContent=mediaQueue.length+' '+(mediaQueue.length===1?'image':'images')+' selected';
+    $('#uploadMedia').disabled=mediaBusy||mediaQueue.length===0;
+    $('#mediaFile').disabled=mediaBusy;
+    $('#mediaBrowse').disabled=mediaBusy;
+    grid.innerHTML=mediaQueue.map((item,index)=>
+      '<div class="nta28-media-queue-item">'+
+      '<img src="'+esc(item.preview||'')+'" alt="" class="nta28-media-queue-preview">'+
+      '<div class="nta28-media-queue-details"><strong title="'+esc(item.file.name)+'">'+esc(item.file.name)+'</strong>'+
+      '<small>'+prettySize(item.file.size)+' · '+(item.file.type==='image/png'?'PNG':'JPG / JPEG')+'</small>'+
+      '<label for="mediaAlt-'+index+'">Image alt text (optional)</label>'+
+      '<input type="text" id="mediaAlt-'+index+'" data-media-alt-index="'+index+'" maxlength="500" placeholder="Describe what the image shows" value="'+esc(item.alt||'')+'"></div>'+
+      '<button type="button" class="nta28-media-remove" data-media-remove-index="'+index+'" aria-label="Remove '+esc(item.file.name)+'" '+(mediaBusy?'disabled':'')+'>Remove</button></div>'
+    ).join('');
+  }
+  $('#mediaQueue').addEventListener('input',event=>{
+    const input=event.target.closest('[data-media-alt-index]');
+    if(!input)return;
+    const index=Number(input.dataset.mediaAltIndex);
+    if(Number.isInteger(index)&&mediaQueue[index])mediaQueue[index].alt=input.value;
+  });
+  $('#mediaQueue').addEventListener('click',event=>{
+    const button=event.target.closest('[data-media-remove-index]');
+    if(!button||mediaBusy)return;
+    const index=Number(button.dataset.mediaRemoveIndex);
+    if(!Number.isInteger(index)||!mediaQueue[index])return;
+    const removed=mediaQueue.splice(index,1)[0];
+    if(removed.preview)URL.revokeObjectURL(removed.preview);
+    renderMediaQueue();
+    if(!mediaQueue.length)mediaStatus('');
+  });
+  function queueMediaFiles(files){
+    if(mediaBusy)return;
+    const errors=[],known=new Set(mediaQueue.map(item=>[item.file.name,item.file.size,item.file.lastModified].join(':')));
+    for(const file of Array.from(files||[])){
+      const extension=file.name.toLowerCase().match(/\.(png|jpe?g)$/)?.[1]||'';
+      const type=extension==='png'?'image/png':extension?'image/jpeg':null;
+      if(!type||file.type!==type){errors.push(file.name+': only PNG or JPG/JPEG images are accepted.');continue;}
+      if(!file.size||file.size>MEDIA_LIMIT_BYTES){errors.push(file.name+': image must be under 12 MB.');continue;}
+      if(mediaQueue.length>=MEDIA_QUEUE_LIMIT){errors.push('Select up to 20 images per batch.');break;}
+      const signature=[file.name,file.size,file.lastModified].join(':');
+      if(known.has(signature))continue;
+      known.add(signature);
+      let preview='';
+      try{preview=URL.createObjectURL(file)}catch{}
+      mediaQueue.push({file,alt:'',preview});
+    }
+    renderMediaQueue();
+    if(errors.length)mediaStatus(errors.slice(0,3).join(' ') +(errors.length>3?' +'+(errors.length-3)+' more.':''),'error');
+    else if(mediaQueue.length)mediaStatus(mediaQueue.length+' '+(mediaQueue.length===1?'image':'images')+' ready to upload.');
+  }
+  $('#mediaFile').addEventListener('change',event=>{
+    queueMediaFiles(event.target.files);
+    event.target.value='';
+  });
+  const mediaDropzone=$('#mediaDropzone');
+  const openMediaFilePicker=()=>{if(!mediaBusy)$('#mediaFile').click()};
+  $('#mediaBrowse').addEventListener('click',event=>{
+    event.stopPropagation();openMediaFilePicker();
+  });
+  mediaDropzone.addEventListener('click',event=>{
+    if(event.target.closest('#mediaBrowse,#mediaFile'))return;
+    openMediaFilePicker();
+  });
+  mediaDropzone.addEventListener('keydown',event=>{
+    if(event.target!==mediaDropzone)return;
+    if(event.key==='Enter'||event.key===' '){event.preventDefault();openMediaFilePicker()}
+  });
+  mediaDropzone.addEventListener('dragover',event=>{
+    event.preventDefault();
+    if(!mediaBusy)mediaDropzone.classList.add('is-dragging');
+  });
+  mediaDropzone.addEventListener('dragleave',event=>{
+    if(!mediaDropzone.contains(event.relatedTarget))mediaDropzone.classList.remove('is-dragging');
+  });
+  mediaDropzone.addEventListener('drop',event=>{
+    event.preventDefault();mediaDropzone.classList.remove('is-dragging');
+    queueMediaFiles(event.dataTransfer?.files);
+  });
+  $('#uploadMedia').addEventListener('click',async()=>{
+    if(mediaBusy||!mediaQueue.length)return;
+    mediaBusy=true;renderMediaQueue();
+    const batch=mediaQueue.slice(),failed=[],uploaded=[];
+    try{
+      for(let index=0;index<batch.length;index++){
+        const item=batch[index],file=item.file;
+        mediaStatus('Uploading '+(index+1)+' of '+batch.length+': '+file.name);
+        try{
+          const signed=await api('media_upload_url',{file_name:file.name,mime_type:file.type,file_size:file.size});
+          if(!signed?.path||!signed?.token||!signed?.bucket)throw Error('Unable to prepare a secure upload.');
+          const {error}=await sb.storage.from(signed.bucket).uploadToSignedUrl(signed.path,signed.token,file,{contentType:file.type});
+          if(error)throw error;
+          await api('media_attach',{storage_path:signed.path,file_name:file.name,mime_type:file.type,file_size:file.size,alt_text:item.alt.trim()});
+          uploaded.push(item);
+          if(item.preview)URL.revokeObjectURL(item.preview);
+        }catch(error){failed.push({item,message:error?.message||'Upload failed'})}
+      }
+      mediaQueue=failed.map(x=>x.item);
+      if(uploaded.length){
+        try{await loadMedia()}catch(error){mediaStatus('Upload completed, but the library could not refresh: '+error.message,'error');}
+      }
+      if(failed.length){
+        const summary=uploaded.length+' uploaded, '+failed.length+' failed. '+failed[0].item.file.name+': '+failed[0].message;
+        mediaStatus(summary,'error');
+      }else{
+        mediaStatus(uploaded.length+' '+(uploaded.length===1?'image':'images')+' uploaded successfully.','success');
+      }
+    }finally{mediaBusy=false;renderMediaQueue();}
+  });
   async function loadTeam(){const j=await api('team');$('#teamBody').innerHTML=(j.team||[]).map(u=>`<tr><td>${esc(u.display_name||'—')}</td><td>${esc(u.email)}</td><td>${esc(u.role)}</td><td>${u.active?'Yes':'No'}</td><td>${dt(u.created_at)}</td></tr>`).join('')||'<tr><td colspan="5">No team members.</td></tr>';}
   window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.returnValue='';}});
 
