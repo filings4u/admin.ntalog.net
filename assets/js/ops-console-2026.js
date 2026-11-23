@@ -35,10 +35,10 @@ const syncRail=()=>{
  const parent={'crm-detail':'crm','account-editor':'accounts','factoring-editor':'factoring','article-preview':'editor'}[page]||page;
  const accountType=accounts?.value;
  const operationsOpen=rail.querySelector('[data-nav-group="operations"].is-open')!==null;
- $('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
- $('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&!operationsOpen&&button.dataset.accountsType===accountType));
- $('[data-operation-account]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&operationsOpen&&button.dataset.operationAccount===accountType));
- $('[data-crm-shortcut]',rail).forEach(button=>button.classList.toggle('active',parent==='crm'&&button.dataset.crmShortcut===crm?.value));
+ $$('[data-admin-panel]',rail).forEach(button=>button.classList.toggle('active',button.dataset.adminPanel===parent));
+ $$('[data-accounts-type]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&!operationsOpen&&button.dataset.accountsType===accountType));
+ $$('[data-operation-account]',rail).forEach(button=>button.classList.toggle('active',parent==='accounts'&&button.dataset.operationAccount===accountType));
+ $$('[data-crm-shortcut]',rail).forEach(button=>button.classList.toggle('active',parent==='crm'&&button.dataset.crmShortcut===crm?.value));
 };
 const observer=new MutationObserver(syncRail);
 panelNodes.forEach(panel=>observer.observe(panel,{attributes:true,attributeFilter:['class']}));
