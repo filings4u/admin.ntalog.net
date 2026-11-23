@@ -59,6 +59,7 @@
   });
   $('#factorNew')?.addEventListener('click',()=>edit({status:'prospect'}));
   $('#factorCancel')?.addEventListener('click',()=>{void openList();});
+  $('#factoringBackToList')?.addEventListener('click',()=>{void openList();});
   $('#factorRefresh')?.addEventListener('click',load);
   $('#factorStatus')?.addEventListener('change',load);
   $('#factorSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')load()});
