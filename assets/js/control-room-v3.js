@@ -29,24 +29,55 @@ document.querySelectorAll('.admin-nav button[data-nav-icon]').forEach(button=>{
  button.prepend(icon);
 });
 
-const menu=$('#applicationNavToggle'),items=$('#applicationNavItems');
-const contentToggle=$('#contentNavToggle'),contentItems=$('#contentNavItems');
-const contentOpen=()=>{if(contentItems&&contentToggle){contentItems.hidden=false;contentToggle.setAttribute('aria-expanded','true')}};
-const contentClose=()=>{if(contentItems&&contentToggle){contentItems.hidden=true;contentToggle.setAttribute('aria-expanded','false')}};
-contentToggle?.addEventListener('click',()=>contentItems?.hidden?contentOpen():contentClose());
-contentItems?.querySelectorAll('button').forEach(b=>b.addEventListener('click',contentOpen));
-const close=()=>{if(!items||!menu)return;items.hidden=true;menu.setAttribute('aria-expanded','false')};
-const open=()=>{if(!items||!menu)return;items.hidden=false;menu.setAttribute('aria-expanded','true')};
-menu?.addEventListener('click',()=>items.hidden?open():close());
-items?.querySelectorAll('button').forEach(b=>b.addEventListener('click',open));
-document.querySelectorAll('.admin-nav button[data-admin-panel],.admin-nav button[data-accounts-type],.admin-nav button[data-crm-shortcut]').forEach(b=>{
-  b.addEventListener('click',()=>{
-    if(items?.contains(b)){open();contentClose();return}
-    if(b===contentToggle){close();return}
-    if(contentItems?.contains(b)){contentOpen();close();return}
-    close();contentClose();
-  });
+/* Expandable management sidebar. Each group is a true dropdown,
+   with plus/minus state instead of caret symbols. */
+const navGroups=[...document.querySelectorAll('.nta26-nav-group')];
+const setGroupOpen=(group,expanded)=>{
+ if(!group)return;
+ const trigger=group.querySelector('.nta26-nav-group-toggle');
+ const content=group.querySelector('.nta26-nav-group-items');
+ if(!trigger||!content)return;
+ content.hidden=!expanded;
+ trigger.setAttribute('aria-expanded',String(expanded));
+ const indicator=trigger.querySelector('.nta26-nav-indicator');
+ if(indicator)indicator.textContent=expanded?'−':'+';
+ group.classList.toggle('is-open',expanded);
+};
+const openGroup=(group)=>{
+ navGroups.forEach(item=>setGroupOpen(item,item===group));
+};
+const closeGroups=()=>navGroups.forEach(item=>setGroupOpen(item,false));
+navGroups.forEach(group=>{
+ setGroupOpen(group,false);
+ group.querySelector('.nta26-nav-group-toggle')?.addEventListener('click',()=>{
+  const expanded=group.querySelector('.nta26-nav-group-toggle')?.getAttribute('aria-expanded')==='true';
+  if(expanded)closeGroups();else openGroup(group);
+ });
+ group.querySelector('.nta26-nav-group-items')?.addEventListener('click',event=>{
+  if(event.target.closest('button'))openGroup(group);
+ });
 });
+document.querySelector('.nta26-navigation > [data-admin-panel="dashboard"]')?.addEventListener('click',closeGroups);
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&document.activeElement?.closest('.nta26-navigation'))closeGroups();
+});
+const openNavGroupFor=(name)=>{
+ const target=navGroups.find(group=>group.dataset.navGroup===name);
+ if(target)openGroup(target);
+};
+const syncOpenGroup=()=>{
+ const page=document.querySelector('.admin-panel.active')?.dataset.panel;
+ const target=page==='crm'||page==='tasks'?'operations':
+  page==='accounts'||page==='factoring'?'network':
+  ['blog','editor','media','categories'].includes(page)?'publishing':null;
+ if(target)openNavGroupFor(target);
+ else if(page==='dashboard')closeGroups();
+};
+document.querySelectorAll('.admin-panel').forEach(panel=>
+ new MutationObserver(syncOpenGroup).observe(panel,{attributes:true,attributeFilter:['class']})
+);
+syncOpenGroup();
+
 // Preserve all application shortcuts. Their original names map to existing
 // CRM entity types rather than new or duplicate API endpoints.
 document.querySelectorAll('.admin-nav [data-crm-shortcut]').forEach(button=>{
@@ -57,7 +88,7 @@ document.querySelectorAll('.admin-nav [data-crm-shortcut]').forEach(button=>{
    const search=$('#crmSearch');if(search)search.value='';
    const status=$('#crmStatus');if(status)status.value='';
    $('.admin-nav [data-admin-panel="crm"]')?.click();
-   if(type!=='quote')open();
+   openNavGroupFor('operations');
  });
 });
 const create=$('#commandNewRecord');
@@ -82,9 +113,7 @@ document.querySelectorAll('.command-dashboard [data-crm-shortcut]').forEach(butt
 document.querySelectorAll('.command-dashboard [data-goto-crm]').forEach(button=>{
  button.addEventListener('click',()=>$('.admin-nav [data-admin-panel="crm"]')?.click());
 });
-document.addEventListener('click',event=>{
- if(event.target.closest('.admin-nav [data-crm-shortcut]'))open();
-});
+
 // Keep the global breadcrumb synced with the currently active workspace panel.
 const updatePageLabel=()=>{
  const active=document.querySelector('.admin-panel.active');
