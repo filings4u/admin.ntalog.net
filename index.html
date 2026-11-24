@@ -2,7 +2,57 @@
 <div id="adminAuth" class="admin-auth ops-auth" hidden>
  <div class="ops-auth-shell">
   <section class="ops-auth-side" aria-label="NTA Logistics management portal"><div class="ops-auth-brand"><span>N</span><div><strong>NTA LOGISTICS</strong><small>ADMINISTRATION PLATFORM</small></div></div><div class="ops-auth-statement"><span>CONNECTED OPERATIONS</span><h1>The work behind every shipment.</h1><p>One secure workspace for managing customers, carriers, incoming requests and the business network.</p></div><div class="ops-auth-footer">MANAGEMENT SYSTEM <span>·</span> AUTHORIZED PERSONNEL</div></section>
-  <div class="auth-card ops-auth-card"><div class="auth-head"><span class="ops-auth-overline">SECURE ADMIN ACCESS</span><h1>Welcome back</h1><p>Sign in to your NTA Logistics workspace.</p></div><div class="auth-body"><form id="signinForm"><div class="field"><label for="adminEmail">Email address</label><input id="adminEmail" type="email" name="email" required autocomplete="email" placeholder="you@company.com"></div><div class="field"><label for="adminPassword">Password</label><div class="password-field"><input id="adminPassword" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password"><button class="password-toggle" type="button" id="adminPasswordToggle" aria-label="Show password" aria-pressed="false" onclick="toggleAdminPassword()"><span class="eye-open" aria-hidden="true">◉</span></button></div></div><button class="btn btn-gold ops-auth-submit">Sign in to workspace </button><div class="ops-auth-recovery"><a href="forgot-password.html">Forgot password?</a></div></form><div id="authStatus" class="status" aria-live="polite"></div></div></div>
+  <div class="auth-card ops-auth-card">
+  <div class="auth-head">
+    <span class="ops-auth-overline" id="authViewOverline">SECURE ADMIN ACCESS</span>
+    <h1 id="authViewTitle">Welcome back</h1>
+    <p id="authViewDescription">Sign in to your NTA Logistics workspace.</p>
+  </div>
+  <div class="auth-body">
+    <form id="signinForm">
+      <div class="field">
+        <label for="adminEmail">Email address</label>
+        <input id="adminEmail" type="email" name="email" required autocomplete="email" placeholder="you@company.com">
+      </div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <div class="password-field">
+          <input id="adminPassword" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+          <button class="password-toggle" type="button" id="adminPasswordToggle" aria-label="Show password" aria-pressed="false" onclick="toggleAdminPassword()"><span class="eye-open" aria-hidden="true">◉</span></button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-gold ops-auth-submit">Sign in to workspace</button>
+      <div class="ops-auth-recovery"><a href="/?auth=forgot-password" data-auth-view="forgot-password">Forgot password?</a></div>
+    </form>
+    <form id="forgotPasswordForm" hidden>
+      <div class="field">
+        <label for="recoveryEmail">Email address</label>
+        <input id="recoveryEmail" name="email" type="email" autocomplete="email" required placeholder="you@company.com">
+      </div>
+      <button type="submit" class="btn btn-gold ops-auth-submit" id="forgotPasswordSubmit">Send password reset link</button>
+      <div class="ops-auth-recovery"><a href="/" data-auth-view="signin">Back to sign in</a></div>
+    </form>
+    <form id="resetPasswordForm" hidden>
+      <div class="field">
+        <label for="newAdminPassword">New password</label>
+        <div class="password-field">
+          <input id="newAdminPassword" type="password" name="password" autocomplete="new-password" required minlength="10" placeholder="At least 10 characters">
+          <button class="password-toggle" type="button" data-auth-password-toggle="newAdminPassword" aria-label="Show new password" aria-pressed="false">◉</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="confirmAdminPassword">Confirm new password</label>
+        <div class="password-field">
+          <input id="confirmAdminPassword" type="password" name="confirmPassword" autocomplete="new-password" required minlength="10" placeholder="Confirm new password">
+          <button class="password-toggle" type="button" data-auth-password-toggle="confirmAdminPassword" aria-label="Show confirmed password" aria-pressed="false">◉</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-gold ops-auth-submit" id="resetPasswordSubmit" disabled>Verify reset link to continue</button>
+      <div class="ops-auth-recovery"><a href="/?auth=forgot-password" data-auth-view="forgot-password">Request a new reset link</a><span class="ops-auth-divider">·</span><a href="/" data-auth-view="signin">Back to sign in</a></div>
+    </form>
+    <div id="authStatus" class="status" aria-live="polite"></div>
+  </div>
+</div>
  </div>
 </div>
 <div id="adminApp" class="admin-shell" hidden>
@@ -408,4 +458,4 @@ function toggleAdminPassword(){
   button.setAttribute('aria-label',showing?'Show password':'Hide password');
   button.title=showing?'Show password':'Hide password';
 }
-</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/nta-supabase.js"></script><script src="assets/js/crm-management-view.js?v=20261123-professional-crm-3"></script><script src="assets/js/admin.js?v=20261123-tasks-manager-1"></script><script src="assets/js/blog-editor-enhancements.js?v=20261123-blog-editor-v2-verified-3"></script><script src="assets/js/factoring.js?v=20261123-factoring-rls-fixed-1"></script><script src="assets/js/accounts.js?v=20261123-carrier-type-fix-1"></script><script src="assets/js/operations-redesign.js?v=20261118b"></script><script src="assets/js/control-room-v3.js?v=20261123-tasks-new-record-1"></script><script src="assets/js/ops-console-2026.js?v=20261123-network-cleanup-2"></script><script src="assets/js/tasks-manager.js?v=20261123-tasks-verified-2"></script></body></html>
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/nta-supabase.js"></script><script src="assets/js/auth-recovery.js?v=20261124-inline-auth1"></script><script src="assets/js/crm-management-view.js?v=20261123-professional-crm-3"></script><script src="assets/js/admin.js?v=20261124-inline-auth1"></script><script src="assets/js/blog-editor-enhancements.js?v=20261123-blog-editor-v2-verified-3"></script><script src="assets/js/factoring.js?v=20261123-factoring-rls-fixed-1"></script><script src="assets/js/accounts.js?v=20261123-carrier-type-fix-1"></script><script src="assets/js/operations-redesign.js?v=20261118b"></script><script src="assets/js/control-room-v3.js?v=20261123-tasks-new-record-1"></script><script src="assets/js/ops-console-2026.js?v=20261123-network-cleanup-2"></script><script src="assets/js/tasks-manager.js?v=20261123-tasks-verified-2"></script></body></html>
