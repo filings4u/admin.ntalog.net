@@ -207,8 +207,12 @@
       resetFinished = true;
       document.getElementById("newAdminPassword").value = "";
       document.getElementById("confirmAdminPassword").value = "";
-      message("Your password has been updated. Returning to sign in…", "success");
-      await sb.auth.signOut({scope:"local"});
+      message("Your password has been updated. Signing out securely…", "success");
+      const signedOut = await sb.auth.signOut({scope:"local"});
+      if (signedOut?.error) {
+        message("Your password was updated, but automatic sign-out did not finish. Please close this tab and sign in again.", "error");
+        return;
+      }
       window.location.replace("/?reset=success");
     } catch (error) {
       message(error?.message || "Unable to update your password. Try again.", "error");
