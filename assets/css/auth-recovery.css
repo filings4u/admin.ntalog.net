@@ -1,0 +1,25 @@
+/* Password recovery uses the existing NTA split-screen login, not a new page. */
+#adminAuth .ops-auth-card .auth-body form[hidden]{display:none!important}
+#adminAuth .ops-auth-card .ops-auth-recovery{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;margin-top:19px!important}
+#adminAuth .ops-auth-card .ops-auth-recovery a{color:#23597b!important;font-size:11px!important;font-weight:750!important;text-decoration:none!important}
+#adminAuth .ops-auth-card .ops-auth-recovery a:hover{text-decoration:underline!important}
+#adminAuth .ops-auth-card .ops-auth-recovery a:focus-visible{outline:2px solid #0059c4;outline-offset:4px;border-radius:2px}
+#adminAuth .ops-auth-card .ops-auth-divider{font-size:12px;color:#8c9aab}
+#adminAuth .ops-auth-card input:focus-visible{outline:2px solid #0059c4!important;outline-offset:1px}
+#adminAuth .ops-auth-card .ops-auth-submit:disabled{cursor:progress;opacity:.7}
+#adminAuth .ops-auth-card .status.show{margin-top:15px;line-height:1.6;font-size:12px;max-width:420px}
+#adminAuth .ops-auth-card .status.show.error{color:#a33333}
+#adminAuth .ops-auth-card .status.show.success{color:#23754c}
+#adminAuth[data-auth-view="reset-password"] .ops-auth-card .auth-head{margin-bottom:23px!important}
+#adminAuth[data-auth-view="reset-password"] .ops-auth-card .field{margin-bottom:14px!important}
+@media(max-height:680px){
+  #adminAuth[data-auth-view="reset-password"] .ops-auth-card.auth-card,
+  #adminAuth[data-auth-view="forgot-password"] .ops-auth-card.auth-card{
+    overflow-y:auto!important;
+    justify-content:flex-start!important;
+  }
+  #adminAuth[data-auth-view="reset-password"] .ops-auth-card .auth-head,
+  #adminAuth[data-auth-view="forgot-password"] .ops-auth-card .auth-head{margin-top:auto!important}
+  #adminAuth[data-auth-view="reset-password"] .ops-auth-card .auth-body,
+  #adminAuth[data-auth-view="forgot-password"] .ops-auth-card .auth-body{margin-bottom:auto!important}
+}
