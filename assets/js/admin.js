@@ -148,6 +148,13 @@
     }
   }
   async function boot(){
+    // Recovery email links create a short-lived Supabase session. Never
+    // auto-enter the management workspace while the user is resetting a password.
+    // Both recovery views must remain on the same split-screen login page.
+    if(window.NTAAuthFlow?.isAuthViewRequested()){
+      showAuth();
+      return;
+    }
     let session=null;
     try {
       const result=await sb.auth.getSession();
