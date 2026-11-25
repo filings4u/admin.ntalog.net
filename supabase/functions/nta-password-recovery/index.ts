@@ -23,7 +23,7 @@ Deno.serve(async(request:Request)=>{
   const apiKey=Deno.env.get("RESEND_API_KEY");
   const supabaseUrl=Deno.env.get("SUPABASE_URL");
   const adminKey=serviceKey();
-  if(!apiKey||!supabaseUrl||!adminKey){console.error("Recovery email configuration missing");return respond({error:"Password recovery is temporarily unavailable"},503,origin);}
+  if(!apiKey||!supabaseUrl||!adminKey){console.error("Recovery email configuration missing", {missingResendKey:!apiKey,missingSupabaseUrl:!supabaseUrl,missingServerAuthKey:!adminKey});return respond({error:"Password recovery is temporarily unavailable"},503,origin);}
   let body:Record<string,unknown>;
   try{body=await request.json()}catch{return respond({error:"Invalid request"},400,origin)}
   const email=String(body.email||"").trim().toLowerCase();
