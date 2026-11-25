@@ -133,28 +133,49 @@
   async function checkRecovery() {
     if (view !== "reset-password" || resetFinished) return;
     const params = new URLSearchParams(window.location.search);
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    if (params.has("error") || hash.has("error")) {
+    const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    if (params.has("error") || fragment.has("error")) {
       setRecoveryReady(false);
       message("This reset link is invalid or expired. Request another password reset email.", "error");
       return;
     }
-    try {
-      // detectSessionInUrl on the shared client exchanges or restores the
-      // verified recovery link before this check resolves.
-      const { data, error } = await sb.auth.getSession();
-      if (error) throw error;
-      if (view !== "reset-password") return;
-      if (data?.session?.user?.id) {
+    const tokenHash = fragment.get("token_hash") || params.get("token_hash");
+    const type = fragment.get("type") || params.get("type");
+    if (tokenHash && type === "recovery") {
+      try {
+        const { data, error } = await sb.auth.verifyOtp({token_hash:tokenHash,type:"recovery"});
+        if (error || !data?.session?.user?.id) throw error || new Error("Invalid recovery link");
+        if (view !== "reset-password") return;
         setRecoveryReady(true);
-        message("Your reset link has been verified. Create your new password.", "success");
-      } else {
+        // Remove the one-time token from the browser address after verification.
+        window.history.replaceState({}, "", "/?auth=reset-password");
+        message("Your secure reset link has been verified. Choose a new password.", "success");
+      } catch {
         setRecoveryReady(false);
         message("This reset link is invalid or expired. Request another password reset email.", "error");
       }
+      return;
+    }
+    // Legacy Supabase links carry a recovery access_token in the URL
+    // and are exchanged automatically by the shared auth client.
+    // An unrelated existing login session must never authorize a reset.
+    if (type !== "recovery" || !fragment.has("access_token")) {
+      if (!recoveryReady) {
+        setRecoveryReady(false);
+        message("Open the secure password reset link from your email.", "error");
+      }
+      return;
+    }
+    try {
+      const {data,error}=await sb.auth.getSession();
+      if(error || !data?.session?.user?.id) throw error || new Error("Invalid session");
+      if(view !== "reset-password") return;
+      setRecoveryReady(true);
+      window.history.replaceState({}, "", "/?auth=reset-password");
+      message("Your secure reset link has been verified. Choose a new password.", "success");
     } catch {
       setRecoveryReady(false);
-      message("This reset link could not be verified. Request a new link.", "error");
+      message("This reset link is invalid or expired. Request another password reset email.", "error");
     }
   }
 
@@ -169,10 +190,14 @@
     try {
       // Keep the existing verified redirect allowlist path. That legacy
       // endpoint forwards the recovery token to this same login screen.
-      const {error} = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: cfg.resetPasswordUrl || "https://admin.ntalog.net/reset-password.html"
+      const response = await fetch(cfg.passwordRecoveryFunctionUrl || "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-password-recovery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
       });
-      if (error) throw error;
+      if (!response.ok) throw new Error("Password recovery is temporarily unavailable. Please try again.");
+      const result = await response.json();
+      if (!result.ok) throw new Error("Password recovery is temporarily unavailable. Please try again.");
       message("If an NTA admin account exists for that email, you'll receive a password reset link. Check your inbox.", "success");
     } catch (error) {
       message(error?.message || "Unable to send the reset link. Try again.", "error");
