@@ -18,6 +18,17 @@ const generic={ok:true,message:"If an authorized NTA administrator account exist
 Deno.serve(async(request:Request)=>{
   const origin=request.headers.get("origin")||"";
   if(request.method==="OPTIONS")return new Response(null,{status:204,headers:{"access-control-allow-origin":allowedOrigin.has(origin)?origin:ADMIN_ORIGIN,"access-control-allow-methods":"POST, OPTIONS","access-control-allow-headers":"content-type, apikey, authorization","vary":"Origin"}});
+  // Non-email diagnostic: exposes only whether server configuration is ready,
+  // never the secret values or individual missing key names.
+  if(request.method==="GET" && new URL(request.url).searchParams.get("health")==="1"){
+    const ready=Boolean(Deno.env.get("RESEND_API_KEY") && Deno.env.get("SUPABASE_URL") && serviceKey());
+    if(!ready)console.error("NTA recovery health check: server configuration incomplete",{
+      missingResendKey:!Deno.env.get("RESEND_API_KEY"),
+      missingSupabaseUrl:!Deno.env.get("SUPABASE_URL"),
+      missingServerAuthKey:!serviceKey()
+    });
+    return respond({ok:ready,service:"nta-password-recovery"},ready?200:503,origin);
+  }
   if(request.method!=="POST")return respond({error:"Method not allowed"},405,origin);
   if(!allowedOrigin.has(origin))return respond({error:"Origin not allowed"},403,origin);
   const apiKey=Deno.env.get("RESEND_API_KEY");
